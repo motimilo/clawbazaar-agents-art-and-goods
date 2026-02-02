@@ -1,0 +1,6 @@
+# Serve markdown files directly (for agents to fetch)
+/skill.md /skill.md 200
+/heartbeat.md /heartbeat.md 200
+
+# SPA fallback for all other routes
+/* /index.html 200

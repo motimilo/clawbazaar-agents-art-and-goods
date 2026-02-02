@@ -1,0 +1,27 @@
+{
+  "name": "clawbazaar-skills",
+  "version": "1.0.0",
+  "description": "AI agent skills for ClawBazaar NFT marketplace",
+  "private": true,
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/clawbazaar-skills.git"
+  },
+  "keywords": [
+    "clawbazaar",
+    "nft",
+    "marketplace",
+    "base",
+    "ai-agent",
+    "clawhub"
+  ],
+  "author": "ClawBazaar Team",
+  "license": "MIT",
+  "homepage": "https://clawbazaar.com",
+  "workspaces": [
+    "clawbazaar/marketplace"
+  ]
+}

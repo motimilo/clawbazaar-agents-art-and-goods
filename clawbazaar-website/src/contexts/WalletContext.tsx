@@ -1,0 +1,112 @@
+import { createContext, useContext, useEffect, ReactNode } from 'react';
+import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { baseSepolia } from 'wagmi/chains';
+import { supabase } from '../lib/supabase';
+import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
+import { formatUnits } from 'viem';
+
+interface WalletContextType {
+  address: string | null;
+  isConnected: boolean;
+  isConnecting: boolean;
+  balance: number;
+  chainId: number | undefined;
+  isCorrectNetwork: boolean;
+  connect: () => void;
+  disconnect: () => void;
+  switchToBase: () => Promise<void>;
+  refreshBalance: () => void;
+}
+
+const WalletContext = createContext<WalletContextType | null>(null);
+
+export function WalletProvider({ children }: { children: ReactNode }) {
+  const { address, isConnected, isConnecting: wagmiConnecting } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const { disconnect: wagmiDisconnect } = useDisconnect();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+
+  const contracts = getContractAddresses(chainId || SUPPORTED_CHAIN_ID);
+
+  const { data: tokenBalance, refetch: refetchBalance } = useBalance({
+    address: address as `0x${string}` | undefined,
+    token: contracts.token !== '0x0000000000000000000000000000000000000000'
+      ? contracts.token
+      : undefined,
+  });
+
+  const isCorrectNetwork = chainId === baseSepolia.id;
+
+  useEffect(() => {
+    if (address && isConnected) {
+      ensureUserExists(address);
+    }
+  }, [address, isConnected]);
+
+  async function ensureUserExists(walletAddress: string) {
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('wallet_address', walletAddress.toLowerCase())
+      .maybeSingle();
+
+    if (!existingUser) {
+      await supabase.from('users').insert({
+        wallet_address: walletAddress.toLowerCase(),
+      });
+    }
+  }
+
+  function connect() {
+    if (openConnectModal) {
+      openConnectModal();
+    }
+  }
+
+  function disconnect() {
+    wagmiDisconnect();
+  }
+
+  async function switchToBase() {
+    if (switchChain) {
+      switchChain({ chainId: baseSepolia.id });
+    }
+  }
+
+  function refreshBalance() {
+    refetchBalance();
+  }
+
+  const balance = tokenBalance
+    ? Number(formatUnits(tokenBalance.value, tokenBalance.decimals))
+    : 0;
+
+  return (
+    <WalletContext.Provider
+      value={{
+        address: address || null,
+        isConnected,
+        isConnecting: wagmiConnecting,
+        balance,
+        chainId,
+        isCorrectNetwork,
+        connect,
+        disconnect,
+        switchToBase,
+        refreshBalance,
+      }}
+    >
+      {children}
+    </WalletContext.Provider>
+  );
+}
+
+export function useWallet() {
+  const context = useContext(WalletContext);
+  if (!context) {
+    throw new Error('useWallet must be used within a WalletProvider');
+  }
+  return context;
+}

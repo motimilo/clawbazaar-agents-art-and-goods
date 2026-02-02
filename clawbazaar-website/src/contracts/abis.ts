@@ -1,0 +1,450 @@
+export const CLAW_BAZAAR_NFT_ABI = [
+  {
+    type: 'constructor',
+    inputs: [{ name: '_bazaarToken', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    name: 'ArtworkMinted',
+    inputs: [
+      { name: 'tokenId', type: 'uint256', indexed: true },
+      { name: 'creator', type: 'address', indexed: true },
+      { name: 'metadataUri', type: 'string', indexed: false },
+      { name: 'timestamp', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'ArtworkListed',
+    inputs: [
+      { name: 'tokenId', type: 'uint256', indexed: true },
+      { name: 'seller', type: 'address', indexed: true },
+      { name: 'price', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'ArtworkSold',
+    inputs: [
+      { name: 'tokenId', type: 'uint256', indexed: true },
+      { name: 'seller', type: 'address', indexed: true },
+      { name: 'buyer', type: 'address', indexed: true },
+      { name: 'price', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'ListingCancelled',
+    inputs: [{ name: 'tokenId', type: 'uint256', indexed: true }],
+  },
+  {
+    type: 'event',
+    name: 'Transfer',
+    inputs: [
+      { name: 'from', type: 'address', indexed: true },
+      { name: 'to', type: 'address', indexed: true },
+      { name: 'tokenId', type: 'uint256', indexed: true },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'Approval',
+    inputs: [
+      { name: 'owner', type: 'address', indexed: true },
+      { name: 'approved', type: 'address', indexed: true },
+      { name: 'tokenId', type: 'uint256', indexed: true },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'mintArtwork',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'metadataUri', type: 'string' },
+      { name: 'royaltyReceiver', type: 'address' },
+      { name: 'royaltyBps', type: 'uint96' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'mintArtworkWithDefaultRoyalty',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'metadataUri', type: 'string' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'listForSale',
+    inputs: [
+      { name: 'tokenId', type: 'uint256' },
+      { name: 'price', type: 'uint256' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'cancelListing',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'buyArtwork',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'approve',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'tokenId', type: 'uint256' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setApprovalForAll',
+    inputs: [
+      { name: 'operator', type: 'address' },
+      { name: 'approved', type: 'bool' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'ownerOf',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'tokenURI',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getListing',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [
+      { name: 'seller', type: 'address' },
+      { name: 'price', type: 'uint256' },
+      { name: 'active', type: 'bool' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getCreator',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'totalSupply',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'balanceOf',
+    inputs: [{ name: 'owner', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getApproved',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'isApprovedForAll',
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'operator', type: 'address' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'royaltyInfo',
+    inputs: [
+      { name: 'tokenId', type: 'uint256' },
+      { name: 'salePrice', type: 'uint256' },
+    ],
+    outputs: [
+      { name: 'receiver', type: 'address' },
+      { name: 'royaltyAmount', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  // v2 additions
+  {
+    type: 'function',
+    name: 'calculateBuyPrice',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [
+      { name: 'totalPrice', type: 'uint256' },
+      { name: 'burnAmount', type: 'uint256' },
+      { name: 'royaltyAmount', type: 'uint256' },
+      { name: 'sellerAmount', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'totalBurned',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'paused',
+    inputs: [],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    name: 'TokensBurned',
+    inputs: [
+      { name: 'amount', type: 'uint256', indexed: false },
+      { name: 'totalBurned', type: 'uint256', indexed: false },
+    ],
+  },
+] as const;
+
+export const BZAAR_TOKEN_ABI = [
+  {
+    type: 'function',
+    name: 'name',
+    inputs: [],
+    outputs: [{ name: '', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'symbol',
+    inputs: [],
+    outputs: [{ name: '', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'decimals',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint8' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'totalSupply',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'balanceOf',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'transfer',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'value', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'allowance',
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'approve',
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'value', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'transferFrom',
+    inputs: [
+      { name: 'from', type: 'address' },
+      { name: 'to', type: 'address' },
+      { name: 'value', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    name: 'Transfer',
+    inputs: [
+      { name: 'from', type: 'address', indexed: true },
+      { name: 'to', type: 'address', indexed: true },
+      { name: 'value', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'Approval',
+    inputs: [
+      { name: 'owner', type: 'address', indexed: true },
+      { name: 'spender', type: 'address', indexed: true },
+      { name: 'value', type: 'uint256', indexed: false },
+    ],
+  },
+  // v2 additions
+  {
+    type: 'function',
+    name: 'burn',
+    inputs: [{ name: 'value', type: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'burnFrom',
+    inputs: [
+      { name: 'account', type: 'address' },
+      { name: 'value', type: 'uint256' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'totalBurned',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'circulatingSupply',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'paused',
+    inputs: [],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+  },
+] as const;
+
+export const CLAW_BAZAAR_EDITIONS_ABI = [
+  {
+    type: 'function',
+    name: 'mint',
+    inputs: [
+      { name: 'editionId', type: 'uint256' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'totalSupply',
+    inputs: [{ name: 'id', type: 'uint256' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'balanceOf',
+    inputs: [
+      { name: 'account', type: 'address' },
+      { name: 'id', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'editionPrice',
+    inputs: [{ name: 'editionId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'editionMaxSupply',
+    inputs: [{ name: 'editionId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'editionMaxPerWallet',
+    inputs: [{ name: 'editionId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'editionActive',
+    inputs: [{ name: 'editionId', type: 'uint256' }],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'mintsPerWallet',
+    inputs: [
+      { name: 'editionId', type: 'uint256' },
+      { name: 'wallet', type: 'address' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    name: 'EditionMinted',
+    inputs: [
+      { name: 'editionId', type: 'uint256', indexed: true },
+      { name: 'minter', type: 'address', indexed: true },
+      { name: 'amount', type: 'uint256', indexed: false },
+      { name: 'totalPaid', type: 'uint256', indexed: false },
+    ],
+  },
+] as const;

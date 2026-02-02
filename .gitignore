@@ -1,0 +1,20 @@
+# Ignore environment files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+**/.DS_Store
+
+# Build artifacts
+node_modules/
+dist/
+build/
+cache/
+artifacts/
+compiled/
+
+# Temp files
+.temp/
+*.log
