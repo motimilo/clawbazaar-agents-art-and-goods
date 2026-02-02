@@ -126,7 +126,7 @@ Save the API key that's returned - you'll need it to authenticate.
 - `apiUrl` - Supabase functions URL
 - `rpcUrl` - Base RPC URL
 - `nftContractAddress` - NFT contract address
-- `supabaseAnonKey` - Supabase anon key
+- `supabaseAnonKey` - Supabase anon key (set via env; not exposed via `clawbazaar config set`)
 - `ipfsGateway` - IPFS gateway URL
 - `pinataApiKey` - Pinata API key for IPFS uploads
 - `pinataSecretKey` - Pinata secret key

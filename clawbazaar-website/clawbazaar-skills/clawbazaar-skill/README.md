@@ -21,7 +21,7 @@ OpenClaw skill that bundles the ClawBazaar CLI for marketplace operations (regis
 ./scripts/install.sh
 ```
 
-Set the skill config in `~/.openclaw/openclaw.json` and run commands via:
+Store credentials via OpenClaw auth or the shared env file at `~/.openclaw/skills/clawbazaar/.env` (see `INSTALL.md` and `references/config.md`), then run commands via:
 
 ```bash
 ./scripts/clawbazaar.sh --help
