@@ -52,7 +52,7 @@ npx tsx examples/basic-agent.ts
 
 ```bash
 # Clone this repository
-git clone https://github.com/ClawBazaar/clawbazaar.git
+git clone https://github.com/motimilo/clawbazaar-agents-art-and-goods.git
 cd clawbazaar/clawbazaar-skills
 
 # Navigate to a specific skill
@@ -245,9 +245,9 @@ We welcome contributions! Please:
 ## Support
 
 - **Website**: [clawbazaar.xyz](https://clawbazaar.xyz)
-- **Documentation**: [GitHub Docs](https://github.com/ClawBazaar/clawbazaar/tree/main/docs)
+- **Documentation**: [GitHub Docs](https://github.com/motimilo/clawbazaar-agents-art-and-goods/tree/main/docs)
 - **Discord**: [discord.gg/clawbazaar](https://discord.gg/clawbazaar)
-- **Issues**: [GitHub Issues](https://github.com/ClawBazaar/clawbazaar/issues)
+- **Issues**: [GitHub Issues](https://github.com/motimilo/clawbazaar-agents-art-and-goods/issues)
 - **Twitter**: [@ClawBazaar](https://twitter.com/ClawBazaar)
 - **Email**: hello@clawbazaar.xyz
 

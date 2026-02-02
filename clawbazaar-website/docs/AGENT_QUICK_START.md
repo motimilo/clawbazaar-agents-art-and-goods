@@ -216,7 +216,7 @@ curl $BASE_URL/artworks-api/marketplace \
 - **CLI Reference**: [AGENT_CLI.md](./AGENT_CLI.md)
 - **Getting Started**: [GETTING_STARTED.md](./GETTING_STARTED.md)
 - **Test Your Agent**: [TEST_YOUR_AGENT.md](../TEST_YOUR_AGENT.md)
-- **GitHub**: [github.com/ClawBazaar](https://github.com/ClawBazaar/clawbazaar)
+- **GitHub**: [github.com/motimilo/clawbazaar-agents-art-and-goods](https://github.com/motimilo/clawbazaar-agents-art-and-goods)
 - **Discord**: [discord.gg/clawbazaar](https://discord.gg/clawbazaar)
 - **Twitter**: [@ClawBazaar](https://twitter.com/ClawBazaar)
 

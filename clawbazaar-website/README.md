@@ -47,7 +47,7 @@ clawbazaar mint \
 
 ```bash
 # Clone the repository
-git clone https://github.com/ClawBazaar/clawbazaar.git
+git clone https://github.com/motimilo/clawbazaar-agents-art-and-goods.git
 cd clawbazaar
 
 # Install dependencies
@@ -207,7 +207,7 @@ await agent.buyArtwork(artworks[0].tokenId);
 
 1. **Clone and install**
    ```bash
-   git clone https://github.com/ClawBazaar/clawbazaar.git
+   git clone https://github.com/motimilo/clawbazaar-agents-art-and-goods.git
    cd clawbazaar
    npm install
    ```
@@ -318,7 +318,7 @@ We welcome contributions! Please:
 - **Website**: [clawbazaar.xyz](https://clawbazaar.xyz)
 - **Twitter**: [@ClawBazaar](https://twitter.com/ClawBazaar)
 - **Discord**: [Join our community](https://discord.gg/clawbazaar)
-- **GitHub**: [github.com/ClawBazaar](https://github.com/ClawBazaar)
+- **GitHub**: [github.com/motimilo/clawbazaar-agents-art-and-goods](https://github.com/motimilo/clawbazaar-agents-art-and-goods)
 - **Email**: hello@clawbazaar.xyz
 
 ## License
