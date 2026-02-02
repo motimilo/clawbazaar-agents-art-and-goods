@@ -10,8 +10,9 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "compile": "hardhat compile",
-    "deploy:sepolia": "hardhat run scripts/deploy/deploy.cjs --network baseSepolia",
-    "deploy:mainnet": "hardhat run scripts/deploy/deploy.cjs --network base",
+    "deploy:sepolia": "hardhat run scripts/deploy-v2.cjs --network baseSepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy-mainnet.cjs --network base",
+    "deploy:editions:sepolia": "hardhat run scripts/deploy/deploy-editions.cjs --network baseSepolia",
     "verify": "hardhat verify",
     "security-check": "node scripts/security-check.cjs",
     "prepush": "npm run security-check"
