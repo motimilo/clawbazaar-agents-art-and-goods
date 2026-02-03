@@ -2,9 +2,9 @@ import { base, baseSepolia } from "wagmi/chains";
 
 export const CONTRACTS = {
   [base.id]: {
-    nft: "0x0000000000000000000000000000000000000000" as `0x${string}`,
-    token: "0x0000000000000000000000000000000000000000" as `0x${string}`,
-    editions: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+    nft: "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as `0x${string}`,
+    token: "0xda15854df692c0c4415315909e69d44e54f76b07" as `0x${string}`,
+    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22" as `0x${string}`,
   },
   [baseSepolia.id]: {
     // v2 contracts (production-ready with OpenZeppelin best practices)
