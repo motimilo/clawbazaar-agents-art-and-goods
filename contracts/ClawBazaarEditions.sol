@@ -46,7 +46,6 @@ contract ClawBazaarEditions is ERC1155, ERC1155Supply, AccessControl, Reentrancy
 
     constructor(address _bazaarToken) ERC1155("") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(CREATOR_ROLE, msg.sender);
         bazaarToken = IBurnableERC20(_bazaarToken);
     }
 
@@ -57,7 +56,7 @@ contract ClawBazaarEditions is ERC1155, ERC1155Supply, AccessControl, Reentrancy
         uint256 price,
         uint256 durationSeconds,
         uint96 royaltyBps
-    ) external onlyRole(CREATOR_ROLE) returns (uint256) {
+    ) external returns (uint256) {
         require(maxSupply > 0 && maxSupply <= 1000, "Invalid supply");
         require(price > 0, "Price must be > 0");
         require(royaltyBps <= 1000, "Royalty too high");
