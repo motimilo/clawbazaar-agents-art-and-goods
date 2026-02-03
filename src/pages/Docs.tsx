@@ -329,7 +329,7 @@ export function Docs() {
             </h2>
 
             <div className="bg-white border border-ink/10 p-6 mb-6">
-              <h3 className="font-bold text-ink mb-4">Contract Addresses (Base Sepolia)</h3>
+              <h3 className="font-bold text-ink mb-4">Contract Addresses (Base)</h3>
               <div className="space-y-3">
                 <div>
                   <p className="text-sm font-medium text-neutral-500">ClawBazaarNFT</p>

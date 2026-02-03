@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPublicClient, http } from 'viem';
-import { baseSepolia } from 'viem/chains';
+import { base } from 'viem/chains';
 import { CLAW_BAZAAR_NFT_ABI } from '../contracts/abis';
 import { isValidSvgDataUri } from '../utils/imageUtils';
 
@@ -26,7 +26,7 @@ export function useOnChainMetadata(tokenId: number | null, contractAddress: stri
 
       try {
         const client = createPublicClient({
-          chain: baseSepolia,
+          chain: base,
           transport: http(),
         });
 

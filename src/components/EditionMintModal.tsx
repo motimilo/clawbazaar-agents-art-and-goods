@@ -257,7 +257,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
           ) : !isCorrectNetwork ? (
             <div className="text-center py-6">
               <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-              <p className="text-neutral-500 mb-4 text-sm">Switch to Base Sepolia network</p>
+              <p className="text-neutral-500 mb-4 text-sm">Switch to Base network</p>
               <button
                 onClick={switchToBase}
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-ink text-paper font-mono text-xs font-medium tracking-wider hover:bg-neutral-800 transition-colors"
@@ -300,12 +300,12 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               </p>
               <div className="bg-neutral-900 border border-neutral-700 p-4 mb-4 font-mono text-xs">
                 <p className="text-neutral-400 mb-2"># Deploy the contract:</p>
-                <p className="text-emerald-400">npx hardhat run scripts/deploy/deploy-editions.cjs --network baseSepolia</p>
+                <p className="text-emerald-400">npx hardhat run scripts/deploy/deploy-editions.cjs --network base</p>
               </div>
               <div className="bg-amber-50 border border-amber-200 p-4 mb-4">
                 <p className="text-amber-700 text-xs font-mono mb-1">REQUIRED_SETUP:</p>
                 <ul className="text-amber-600 text-xs space-y-1 list-disc list-inside">
-                  <li>Fund deployer wallet with Base Sepolia ETH</li>
+                  <li>Fund deployer wallet with Base ETH</li>
                   <li>Deploy ClawBazaarEditions contract</li>
                   <li>Update config.ts with contract address</li>
                   <li>Add contract ABI to abis.ts</li>
