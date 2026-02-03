@@ -60,6 +60,18 @@ export function Home({
       )
       .subscribe();
 
+    // Set up real-time subscription for agents count
+    const agentsChannel = supabase
+      .channel('agents-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'agents' },
+        () => {
+          fetchAgentStats();
+        }
+      )
+      .subscribe();
+
     // Set up real-time subscription for edition mints
     const editionMintsChannel = supabase
       .channel('edition-mints-changes')
@@ -68,6 +80,7 @@ export function Home({
         { event: '*', schema: 'public', table: 'edition_mints' },
         () => {
           fetchEditionMintStats();
+          fetchVolumeStats();
         }
       )
       .subscribe();
@@ -75,21 +88,22 @@ export function Home({
     return () => {
       supabase.removeChannel(transactionsChannel);
       supabase.removeChannel(artworksChannel);
+      supabase.removeChannel(agentsChannel);
       supabase.removeChannel(editionMintsChannel);
     };
   }, []);
 
   async function fetchVolumeStats() {
-    const { data: volumeData } = await supabase
-      .from('marketplace_transactions')
-      .select('price_paid');
+    const [{ data: marketplaceData }, { data: editionMintsData }] = await Promise.all([
+      supabase.from('marketplace_transactions').select('price_paid'),
+      supabase.from('edition_mints').select('price_paid_bzaar'),
+    ]);
 
-    if (volumeData) {
-      const totalVolume = volumeData.reduce((sum, t) => sum + (t.price_paid || 0), 0);
-      // Platform fee is 2.5% of each sale, and it gets burned
-      const totalBurned = Math.floor(totalVolume * 0.025);
-      setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
-    }
+    const marketplaceVolume = marketplaceData?.reduce((sum, t) => sum + (t.price_paid || 0), 0) ?? 0;
+    const editionMintsVolume = editionMintsData?.reduce((sum, m) => sum + (Number(m.price_paid_bzaar) || 0), 0) ?? 0;
+    const totalVolume = marketplaceVolume + editionMintsVolume;
+    const totalBurned = Math.floor(totalVolume * 0.025);
+    setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
   }
 
   async function fetchArtworkStats() {
@@ -110,6 +124,16 @@ export function Home({
 
     if (count !== null) {
       setStats((prev) => ({ ...prev, editionMints: count }));
+    }
+  }
+
+  async function fetchAgentStats() {
+    const { count } = await supabase
+      .from('agents')
+      .select('*', { count: 'exact', head: true });
+
+    if (count !== null) {
+      setStats((prev) => ({ ...prev, agents: count }));
     }
   }
 
@@ -164,20 +188,26 @@ export function Home({
       });
       setAgents(agentMap);
 
-      const verifiedAgents = agentsData.filter((a) => a.is_verified).length;
+      const { count: totalAgentsCount } = await supabase
+        .from('agents')
+        .select('*', { count: 'exact', head: true });
+
       setStats((prev) => ({
         ...prev,
-        agents: verifiedAgents,
+        agents: totalAgentsCount ?? 0,
         artworks: mintedCount ?? 0,
         editionMints: editionMintsCount ?? 0,
       }));
     }
-    if (volumeData) {
-      const totalVolume = volumeData.reduce((sum, t) => sum + (t.price_paid || 0), 0);
-      // Platform fee is 2.5% of each sale, and it gets burned
-      const totalBurned = Math.floor(totalVolume * 0.025);
-      setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
-    }
+    const { data: editionMintsVolumeData } = await supabase
+      .from('edition_mints')
+      .select('price_paid_bzaar');
+
+    const marketplaceVolume = volumeData?.reduce((sum, t) => sum + (t.price_paid || 0), 0) ?? 0;
+    const editionMintsVolume = editionMintsVolumeData?.reduce((sum, m) => sum + (Number(m.price_paid_bzaar) || 0), 0) ?? 0;
+    const totalVolume = marketplaceVolume + editionMintsVolume;
+    const totalBurned = Math.floor(totalVolume * 0.025);
+    setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
 
     setLoading(false);
   }
