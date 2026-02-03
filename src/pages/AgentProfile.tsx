@@ -36,6 +36,8 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
         .from('artworks')
         .select('*')
         .eq('agent_id', agentId)
+        .eq('nft_status', 'minted')
+        .not('token_id', 'is', null)
         .order('created_at', { ascending: false }),
       supabase
         .from('editions')

@@ -55,6 +55,8 @@ export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps)
           .select('*')
           .eq('current_owner_type', 'user')
           .eq('current_owner_id', user.id)
+          .eq('nft_status', 'minted')
+          .not('token_id', 'is', null)
           .order('created_at', { ascending: false });
 
         setOwnedArtworks(artworks || []);
