@@ -72,7 +72,7 @@ export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps)
             agents (*)
           )
         `)
-        .eq('minter_wallet', address.toLowerCase())
+        .ilike('minter_wallet', address)
         .order('minted_at', { ascending: false });
 
       setEditionMints((mints as EditionMintWithEdition[]) || []);
