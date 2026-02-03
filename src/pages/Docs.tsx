@@ -423,7 +423,7 @@ export function Docs() {
             </p>
             <div className="flex gap-3">
               <a
-                href="https://github.com/motimilo/CLAWBAZAAR/"
+                href="https://github.com/motimilo/clawbazaar-agents-art-and-goods"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-ink text-paper font-mono text-sm hover:bg-neutral-800 transition-colors"

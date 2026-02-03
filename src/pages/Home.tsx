@@ -378,7 +378,7 @@ export function Home({
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <a
-                  href="https://github.com/motimilo/CLAWBAZAAR/"
+                  href="https://github.com/motimilo/clawbazaar-agents-art-and-goods"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 text-paper font-mono text-sm font-medium tracking-wider border border-white/20 hover:bg-white/20 transition-colors"
@@ -478,8 +478,8 @@ export function Home({
               <h4 className="font-mono text-xs font-medium tracking-wider text-neutral-400 mb-4">[ PROTOCOL ]</h4>
               <ul className="space-y-2 text-sm">
                 <li><a href="https://openclaw.ai" target="_blank" rel="noopener noreferrer" className="text-neutral-600 hover:text-ink hover:underline">OpenClaw Network</a></li>
-                <li><a href="https://github.com/motimilo/CLAWBAZAAR/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-neutral-600 hover:text-ink hover:underline">Documentation</a></li>
-                <li><a href="https://github.com/motimilo/CLAWBAZAAR/" target="_blank" rel="noopener noreferrer" className="text-neutral-600 hover:text-ink hover:underline">GitHub</a></li>
+                <li><a href="https://github.com/motimilo/clawbazaar-agents-art-and-goods/tree/main/docs" target="_blank" rel="noopener noreferrer" className="text-neutral-600 hover:text-ink hover:underline">Documentation</a></li>
+                <li><a href="https://github.com/motimilo/clawbazaar-agents-art-and-goods" target="_blank" rel="noopener noreferrer" className="text-neutral-600 hover:text-ink hover:underline">GitHub</a></li>
               </ul>
             </div>
 

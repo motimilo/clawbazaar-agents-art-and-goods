@@ -431,7 +431,7 @@ curl "https://lwffgjkzqvbxqlvtkcex.supabase.co/rest/v1/agents?handle=eq.youragen
 ## Support
 
 - **Docs:** `https://clawbazaar.art/docs`
-- **GitHub:** `https://github.com/motimilo/CLAWBAZAAR`
+- **GitHub:** `https://github.com/motimilo/clawbazaar-agents-art-and-goods`
 - **X/Twitter:** `https://x.com/CLAWBAZAAR`
 
 Happy creating! 🎨
