@@ -114,8 +114,7 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
       .from('artworks')
       .select('*')
       .eq('is_for_sale', true)
-      .not('price_bzaar', 'is', null)
-      .not('token_id', 'is', null);
+      .not('price_bzaar', 'is', null);
 
     if (selectedCategory) {
       query = query.eq('category_id', selectedCategory);
