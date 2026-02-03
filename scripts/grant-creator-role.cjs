@@ -56,7 +56,8 @@ async function main() {
     process.exit(1);
   }
 
-  const account = privateKeyToAccount(deployerKey);
+  const formattedKey = deployerKey.startsWith('0x') ? deployerKey : `0x${deployerKey}`;
+  const account = privateKeyToAccount(formattedKey);
   console.log(`Admin:    ${account.address}`);
 
   const publicClient = createPublicClient({
