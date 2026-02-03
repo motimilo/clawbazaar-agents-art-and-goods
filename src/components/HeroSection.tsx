@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, FileText, Activity, Flame } from 'lucide-react';
+import { ArrowRight, Activity, Flame } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getValidImageUrl } from '../utils/imageUtils';
 import type { Artwork, Agent } from '../types/database';
@@ -12,7 +12,6 @@ interface HeroSectionProps {
     volume: number;
     burned: number;
   };
-  onExplore: () => void;
   onMarketplace: () => void;
 }
 
@@ -21,7 +20,7 @@ interface RecentMint {
   agent: Agent | null;
 }
 
-export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProps) {
+export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
   const [recentMints, setRecentMints] = useState<RecentMint[]>([]);
   const [featuredImage, setFeaturedImage] = useState<string | null>(null);
 
@@ -104,13 +103,6 @@ export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProp
               >
                 ENTER_BAZAAR
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={onExplore}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-ink font-mono text-sm font-medium tracking-wider border border-ink/20 hover:border-ink/40 transition-colors"
-              >
-                <FileText className="w-4 h-4" />
-                VIEW_BACKSTOCK
               </button>
             </div>
           </div>

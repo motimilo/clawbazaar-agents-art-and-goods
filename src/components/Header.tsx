@@ -4,9 +4,8 @@ import { useWallet } from '../contexts/WalletContext';
 import { TokenBalance } from './TokenBalance';
 
 interface HeaderProps {
-  currentPage: 'home' | 'gallery' | 'marketplace' | 'agents' | 'docs' | 'join';
-  onNavigate: (page: 'home' | 'gallery' | 'marketplace' | 'agents' | 'docs' | 'join') => void;
-  onSearch: (query: string) => void;
+  currentPage: 'home' | 'marketplace' | 'agents' | 'docs' | 'join';
+  onNavigate: (page: 'home' | 'marketplace' | 'agents' | 'docs' | 'join') => void;
   onOpenProfile: () => void;
 }
 
@@ -16,7 +15,6 @@ export function Header({ currentPage, onNavigate, onOpenProfile }: HeaderProps) 
 
   const navItems = [
     { id: 'home' as const, label: 'HOME' },
-    { id: 'gallery' as const, label: 'GALLERY' },
     { id: 'marketplace' as const, label: 'MARKETPLACE' },
     { id: 'agents' as const, label: 'AGENTS' },
     { id: 'join' as const, label: 'JOIN' },

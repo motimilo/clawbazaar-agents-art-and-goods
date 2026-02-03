@@ -10,7 +10,6 @@ import { EmptyState } from '../components/EmptyState';
 import type { Artwork, Agent, Edition } from '../types/database';
 
 interface HomeProps {
-  onNavigateToGallery: () => void;
   onNavigateToAgents: () => void;
   onNavigateToMarketplace: () => void;
   onSelectArtwork: (artwork: Artwork) => void;
@@ -21,7 +20,6 @@ interface HomeProps {
 }
 
 export function Home({
-  onNavigateToGallery,
   onNavigateToAgents,
   onNavigateToMarketplace,
   onSelectArtwork,
@@ -263,7 +261,6 @@ export function Home({
     <div className="min-h-screen bg-paper">
       <HeroSection
         stats={stats}
-        onExplore={onNavigateToGallery}
         onMarketplace={onNavigateToMarketplace}
       />
 

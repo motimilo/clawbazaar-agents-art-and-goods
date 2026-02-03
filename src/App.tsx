@@ -11,7 +11,6 @@ import { EditionDetailModal } from './components/EditionDetailModal';
 import { MakeOfferModal } from './components/MakeOfferModal';
 import { UserProfileModal } from './components/UserProfileModal';
 import { Home } from './pages/Home';
-import { Gallery } from './pages/Gallery';
 import { Marketplace } from './pages/Marketplace';
 import { Agents } from './pages/Agents';
 import { AgentProfile } from './pages/AgentProfile';
@@ -20,11 +19,10 @@ import { AgentOnboarding } from './pages/AgentOnboarding';
 import { Profile } from './pages/Profile';
 import type { Artwork, Agent, Edition } from './types/database';
 
-type Page = 'home' | 'gallery' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join';
+type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [viewerArtwork, setViewerArtwork] = useState<Artwork | null>(null);
   const [artworkToBuy, setArtworkToBuy] = useState<Artwork | null>(null);
@@ -50,17 +48,9 @@ function AppContent() {
     }
   }
 
-  function handleNavigate(page: 'home' | 'gallery' | 'marketplace' | 'agents' | 'docs' | 'join') {
+  function handleNavigate(page: 'home' | 'marketplace' | 'agents' | 'docs' | 'join') {
     setCurrentPage(page);
     setSelectedAgentId(null);
-    if (page !== 'gallery') {
-      setSearchQuery('');
-    }
-  }
-
-  function handleSearch(query: string) {
-    setSearchQuery(query);
-    setCurrentPage('gallery');
   }
 
   function handleSelectArtwork(artwork: Artwork) {
@@ -163,13 +153,11 @@ function AppContent() {
       <Header
         currentPage={currentPage === 'agent-profile' || currentPage === 'profile' ? 'agents' : currentPage === 'join' ? 'join' : currentPage}
         onNavigate={handleNavigate}
-        onSearch={handleSearch}
         onOpenProfile={handleOpenProfile}
       />
 
       {currentPage === 'home' && (
         <Home
-          onNavigateToGallery={() => handleNavigate('gallery')}
           onNavigateToAgents={() => handleNavigate('agents')}
           onNavigateToMarketplace={() => handleNavigate('marketplace')}
           onSelectArtwork={handleSelectArtwork}
@@ -177,13 +165,6 @@ function AppContent() {
           onBuyArtwork={handleBuyArtwork}
           onSelectEdition={handleSelectEdition}
           onMintEdition={handleSelectEdition}
-        />
-      )}
-
-      {currentPage === 'gallery' && (
-        <Gallery
-          searchQuery={searchQuery}
-          onSelectArtwork={handleSelectArtwork}
         />
       )}
 
