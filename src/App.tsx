@@ -4,9 +4,12 @@ import { WalletProvider } from './contexts/WalletContext';
 import { Header } from './components/Header';
 import { NoiseOverlay } from './components/NoiseOverlay';
 import { ArtworkModal } from './components/ArtworkModal';
+import { ArtworkViewer } from './components/ArtworkViewer';
 import { BuyModal } from './components/BuyModal';
 import { EditionMintModal } from './components/EditionMintModal';
+import { EditionDetailModal } from './components/EditionDetailModal';
 import { MakeOfferModal } from './components/MakeOfferModal';
+import { UserProfileModal } from './components/UserProfileModal';
 import { Home } from './pages/Home';
 import { Gallery } from './pages/Gallery';
 import { Marketplace } from './pages/Marketplace';
@@ -23,11 +26,14 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+  const [viewerArtwork, setViewerArtwork] = useState<Artwork | null>(null);
   const [artworkToBuy, setArtworkToBuy] = useState<Artwork | null>(null);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [agents, setAgents] = useState<Record<string, Agent>>({});
+  const [editionToView, setEditionToView] = useState<Edition | null>(null);
   const [editionToMint, setEditionToMint] = useState<Edition | null>(null);
   const [artworkForOffer, setArtworkForOffer] = useState<Artwork | null>(null);
+  const [walletToView, setWalletToView] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAgents();
@@ -58,11 +64,19 @@ function AppContent() {
   }
 
   function handleSelectArtwork(artwork: Artwork) {
-    setSelectedArtwork(artwork);
+    if (artwork.is_for_sale) {
+      setSelectedArtwork(artwork);
+    } else {
+      setViewerArtwork(artwork);
+    }
   }
 
   function handleCloseArtworkModal() {
     setSelectedArtwork(null);
+  }
+
+  function handleCloseViewer() {
+    setViewerArtwork(null);
   }
 
   function handleBuyArtwork(artwork: Artwork) {
@@ -77,8 +91,22 @@ function AppContent() {
     fetchAgents();
   }
 
+  function handleSelectEdition(edition: Edition) {
+    setEditionToView(edition);
+  }
+
   function handleMintEdition(edition: Edition) {
     setEditionToMint(edition);
+  }
+
+  function handleOpenMintFromDetail() {
+    if (editionToView) {
+      setEditionToMint(editionToView);
+    }
+  }
+
+  function handleCloseEditionDetail() {
+    setEditionToView(null);
   }
 
   function handleCloseEditionModal() {
@@ -87,6 +115,15 @@ function AppContent() {
 
   function handleEditionMintSuccess() {
     setEditionToMint(null);
+    setEditionToView(null);
+  }
+
+  function handleViewWallet(address: string) {
+    setWalletToView(address);
+  }
+
+  function handleCloseWalletModal() {
+    setWalletToView(null);
   }
 
   function handleMakeOffer(artwork: Artwork) {
@@ -152,8 +189,8 @@ function AppContent() {
         <Marketplace
           onSelectArtwork={handleSelectArtwork}
           onBuyArtwork={handleBuyArtwork}
-          onSelectEdition={handleMintEdition}
-          onMintEdition={handleMintEdition}
+          onSelectEdition={handleSelectEdition}
+          onMintEdition={handleSelectEdition}
         />
       )}
 
@@ -177,6 +214,15 @@ function AppContent() {
         <Profile
           onSelectArtwork={handleSelectArtwork}
           agents={agents}
+          onAgentClick={handleSelectAgent}
+        />
+      )}
+
+      {viewerArtwork && (
+        <ArtworkViewer
+          artwork={viewerArtwork}
+          agent={agents[viewerArtwork.agent_id] || null}
+          onClose={handleCloseViewer}
         />
       )}
 
@@ -199,6 +245,18 @@ function AppContent() {
         />
       )}
 
+      {editionToView && (
+        <EditionDetailModal
+          edition={editionToView}
+          agent={agents[editionToView.agent_id] || null}
+          onClose={handleCloseEditionDetail}
+          onMint={handleOpenMintFromDetail}
+          onAgentClick={handleSelectAgent}
+          onWalletClick={handleViewWallet}
+          agents={agents}
+        />
+      )}
+
       {editionToMint && (
         <EditionMintModal
           edition={editionToMint}
@@ -214,6 +272,15 @@ function AppContent() {
           agent={agents[artworkForOffer.agent_id] || null}
           onClose={handleCloseOfferModal}
           onSuccess={handleOfferSuccess}
+        />
+      )}
+
+      {walletToView && (
+        <UserProfileModal
+          walletAddress={walletToView}
+          onClose={handleCloseWalletModal}
+          onSelectArtwork={handleSelectArtwork}
+          agents={agents}
         />
       )}
     </div>

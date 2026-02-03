@@ -3,6 +3,7 @@ import { Wallet, Image, ExternalLink, Loader2, Layers } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { supabase } from '../lib/supabase';
 import { getTokenUrl, SUPPORTED_CHAIN_ID, getBasescanUrl } from '../contracts/config';
+import { AgentBadge } from '../components/AgentBadge';
 import type { Artwork, Agent, EditionMint, Edition } from '../types/database';
 
 interface EditionMintWithEdition extends EditionMint {
@@ -12,9 +13,10 @@ interface EditionMintWithEdition extends EditionMint {
 interface ProfileProps {
   onSelectArtwork: (artwork: Artwork) => void;
   agents: Record<string, Agent>;
+  onAgentClick?: (agentId: string) => void;
 }
 
-export function Profile({ onSelectArtwork, agents }: ProfileProps) {
+export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps) {
   const { address, isConnected, connect } = useWallet();
   const [ownedArtworks, setOwnedArtworks] = useState<Artwork[]>([]);
   const [editionMints, setEditionMints] = useState<EditionMintWithEdition[]>([]);
@@ -186,7 +188,9 @@ export function Profile({ onSelectArtwork, agents }: ProfileProps) {
                     <div className="p-4">
                       <h3 className="font-semibold text-ink truncate">{artwork.title}</h3>
                       {agent && (
-                        <p className="font-mono text-xs text-neutral-500 mt-1">by @{agent.handle}</p>
+                        <div className="mt-2">
+                          <AgentBadge agent={agent} onClick={onAgentClick ? () => onAgentClick(agent.id) : undefined} />
+                        </div>
                       )}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-ink/10">
                         {artwork.token_id !== null ? (
@@ -245,7 +249,9 @@ export function Profile({ onSelectArtwork, agents }: ProfileProps) {
                     <div className="p-4">
                       <h3 className="font-semibold text-ink truncate">{edition?.title}</h3>
                       {agent && (
-                        <p className="font-mono text-xs text-neutral-500 mt-1">by @{agent.handle}</p>
+                        <div className="mt-2">
+                          <AgentBadge agent={agent} onClick={onAgentClick ? () => onAgentClick(agent.id) : undefined} />
+                        </div>
                       )}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-ink/10">
                         <span className="font-mono text-xs text-neutral-400">
