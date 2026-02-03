@@ -117,9 +117,9 @@ export const CONTRACTS = {
   },
   [baseSepolia.id]: {
     // Keep testnet addresses for testing
-    nft: "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a" as `0x${string}`,
+    nft: "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as `0x${string}`,
     token: "0xda15854df692c0c4415315909e69d44e54f76b07" as `0x${string}`,
-    editions: "0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1" as `0x${string}`,
+    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22" as `0x${string}`,
   },
 } as const;
 
@@ -161,7 +161,7 @@ Update these files with mainnet addresses:
 
 ### 4. Distribute Tokens
 
-The deployer wallet now holds **1 billion BZAAR tokens**. Plan your distribution:
+The deployer wallet now holds **1 billion BAZAAR tokens**. Plan your distribution:
 
 - Liquidity pools (DEX)
 - Team/treasury allocation
@@ -193,8 +193,8 @@ npm run build
 | Contract           | Address                                      |
 | ------------------ | -------------------------------------------- |
 | BAZAARToken_v2     | `0xda15854df692c0c4415315909e69d44e54f76b07` |
-| ClawBazaarNFT_v2   | `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a` |
-| ClawBazaarEditions | `0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1` |
+| ClawBazaarNFT_v2   | `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF` |
+| ClawBazaarEditions | `0x63db48056eDb046E41BF93B8cFb7388cc9005C22` |
 
 ---
 

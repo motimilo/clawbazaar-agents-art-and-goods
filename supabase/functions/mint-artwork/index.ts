@@ -13,11 +13,13 @@ import { baseSepolia } from "npm:viem@2.21.0/chains";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
 // v2 contract (production-ready with OpenZeppelin best practices)
-const NFT_CONTRACT_ADDRESS = "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a" as Address;
+const NFT_CONTRACT_ADDRESS =
+  "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as Address;
 // Legacy v1: 0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA
 const RPC_URL = "https://sepolia.base.org";
 
@@ -43,10 +45,13 @@ async function hashKey(key: string): Promise<string> {
   const data = encoder.encode(key);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function verifyApiKeyAndGetAgent(supabase: ReturnType<typeof createClient>, apiKey: string) {
+async function verifyApiKeyAndGetAgent(
+  supabase: ReturnType<typeof createClient>,
+  apiKey: string,
+) {
   const keyHash = await hashKey(apiKey);
 
   const { data: apiKeyRecord } = await supabase
@@ -74,7 +79,9 @@ async function verifyApiKeyAndGetAgent(supabase: ReturnType<typeof createClient>
   return agent;
 }
 
-async function fetchImageAsBase64(imageUrl: string): Promise<{ dataUri: string; mimeType: string }> {
+async function fetchImageAsBase64(
+  imageUrl: string,
+): Promise<{ dataUri: string; mimeType: string }> {
   const response = await fetch(imageUrl);
   if (!response.ok) {
     throw new Error(`Failed to fetch image: ${response.status}`);
@@ -98,7 +105,7 @@ function createOnChainMetadata(
   imageDataUri: string,
   agentName: string,
   agentHandle: string,
-  attributes: Array<{ trait_type: string; value: string }>
+  attributes: Array<{ trait_type: string; value: string }>,
 ): string {
   const metadata = {
     name: title,
@@ -124,7 +131,7 @@ function decryptPrivateKey(encryptedKey: string, _secret: string): string {
 
 async function mintOnChain(
   privateKey: string,
-  metadataUri: string
+  metadataUri: string,
 ): Promise<{ hash: string; tokenId: number }> {
   const account = privateKeyToAccount(privateKey as `0x${string}`);
 
@@ -179,7 +186,7 @@ Deno.serve(async (req: Request) => {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
     const url = new URL(req.url);
@@ -191,29 +198,43 @@ Deno.serve(async (req: Request) => {
       if (!body.api_key || !body.title) {
         return new Response(
           JSON.stringify({ error: "Missing required fields: api_key, title" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       if (!body.image_url && !body.image_base64) {
         return new Response(
-          JSON.stringify({ error: "Either image_url or image_base64 is required" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Either image_url or image_base64 is required",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       const agent = await verifyApiKeyAndGetAgent(supabase, body.api_key);
       if (!agent) {
-        return new Response(
-          JSON.stringify({ error: "Invalid API key" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Invalid API key" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       if (!agent.encrypted_private_key) {
         return new Response(
-          JSON.stringify({ error: "Agent wallet not configured for server-side minting. Use the CLI instead." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error:
+              "Agent wallet not configured for server-side minting. Use the CLI instead.",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -231,10 +252,10 @@ Deno.serve(async (req: Request) => {
         const imageData = await fetchImageAsBase64(body.image_url);
         imageDataUri = imageData.dataUri;
       } else {
-        return new Response(
-          JSON.stringify({ error: "Image required" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Image required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const attributes: Array<{ trait_type: string; value: string }> = [];
@@ -251,7 +272,7 @@ Deno.serve(async (req: Request) => {
         imageDataUri,
         agent.name,
         agent.handle,
-        attributes
+        attributes,
       );
 
       const { data: artwork, error: artworkError } = await supabase
@@ -271,8 +292,14 @@ Deno.serve(async (req: Request) => {
 
       if (artworkError) {
         return new Response(
-          JSON.stringify({ error: "Failed to create artwork record", details: artworkError.message }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Failed to create artwork record",
+            details: artworkError.message,
+          }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -280,7 +307,7 @@ Deno.serve(async (req: Request) => {
       try {
         const privateKey = decryptPrivateKey(
           agent.encrypted_private_key,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
         );
 
         mintResult = await mintOnChain(privateKey, metadataUri);
@@ -293,10 +320,14 @@ Deno.serve(async (req: Request) => {
         return new Response(
           JSON.stringify({
             error: "On-chain minting failed",
-            details: mintError instanceof Error ? mintError.message : "Unknown error",
+            details:
+              mintError instanceof Error ? mintError.message : "Unknown error",
             artwork_id: artwork.id,
           }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -319,7 +350,9 @@ Deno.serve(async (req: Request) => {
 
       await supabase
         .from("agents")
-        .update({ artwork_count: agent.artwork_count ? agent.artwork_count + 1 : 1 })
+        .update({
+          artwork_count: agent.artwork_count ? agent.artwork_count + 1 : 1,
+        })
         .eq("id", agent.id);
 
       return new Response(
@@ -332,7 +365,10 @@ Deno.serve(async (req: Request) => {
           explorer_url: `https://sepolia.basescan.org/tx/${mintResult.hash}`,
           message: "Artwork minted on-chain with embedded image data",
         }),
-        { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 201,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
@@ -342,48 +378,61 @@ Deno.serve(async (req: Request) => {
       if (!body.api_key || !body.artwork_id) {
         return new Response(
           JSON.stringify({ error: "Missing api_key or artwork_id" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       const agent = await verifyApiKeyAndGetAgent(supabase, body.api_key);
       if (!agent) {
-        return new Response(
-          JSON.stringify({ error: "Invalid API key" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Invalid API key" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: artwork } = await supabase
         .from("artworks")
-        .select("id, title, mint_status, is_minted, token_id, tx_hash, minted_at")
+        .select(
+          "id, title, mint_status, is_minted, token_id, tx_hash, minted_at",
+        )
         .eq("id", body.artwork_id)
         .eq("agent_id", agent.id)
         .maybeSingle();
 
       if (!artwork) {
-        return new Response(
-          JSON.stringify({ error: "Artwork not found" }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Artwork not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
-      return new Response(
-        JSON.stringify({ artwork }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ artwork }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     return new Response(
       JSON.stringify({ error: "Not found", endpoints: ["mint", "status"] }),
-      { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
-
   } catch (error) {
     console.error("Mint artwork error:", error);
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: error instanceof Error ? error.message : "Unknown" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });

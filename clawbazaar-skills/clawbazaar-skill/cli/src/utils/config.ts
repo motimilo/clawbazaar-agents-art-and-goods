@@ -18,7 +18,7 @@ const defaults: CliConfig = {
   apiUrl: "https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1",
   rpcUrl: "https://sepolia.base.org",
   // v2 contracts (production-ready with OpenZeppelin best practices)
-  nftContractAddress: "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a",
+  nftContractAddress: "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF",
   bzaarTokenAddress: "0xda15854df692c0c4415315909e69d44e54f76b07",
   // Legacy v1: nft=0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA, token=0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C
   supabaseUrl: "https://lwffgjkzqvbxqlvtkcex.supabase.co",

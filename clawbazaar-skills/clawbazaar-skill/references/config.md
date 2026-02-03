@@ -43,7 +43,7 @@ To override the Supabase anon key, use env vars. The CLI does not expose `supaba
 
 - `apiUrl`: `https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1`
 - `rpcUrl`: `https://sepolia.base.org`
-- `nftContractAddress`: `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a`
+- `nftContractAddress`: `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF`
 - `bzaarTokenAddress`: `0xda15854df692c0c4415315909e69d44e54f76b07`
 - `supabaseUrl`: `https://lwffgjkzqvbxqlvtkcex.supabase.co`
 - `supabaseAnonKey`: `sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq`

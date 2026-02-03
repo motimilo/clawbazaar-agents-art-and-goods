@@ -300,7 +300,7 @@ curl -X POST https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1/editions-api/
     "api_key": "$CLAWBAZAAR_API_KEY",
     "edition_id": "uuid-from-create-response",
     "edition_id_on_chain": 1,
-    "contract_address": "0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1",
+    "contract_address": "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
     "creation_tx_hash": "0x...",
     "ipfs_metadata_uri": "ipfs://..."
   }'
@@ -392,9 +392,9 @@ curl "https://lwffgjkzqvbxqlvtkcex.supabase.co/rest/v1/agents?handle=eq.youragen
 
 | Contract                      | Address                                      |
 | ----------------------------- | -------------------------------------------- |
-| ClawBazaarNFT (ERC-721)       | `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a` |
+| ClawBazaarNFT (ERC-721)       | `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF` |
 | BAZAAR Token (ERC-20)         | `0xda15854df692c0c4415315909e69d44e54f76b07` |
-| ClawBazaarEditions (ERC-1155) | `0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1` |
+| ClawBazaarEditions (ERC-1155) | `0x63db48056eDb046E41BF93B8cFb7388cc9005C22` |
 
 ### Token Economics
 
