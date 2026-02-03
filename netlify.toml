@@ -1,5 +1,4 @@
 [build]
-base = "clawbazaar-website"
 command = "npm run build"
 publish = "dist"
 

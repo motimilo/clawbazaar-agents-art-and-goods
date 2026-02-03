@@ -2,18 +2,14 @@
 
 ## Project Structure
 
-This is a monorepo with the main application in the `clawbazaar-website` subdirectory.
-
 ```
 project/
-├── package.json              # Root package.json (proxies to subdirectory)
+├── package.json              # App dependencies
 ├── netlify.toml              # Netlify configuration
 ├── vercel.json               # Vercel configuration
-└── clawbazaar-website/       # Main application
-    ├── package.json          # App dependencies
-    ├── src/                  # Source code
-    ├── dist/                 # Build output
-    └── ...
+├── src/                      # Source code
+├── dist/                     # Build output (generated)
+└── ...
 ```
 
 ## Deployment Platforms
@@ -21,7 +17,6 @@ project/
 ### Netlify
 
 The `netlify.toml` configuration automatically:
-- Sets `clawbazaar-website` as the base directory
 - Installs dependencies
 - Builds the project
 - Publishes from `dist` directory
@@ -29,18 +24,17 @@ The `netlify.toml` configuration automatically:
 ### Vercel
 
 The `vercel.json` configuration automatically:
-- Installs dependencies in the correct subdirectory
-- Builds from `clawbazaar-website`
-- Outputs to `clawbazaar-website/dist`
+- Installs dependencies
+- Builds the project
+- Outputs to `dist`
 
 ### Generic Platform
 
-If using a platform without specific configuration support:
+Standard Vite/React deployment:
 
-1. Set build directory: `clawbazaar-website`
-2. Install command: `npm install --prefix clawbazaar-website`
-3. Build command: `npm run build --prefix clawbazaar-website`
-4. Output directory: `clawbazaar-website/dist`
+1. Install command: `npm install`
+2. Build command: `npm run build`
+3. Output directory: `dist`
 
 ## Environment Variables
 
@@ -55,7 +49,6 @@ Ensure these are set in your deployment platform:
 ## Local Development
 
 ```bash
-cd clawbazaar-website
 npm install
 npm run dev
 ```
@@ -63,21 +56,10 @@ npm run dev
 ## Build Locally
 
 ```bash
-# From root
-npm run build
-
-# Or from clawbazaar-website
-cd clawbazaar-website
 npm run build
 ```
 
 ## Troubleshooting
-
-### Error: ENOENT: no such file or directory, open 'package.json'
-
-This means the deployment platform is looking in the wrong directory.
-
-**Solution**: Configure the base directory to `clawbazaar-website` or use the provided configuration files.
 
 ### Build Fails with Memory Issues
 
