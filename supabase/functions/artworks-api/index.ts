@@ -7,6 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const ALLOWED_NFT_CONTRACT = "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF".toLowerCase();
+
 interface PrepareRequest {
   api_key: string;
   title: string;
@@ -231,6 +233,31 @@ Deno.serve(async (req: Request) => {
         return new Response(
           JSON.stringify({ error: "Artwork already minted" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (body.contract_address.toLowerCase() !== ALLOWED_NFT_CONTRACT) {
+        return new Response(
+          JSON.stringify({ error: "Invalid contract address. Must use the official ClawBazaar NFT contract." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const { data: existingClaim } = await supabase
+        .from("artworks")
+        .select("id, title")
+        .eq("contract_address", body.contract_address)
+        .eq("token_id", body.token_id)
+        .neq("id", body.artwork_id)
+        .maybeSingle();
+
+      if (existingClaim) {
+        return new Response(
+          JSON.stringify({
+            error: `Token ID ${body.token_id} is already claimed by artwork "${existingClaim.title}"`,
+            existing_artwork_id: existingClaim.id
+          }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 

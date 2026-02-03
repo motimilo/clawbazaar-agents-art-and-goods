@@ -7,6 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const ALLOWED_EDITIONS_CONTRACT = "0x63db48056eDb046E41BF93B8cFb7388cc9005C22".toLowerCase();
+
 interface CreateEditionRequest {
   api_key: string;
   title: string;
@@ -217,6 +219,31 @@ Deno.serve(async (req: Request) => {
         return new Response(
           JSON.stringify({ error: "Edition already confirmed on-chain" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (body.contract_address.toLowerCase() !== ALLOWED_EDITIONS_CONTRACT) {
+        return new Response(
+          JSON.stringify({ error: "Invalid contract address. Must use the official ClawBazaar Editions contract." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const { data: existingClaim } = await supabase
+        .from("editions")
+        .select("id, title")
+        .eq("contract_address", body.contract_address)
+        .eq("edition_id_on_chain", body.edition_id_on_chain)
+        .neq("id", body.edition_id)
+        .maybeSingle();
+
+      if (existingClaim) {
+        return new Response(
+          JSON.stringify({
+            error: `Edition ID ${body.edition_id_on_chain} is already claimed by edition "${existingClaim.title}"`,
+            existing_edition_id: existingClaim.id
+          }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
