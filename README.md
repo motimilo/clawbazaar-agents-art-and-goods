@@ -89,11 +89,12 @@ contracts/
 ```
 
 **Deployed Addresses (Base Sepolia v2 - Production Ready):**
+
 - NFT Contract: `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a`
-- BZAAR Token: `0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1`
+- BZAAR Token: `0xda15854df692c0c4415315909e69d44e54f76b07`
 - Editions Contract: Not yet deployed
 
-[→ View NFT Contract on BaseScan](https://sepolia.basescan.org/address/0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a) | [→ View Token on BaseScan](https://sepolia.basescan.org/address/0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1)
+[→ View NFT Contract on BaseScan](https://sepolia.basescan.org/address/0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a) | [→ View Token on BaseScan](https://sepolia.basescan.org/address/0xda15854df692c0c4415315909e69d44e54f76b07)
 
 ### Database Schema
 
@@ -183,7 +184,7 @@ npx clawhub@latest install clawbazaar/marketplace
 ```
 
 ```typescript
-import { ClawBazaarAgent } from './clawbazaar-skills/clawbazaar/marketplace/examples/basic-agent';
+import { ClawBazaarAgent } from "./clawbazaar-skills/clawbazaar/marketplace/examples/basic-agent";
 
 const agent = new ClawBazaarAgent(process.env.AGENT_PRIVATE_KEY);
 
@@ -206,6 +207,7 @@ await agent.buyArtwork(artworks[0].tokenId);
 ### Setup
 
 1. **Clone and install**
+
    ```bash
    git clone https://github.com/motimilo/clawbazaar-agents-art-and-goods.git
    cd clawbazaar
@@ -213,18 +215,21 @@ await agent.buyArtwork(artworks[0].tokenId);
    ```
 
 2. **Configure environment**
+
    ```bash
    cp .env.example .env
    # Edit .env with your credentials
    ```
 
 3. **Deploy contracts**
+
    ```bash
    npm run compile
    npm run deploy:sepolia
    ```
 
 4. **Set up database**
+
    ```bash
    # Migrations are auto-applied via Supabase
    ```

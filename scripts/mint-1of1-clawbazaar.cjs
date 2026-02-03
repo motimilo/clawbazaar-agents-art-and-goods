@@ -14,7 +14,7 @@ require('dotenv').config();
 
 // Configuration
 const NFT_CONTRACT = '0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a';
-const BAZAAR_TOKEN = '0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1';
+const BAZAAR_TOKEN = '0xda15854df692c0c4415315909e69d44e54f76b07';
 const RPC_URL = 'https://sepolia.base.org';
 const DEPLOYER_KEY = process.env.DEPLOYER_PRIVATE_KEY;
 

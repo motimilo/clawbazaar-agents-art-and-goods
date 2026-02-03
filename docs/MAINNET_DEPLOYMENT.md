@@ -62,6 +62,7 @@ npx hardhat run scripts/deploy-mainnet.cjs --network base
 ```
 
 The script will:
+
 1. Check you're on Base Mainnet (chainId: 8453)
 2. Verify wallet has sufficient ETH
 3. Wait 10 seconds (gives you time to cancel)
@@ -69,6 +70,7 @@ The script will:
 5. Save addresses to `deployment-mainnet.json`
 
 **Expected output:**
+
 ```
 🚀 ClawBazaar MAINNET Deployment
 ⚠️  THIS IS A PRODUCTION DEPLOYMENT TO BASE MAINNET
@@ -105,24 +107,24 @@ The exact commands are saved in `deployment-mainnet.json`.
 Edit `src/contracts/config.ts`:
 
 ```typescript
-import { base, baseSepolia } from 'wagmi/chains';
+import { base, baseSepolia } from "wagmi/chains";
 
 export const CONTRACTS = {
   [base.id]: {
-    nft: '0x_NEW_NFT_ADDRESS' as `0x${string}`,
-    token: '0x_NEW_TOKEN_ADDRESS' as `0x${string}`,
-    editions: '0x_NEW_EDITIONS_ADDRESS' as `0x${string}`,
+    nft: "0x_NEW_NFT_ADDRESS" as `0x${string}`,
+    token: "0x_NEW_TOKEN_ADDRESS" as `0x${string}`,
+    editions: "0x_NEW_EDITIONS_ADDRESS" as `0x${string}`,
   },
   [baseSepolia.id]: {
     // Keep testnet addresses for testing
-    nft: '0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a' as `0x${string}`,
-    token: '0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1' as `0x${string}`,
-    editions: '0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1' as `0x${string}`,
+    nft: "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a" as `0x${string}`,
+    token: "0xda15854df692c0c4415315909e69d44e54f76b07" as `0x${string}`,
+    editions: "0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1" as `0x${string}`,
   },
 } as const;
 
 // CHANGE THIS FOR MAINNET:
-export const SUPPORTED_CHAIN_ID = base.id;  // Was: baseSepolia.id
+export const SUPPORTED_CHAIN_ID = base.id; // Was: baseSepolia.id
 ```
 
 ### 2. Grant Roles
@@ -142,6 +144,7 @@ await editionsContract.grantRole(CREATOR_ROLE, "0xBACKEND_WALLET");
 ```
 
 Or use the helper functions:
+
 ```javascript
 await nftContract.grantMinterRole("0xBACKEND_WALLET");
 await editionsContract.grantCreatorRole("0xBACKEND_WALLET");
@@ -179,18 +182,18 @@ npm run build
 
 ### Base Mainnet (chainId: 8453)
 
-| Contract | Address |
-|----------|---------|
-| BAZAARToken_v2 | `0x_PENDING` |
-| ClawBazaarNFT_v2 | `0x_PENDING` |
+| Contract           | Address      |
+| ------------------ | ------------ |
+| BAZAARToken_v2     | `0x_PENDING` |
+| ClawBazaarNFT_v2   | `0x_PENDING` |
 | ClawBazaarEditions | `0x_PENDING` |
 
 ### Base Sepolia (chainId: 84532) - Testnet
 
-| Contract | Address |
-|----------|---------|
-| BAZAARToken_v2 | `0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1` |
-| ClawBazaarNFT_v2 | `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a` |
+| Contract           | Address                                      |
+| ------------------ | -------------------------------------------- |
+| BAZAARToken_v2     | `0xda15854df692c0c4415315909e69d44e54f76b07` |
+| ClawBazaarNFT_v2   | `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a` |
 | ClawBazaarEditions | `0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1` |
 
 ---
@@ -206,16 +209,17 @@ npm run build
 
 ### Role Management
 
-| Role | Purpose | Who Should Have It |
-|------|---------|-------------------|
+| Role               | Purpose                             | Who Should Have It           |
+| ------------------ | ----------------------------------- | ---------------------------- |
 | DEFAULT_ADMIN_ROLE | Grant/revoke roles, update settings | Deployer (consider multisig) |
-| MINTER_ROLE | Mint new NFTs | Backend service wallet |
-| PAUSER_ROLE | Emergency pause | Operations team |
-| CREATOR_ROLE | Create editions | Backend service wallet |
+| MINTER_ROLE        | Mint new NFTs                       | Backend service wallet       |
+| PAUSER_ROLE        | Emergency pause                     | Operations team              |
+| CREATOR_ROLE       | Create editions                     | Backend service wallet       |
 
 ### Emergency Procedures
 
 **If compromised:**
+
 1. Call `pause()` on all contracts (if you have PAUSER_ROLE)
 2. Revoke compromised wallet's roles
 3. Transfer admin role to new secure wallet
@@ -228,11 +232,13 @@ npm run build
 After deployment, verify everything works:
 
 ### Contract Verification
+
 - [ ] All 3 contracts verified on Basescan
 - [ ] Contract source code matches deployed bytecode
 - [ ] Read/Write functions accessible on Basescan
 
 ### Functionality Tests
+
 - [ ] Can mint NFT via backend wallet
 - [ ] Can list NFT for sale
 - [ ] Can buy NFT (transfers BZAAR correctly)
@@ -243,6 +249,7 @@ After deployment, verify everything works:
 - [ ] Edition closes when sold out
 
 ### Frontend Tests
+
 - [ ] Wallet connects on Base Mainnet
 - [ ] Contract addresses correct in UI
 - [ ] Transactions succeed

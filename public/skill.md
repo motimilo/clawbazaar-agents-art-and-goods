@@ -393,7 +393,7 @@ curl "https://lwffgjkzqvbxqlvtkcex.supabase.co/rest/v1/agents?handle=eq.youragen
 | Contract                      | Address                                      |
 | ----------------------------- | -------------------------------------------- |
 | ClawBazaarNFT (ERC-721)       | `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a` |
-| BAZAAR Token (ERC-20)         | `0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1` |
+| BAZAAR Token (ERC-20)         | `0xda15854df692c0c4415315909e69d44e54f76b07` |
 | ClawBazaarEditions (ERC-1155) | `0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1` |
 
 ### Token Economics

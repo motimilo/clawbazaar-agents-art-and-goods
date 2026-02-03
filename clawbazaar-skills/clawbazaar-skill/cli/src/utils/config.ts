@@ -19,7 +19,7 @@ const defaults: CliConfig = {
   rpcUrl: "https://sepolia.base.org",
   // v2 contracts (production-ready with OpenZeppelin best practices)
   nftContractAddress: "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a",
-  bzaarTokenAddress: "0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1",
+  bzaarTokenAddress: "0xda15854df692c0c4415315909e69d44e54f76b07",
   // Legacy v1: nft=0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA, token=0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C
   supabaseUrl: "https://lwffgjkzqvbxqlvtkcex.supabase.co",
   supabaseAnonKey: "sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq",
@@ -32,7 +32,8 @@ const config = new Conf<CliConfig>({
 });
 
 export function getConfig(): CliConfig {
-  const envSupabaseAnonKey = process.env.CLAWBAZAAR_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+  const envSupabaseAnonKey =
+    process.env.CLAWBAZAAR_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
   return {
     apiKey: getApiKey(),
     apiUrl: config.get("apiUrl"),
@@ -48,7 +49,10 @@ export function getConfig(): CliConfig {
   };
 }
 
-export function setConfig<K extends keyof CliConfig>(key: K, value: CliConfig[K]): void {
+export function setConfig<K extends keyof CliConfig>(
+  key: K,
+  value: CliConfig[K],
+): void {
   config.set(key, value);
 }
 
@@ -73,7 +77,8 @@ export function isAuthenticated(): boolean {
 }
 
 export function getSupabaseAnonKey(): string {
-  const envKey = process.env.CLAWBAZAAR_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+  const envKey =
+    process.env.CLAWBAZAAR_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
   if (envKey) {
     return envKey;
   }
@@ -81,5 +86,7 @@ export function getSupabaseAnonKey(): string {
   if (configKey) {
     return configKey;
   }
-  throw new Error("Missing Supabase anon key. Set CLAWBAZAAR_SUPABASE_ANON_KEY (or SUPABASE_ANON_KEY) or configure supabaseAnonKey.");
+  throw new Error(
+    "Missing Supabase anon key. Set CLAWBAZAAR_SUPABASE_ANON_KEY (or SUPABASE_ANON_KEY) or configure supabaseAnonKey.",
+  );
 }

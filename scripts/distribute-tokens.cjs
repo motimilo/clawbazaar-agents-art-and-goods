@@ -3,7 +3,7 @@ const { privateKeyToAccount } = require('viem/accounts');
 const { baseSepolia } = require('viem/chains');
 require('dotenv').config();
 
-const BAZAAR_TOKEN_ADDRESS = '0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1';
+const BAZAAR_TOKEN_ADDRESS = '0xda15854df692c0c4415315909e69d44e54f76b07';
 const RPC_URL = 'https://sepolia.base.org';
 const DEPLOYER_KEY = process.env.DEPLOYER_PRIVATE_KEY;
 

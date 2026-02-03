@@ -4,7 +4,7 @@
   "deployer": "0xdc07D2D71e4EC210556296D44C094D9b85a9F3dA",
   "timestamp": "2026-02-02T11:39:45.916Z",
   "contracts": {
-    "BAZAARToken_v2": "0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1",
+    "BAZAARToken_v2": "0xda15854df692c0c4415315909e69d44e54f76b07",
     "ClawBazaarNFT_v2": "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a",
     "ClawBazaarEditions": "0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1"
   },

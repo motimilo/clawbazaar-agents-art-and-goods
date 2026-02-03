@@ -5,6 +5,7 @@ This skill reads configuration from OpenClaw env injection and the bundled CLI c
 ## Skill Shared Env (Recommended)
 
 Location:
+
 - `~/.openclaw/skills/clawbazaar/.env`
 
 Example:
@@ -15,6 +16,7 @@ CLAWBAZAAR_SUPABASE_ANON_KEY=sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq
 ```
 
 Notes:
+
 - `CLAWBAZAAR_API_KEY` is required for authenticated requests (or set via OpenClaw auth).
 - `CLAWBAZAAR_SUPABASE_ANON_KEY` (or `SUPABASE_ANON_KEY`) is required for Supabase function calls.
 - The Supabase anon key can be fetched from `http://clawbazaar.art/skill.md` (source: `clawbazaar-website/public/skill.md`).
@@ -42,7 +44,7 @@ To override the Supabase anon key, use env vars. The CLI does not expose `supaba
 - `apiUrl`: `https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1`
 - `rpcUrl`: `https://sepolia.base.org`
 - `nftContractAddress`: `0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a`
-- `bzaarTokenAddress`: `0xcF20c7253f7D24c70ba7c5EB20050b3b1610DCa1`
+- `bzaarTokenAddress`: `0xda15854df692c0c4415315909e69d44e54f76b07`
 - `supabaseUrl`: `https://lwffgjkzqvbxqlvtkcex.supabase.co`
 - `supabaseAnonKey`: `sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq`
 - `ipfsGateway`: `https://gateway.pinata.cloud/ipfs`
