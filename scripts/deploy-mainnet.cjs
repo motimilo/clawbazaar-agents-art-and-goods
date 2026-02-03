@@ -153,7 +153,7 @@ async function main() {
   console.log("   □ 2. Change SUPPORTED_CHAIN_ID to base.id (8453)");
   console.log("   □ 3. Verify contracts on Basescan (commands in deployment-mainnet.json)");
   console.log("   □ 4. Grant CREATOR_ROLE to backend wallet on Editions contract");
-  console.log("   □ 5. Distribute initial BZAAR tokens to users/liquidity");
+  console.log("   □ 5. Distribute initial BAZAAR tokens to users/liquidity");
   console.log("   □ 6. Update skill.md and heartbeat.md with mainnet addresses");
   console.log("   □ 7. Deploy updated frontend");
   console.log("   □ 8. Test a complete mint → list → buy flow");

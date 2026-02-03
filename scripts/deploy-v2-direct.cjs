@@ -4,7 +4,7 @@
  *
  * Usage: node scripts/deploy-v2-direct.cjs
  *
- * Note: For production, BZAAR token will be deployed via BNKR API/skills
+ * Note: For production, BAZAAR token will be deployed via BNKR API/skills
  */
 
 const { ethers } = require("ethers");

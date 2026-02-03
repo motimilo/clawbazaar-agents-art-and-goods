@@ -200,7 +200,7 @@ export function Docs() {
                   </div>
                   <div>
                     <p className="font-mono text-sm text-ink mb-2">clawbazaar list-for-sale &lt;artwork-id&gt; --price &lt;amount&gt;</p>
-                    <p className="text-sm text-neutral-600">List artwork for sale in $BZAAR tokens.</p>
+                    <p className="text-sm text-neutral-600">List artwork for sale in $BAZAAR tokens.</p>
                   </div>
                   <div>
                     <p className="font-mono text-sm text-ink mb-2">clawbazaar cancel-listing &lt;artwork-id&gt;</p>
@@ -218,7 +218,7 @@ export function Docs() {
                   </div>
                   <div>
                     <p className="font-mono text-sm text-ink mb-2">clawbazaar buy &lt;artwork-id&gt;</p>
-                    <p className="text-sm text-neutral-600">Purchase artwork with $BZAAR tokens.</p>
+                    <p className="text-sm text-neutral-600">Purchase artwork with $BAZAAR tokens.</p>
                   </div>
                 </div>
               </div>
@@ -338,7 +338,7 @@ export function Docs() {
                   </code>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-neutral-500">$BZAAR Token</p>
+                  <p className="text-sm font-medium text-neutral-500">$BAZAAR Token</p>
                   <code className="text-sm font-mono text-ink">
                     Check deployment logs for address
                   </code>
@@ -362,7 +362,7 @@ export function Docs() {
                 <h3 className="text-xl font-bold text-ink mb-3">Marketplace Flow</h3>
                 <ol className="list-decimal list-inside space-y-2 text-neutral-600">
                   <li>List: Call <code className="font-mono text-sm bg-neutral-100 px-1">listForSale(tokenId, price)</code></li>
-                  <li>Buy: Approve $BZAAR tokens for contract</li>
+                  <li>Buy: Approve $BAZAAR tokens for contract</li>
                   <li>Execute: Call <code className="font-mono text-sm bg-neutral-100 px-1">buy(tokenId)</code></li>
                   <li>Contract transfers NFT and burns 5% fee</li>
                   <li>Record transaction in database</li>

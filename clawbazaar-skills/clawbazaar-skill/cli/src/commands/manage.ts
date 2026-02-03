@@ -1,9 +1,18 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import ora from "ora";
-import { isAuthenticated, setConfig, getConfig, type CliConfig } from "../utils/config.js";
+import {
+  isAuthenticated,
+  setConfig,
+  getConfig,
+  type CliConfig,
+} from "../utils/config.js";
 import { listArtworks, listForSale as apiListForSale } from "../utils/api.js";
-import { listNftForSale, cancelNftListing, getChain } from "../utils/blockchain.js";
+import {
+  listNftForSale,
+  cancelNftListing,
+  getChain,
+} from "../utils/blockchain.js";
 import { parseEther } from "viem";
 
 export const listCommand = new Command("list")
@@ -51,19 +60,25 @@ export const listCommand = new Command("list")
           artwork.nft_status === "minted"
             ? chalk.green
             : artwork.nft_status === "pending"
-            ? chalk.yellow
-            : chalk.red;
+              ? chalk.yellow
+              : chalk.red;
 
         console.log(`${chalk.bold(artwork.title)}`);
         console.log(`  ${chalk.gray("ID:")}      ${artwork.id}`);
-        console.log(`  ${chalk.gray("Status:")}  ${statusColor(artwork.nft_status)}`);
+        console.log(
+          `  ${chalk.gray("Status:")}  ${statusColor(artwork.nft_status)}`,
+        );
         if (artwork.token_id !== null) {
           console.log(`  ${chalk.gray("Token:")}   #${artwork.token_id}`);
         }
         if (artwork.is_for_sale && artwork.price_bzaar) {
-          console.log(`  ${chalk.gray("Price:")}   ${chalk.green(`${artwork.price_bzaar} BZAAR`)}`);
+          console.log(
+            `  ${chalk.gray("Price:")}   ${chalk.green(`${artwork.price_bzaar} BZAAR`)}`,
+          );
         }
-        console.log(`  ${chalk.gray("Created:")} ${new Date(artwork.created_at).toLocaleDateString()}`);
+        console.log(
+          `  ${chalk.gray("Created:")} ${new Date(artwork.created_at).toLocaleDateString()}`,
+        );
         console.log();
       }
     } catch (error) {
@@ -76,7 +91,7 @@ export const listCommand = new Command("list")
 export const listForSaleCommand = new Command("list-for-sale")
   .description("List an artwork for sale")
   .argument("<artwork-id>", "The artwork ID to list")
-  .requiredOption("--price <bzaar>", "Price in BZAAR tokens")
+  .requiredOption("--price <bzaar>", "Price in BAZAAR tokens")
   .option("--private-key <key>", "Wallet private key")
   .action(async (artworkId: string, options) => {
     if (!isAuthenticated()) {
@@ -123,8 +138,14 @@ export const listForSaleCommand = new Command("list-for-sale")
     console.log(chalk.gray(`  Artwork: ${artworkId}`));
     console.log(chalk.gray(`  Price:   ${price} BZAAR`));
     console.log();
-    console.log(chalk.yellow("Note: You also need to approve and list on the smart contract."));
-    console.log(chalk.gray("This ensures the NFT can be transferred when sold."));
+    console.log(
+      chalk.yellow(
+        "Note: You also need to approve and list on the smart contract.",
+      ),
+    );
+    console.log(
+      chalk.gray("This ensures the NFT can be transferred when sold."),
+    );
   });
 
 export const cancelListingCommand = new Command("cancel-listing")
@@ -149,7 +170,8 @@ export const cancelListingCommand = new Command("cancel-listing")
     try {
       const hash = await cancelNftListing(privateKey, tokenId);
       const chain = getChain();
-      const explorerUrl = chain.blockExplorers?.default.url || "https://basescan.org";
+      const explorerUrl =
+        chain.blockExplorers?.default.url || "https://basescan.org";
 
       spinner.succeed("Listing cancelled");
       console.log(chalk.gray(`  Transaction: ${explorerUrl}/tx/${hash}`));
@@ -160,8 +182,9 @@ export const cancelListingCommand = new Command("cancel-listing")
     }
   });
 
-export const configCommand = new Command("config")
-  .description("Manage CLI configuration");
+export const configCommand = new Command("config").description(
+  "Manage CLI configuration",
+);
 
 configCommand
   .command("set <key> <value>")
@@ -177,12 +200,18 @@ configCommand
     ];
 
     if (!validKeys.includes(key)) {
-      console.log(chalk.red(`Invalid key. Valid keys: ${validKeys.join(", ")}`));
+      console.log(
+        chalk.red(`Invalid key. Valid keys: ${validKeys.join(", ")}`),
+      );
       process.exit(1);
     }
 
     setConfig(key as keyof CliConfig, value);
-    console.log(chalk.green(`${key} = ${key.includes("Secret") || key.includes("Key") ? "***" : value}`));
+    console.log(
+      chalk.green(
+        `${key} = ${key.includes("Secret") || key.includes("Key") ? "***" : value}`,
+      ),
+    );
   });
 
 configCommand
@@ -206,8 +235,12 @@ configCommand
       console.log(`${chalk.gray("RPC URL:")}     ${config.rpcUrl}`);
       console.log(`${chalk.gray("Contract:")}    ${config.nftContractAddress}`);
       console.log(`${chalk.gray("IPFS Gateway:")} ${config.ipfsGateway}`);
-      console.log(`${chalk.gray("Pinata Key:")}  ${config.pinataApiKey ? chalk.green("Set") : chalk.yellow("Not set")}`);
-      console.log(`${chalk.gray("Pinata Secret:")} ${config.pinataSecretKey ? chalk.green("Set") : chalk.yellow("Not set")}`);
+      console.log(
+        `${chalk.gray("Pinata Key:")}  ${config.pinataApiKey ? chalk.green("Set") : chalk.yellow("Not set")}`,
+      );
+      console.log(
+        `${chalk.gray("Pinata Secret:")} ${config.pinataSecretKey ? chalk.green("Set") : chalk.yellow("Not set")}`,
+      );
     }
   });
 

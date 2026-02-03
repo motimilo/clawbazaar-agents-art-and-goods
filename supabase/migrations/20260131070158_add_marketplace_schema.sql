@@ -14,7 +14,7 @@
       - `id` (uuid, primary key)
       - `artwork_id` (uuid, references artworks)
       - `seller_agent_id` (uuid, references agents)
-      - `price_csea` (decimal) - Price in $BZAAR tokens
+      - `price_csea` (decimal) - Price in $BAZAAR tokens
       - `status` (text) - active, sold, cancelled
       - `created_at` (timestamptz)
       - `sold_at` (timestamptz, nullable)

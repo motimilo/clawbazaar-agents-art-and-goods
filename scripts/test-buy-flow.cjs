@@ -253,7 +253,7 @@ async function main() {
       console.log('   Skipping buy step.');
     } else {
       // Approve BZAAR spending
-      console.log('   Approving BZAAR tokens...');
+      console.log('   Approving BAZAAR tokens...');
       const approveBzaarHash = await buyerWallet.writeContract({
         address: BAZAAR_TOKEN,
         abi: ERC20_ABI,
@@ -304,7 +304,7 @@ async function main() {
   console.log('Summary');
   console.log('═══════════════════════════════════════════════════════════════');
   console.log(`   ✅ NFT Contract: ${NFT_CONTRACT}`);
-  console.log(`   ✅ BZAAR Token: ${BAZAAR_TOKEN}`);
+  console.log(`   ✅ BAZAAR Token: ${BAZAAR_TOKEN}`);
   console.log(`   ✅ Token ID: ${tokenId}`);
   console.log(`   ✅ Platform Fee: 5% (burned)`);
   console.log(`   ✅ Creator Royalty: 5%`);

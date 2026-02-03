@@ -45,17 +45,20 @@ export const browseCommand = new Command("browse")
       console.log(chalk.gray("─".repeat(60)));
 
       listings.forEach((listing: MarketplaceListing, index: number) => {
-        console.log(
-          chalk.white.bold(`${index + 1}. ${listing.title}`)
-        );
+        console.log(chalk.white.bold(`${index + 1}. ${listing.title}`));
         console.log(`   ${chalk.gray("ID:")}       ${listing.id}`);
         console.log(`   ${chalk.gray("Token:")}    #${listing.token_id}`);
-        console.log(`   ${chalk.gray("Price:")}    ${chalk.green(listing.price_bzaar + " BZAAR")}`);
-        console.log(`   ${chalk.gray("Seller:")}   @${listing.seller_agent.handle}`);
+        console.log(
+          `   ${chalk.gray("Price:")}    ${chalk.green(listing.price_bzaar + " BZAAR")}`,
+        );
+        console.log(
+          `   ${chalk.gray("Seller:")}   @${listing.seller_agent.handle}`,
+        );
         if (listing.description) {
-          const desc = listing.description.length > 50
-            ? listing.description.substring(0, 50) + "..."
-            : listing.description;
+          const desc =
+            listing.description.length > 50
+              ? listing.description.substring(0, 50) + "..."
+              : listing.description;
           console.log(`   ${chalk.gray("Desc:")}     ${desc}`);
         }
         console.log();
@@ -122,9 +125,13 @@ export const buyCommand = new Command("buy")
 
     console.log();
     console.log(chalk.gray("─".repeat(40)));
-    console.log(`${chalk.gray("Title:")}    ${chalk.white.bold(artwork.title)}`);
+    console.log(
+      `${chalk.gray("Title:")}    ${chalk.white.bold(artwork.title)}`,
+    );
     console.log(`${chalk.gray("Token ID:")} #${artwork.token_id}`);
-    console.log(`${chalk.gray("Price:")}    ${chalk.green.bold(artwork.price_bzaar + " BZAAR")}`);
+    console.log(
+      `${chalk.gray("Price:")}    ${chalk.green.bold(artwork.price_bzaar + " BZAAR")}`,
+    );
     console.log(`${chalk.gray("Seller:")}   @${artwork.seller_agent.handle}`);
     console.log(chalk.gray("─".repeat(40)));
     console.log();
@@ -141,8 +148,12 @@ export const buyCommand = new Command("buy")
       const priceInWei = BigInt(Math.floor(artwork.price_bzaar * 1e18));
 
       spinner.succeed(`Wallet: ${account.address}`);
-      console.log(`   ${chalk.gray("ETH Balance:")}  ${ethBalanceFormatted} ETH`);
-      console.log(`   ${chalk.gray("BZAAR Balance:")} ${bzaarBalanceFormatted} BZAAR`);
+      console.log(
+        `   ${chalk.gray("ETH Balance:")}  ${ethBalanceFormatted} ETH`,
+      );
+      console.log(
+        `   ${chalk.gray("BZAAR Balance:")} ${bzaarBalanceFormatted} BZAAR`,
+      );
 
       if (ethBalance < BigInt(1e15)) {
         console.log(chalk.red("\nInsufficient ETH for gas fees"));
@@ -150,7 +161,11 @@ export const buyCommand = new Command("buy")
       }
 
       if (bzaarBalance < priceInWei) {
-        console.log(chalk.red(`\nInsufficient BZAAR balance. Need ${artwork.price_bzaar} BZAAR`));
+        console.log(
+          chalk.red(
+            `\nInsufficient BZAAR balance. Need ${artwork.price_bzaar} BZAAR`,
+          ),
+        );
         process.exit(1);
       }
     } catch (error) {
@@ -184,7 +199,7 @@ export const buyCommand = new Command("buy")
       console.log();
     }
 
-    spinner = ora("Approving BZAAR tokens...").start();
+    spinner = ora("Approving BAZAAR tokens...").start();
 
     let txHash: string;
     try {
@@ -192,7 +207,8 @@ export const buyCommand = new Command("buy")
       txHash = await buyNft(privateKey, artwork.token_id, priceInWei);
 
       const chain = getChain();
-      const explorerUrl = chain.blockExplorers?.default.url || "https://basescan.org";
+      const explorerUrl =
+        chain.blockExplorers?.default.url || "https://basescan.org";
       spinner.succeed("Purchase transaction confirmed");
       console.log(chalk.gray(`  Transaction: ${explorerUrl}/tx/${txHash}`));
     } catch (error) {
@@ -215,7 +231,11 @@ export const buyCommand = new Command("buy")
         spinner.succeed("Purchase confirmed in database");
       }
     } catch (error) {
-      spinner.warn(chalk.yellow("Failed to confirm in database (purchase is still valid on-chain)"));
+      spinner.warn(
+        chalk.yellow(
+          "Failed to confirm in database (purchase is still valid on-chain)",
+        ),
+      );
     }
 
     console.log();
