@@ -33,19 +33,6 @@ async function main() {
   // Load compiled artifacts
   const compiledDir = path.join(__dirname, "..", "compiled");
 
-  const tokenAbi = JSON.parse(
-    fs.readFileSync(
-      path.join(compiledDir, "contracts_BAZAARToken_v2_sol_BAZAARToken_v2.abi"),
-      "utf8"
-    )
-  );
-  const tokenBytecode =
-    "0x" +
-    fs.readFileSync(
-      path.join(compiledDir, "contracts_BAZAARToken_v2_sol_BAZAARToken_v2.bin"),
-      "utf8"
-    );
-
   const nftAbi = JSON.parse(
     fs.readFileSync(
       path.join(compiledDir, "contracts_ClawBazaarNFT_v2_sol_ClawBazaarNFT_v2.abi"),
@@ -59,27 +46,12 @@ async function main() {
       "utf8"
     );
 
-  // ============ Deploy BAZAARToken_v2 ============
-  console.log("\n[1/2] Deploying BAZAARToken_v2...");
-
-  const tokenFactory = new ethers.ContractFactory(tokenAbi, tokenBytecode, wallet);
-  const bazaarToken = await tokenFactory.deploy(wallet.address, {
-    gasLimit: 5000000,
-  });
-
-  console.log("Tx submitted:", bazaarToken.deploymentTransaction().hash);
-  await bazaarToken.waitForDeployment();
-
-  const tokenAddress = await bazaarToken.getAddress();
-  console.log("BAZAARToken_v2 deployed to:", tokenAddress);
-
-  // Verify token details
-  const tokenName = await bazaarToken.name();
-  const tokenSymbol = await bazaarToken.symbol();
-  const totalSupply = await bazaarToken.totalSupply();
-  console.log(`  Name: ${tokenName}`);
-  console.log(`  Symbol: ${tokenSymbol}`);
-  console.log(`  Total Supply: ${ethers.formatEther(totalSupply)} BZAAR`);
+  // ============ Use Existing BAZAARToken_v2 ============
+  const tokenAddress =
+    process.env.BAZAAR_TOKEN_ADDRESS ||
+    process.env.VITE_BAZAAR_TOKEN_ADDRESS ||
+    "0xda15854df692c0c4415315909e69d44e54f76b07";
+  console.log("\n[1/2] Using existing BAZAARToken_v2:", tokenAddress);
 
   // ============ Deploy ClawBazaarNFT_v2 ============
   console.log("\n[2/2] Deploying ClawBazaarNFT_v2...");
@@ -123,8 +95,6 @@ async function main() {
 
   console.log("\nNext Steps:");
   console.log("1. Update /src/contracts/config.ts with new addresses");
-  console.log("2. Grant MINTER_ROLE to your backend wallet:");
-  console.log(`   await nftContract.grantMinterRole("YOUR_BACKEND_WALLET")`);
 
   // Save deployment info
   const deploymentInfo = {

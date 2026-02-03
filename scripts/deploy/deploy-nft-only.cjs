@@ -1,6 +1,9 @@
 const hre = require("hardhat");
 
-const BAZAAR_TOKEN_ADDRESS = "0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C";
+const BAZAAR_TOKEN_ADDRESS =
+  process.env.BAZAAR_TOKEN_ADDRESS ||
+  process.env.VITE_BAZAAR_TOKEN_ADDRESS ||
+  "0xda15854df692c0c4415315909e69d44e54f76b07";
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();

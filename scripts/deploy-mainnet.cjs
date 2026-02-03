@@ -29,6 +29,11 @@ const CONFIG = {
   editionPlatformFeeBps: 500,  // 5%
 };
 
+const BAZAAR_TOKEN_ADDRESS =
+  process.env.BAZAAR_TOKEN_ADDRESS ||
+  process.env.VITE_BAZAAR_TOKEN_ADDRESS ||
+  "0xda15854df692c0c4415315909e69d44e54f76b07";
+
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
 
@@ -65,6 +70,7 @@ async function main() {
 
   console.log("\n📦 Deployment Parameters:");
   console.log(`   Token: ${CONFIG.tokenName} (${CONFIG.tokenSymbol})`);
+  console.log(`   Token Address: ${BAZAAR_TOKEN_ADDRESS}`);
   console.log(`   NFT: ${CONFIG.nftName} (${CONFIG.nftSymbol})`);
   console.log(`   Default Royalty: ${CONFIG.defaultRoyaltyBps / 100}%`);
   console.log(`   Platform Fee: ${CONFIG.platformFeeBps / 100}%`);
@@ -73,32 +79,13 @@ async function main() {
   console.log("\n⏳ Deploying in 10 seconds... (Ctrl+C to cancel)");
   await new Promise(resolve => setTimeout(resolve, 10000));
 
-  // ============ Deploy BAZAARToken_v2 ============
-  console.log("\n" + "-".repeat(70));
-  console.log("[1/3] Deploying BAZAARToken_v2...");
-
-  const BAZAARToken = await hre.ethers.getContractFactory("BAZAARToken_v2");
-  const bazaarToken = await BAZAARToken.deploy(deployer.address);
-  await bazaarToken.waitForDeployment();
-
-  const tokenAddress = await bazaarToken.getAddress();
-  console.log(`   ✅ BAZAARToken_v2: ${tokenAddress}`);
-
-  // Verify token details
-  const tokenName = await bazaarToken.name();
-  const tokenSymbol = await bazaarToken.symbol();
-  const totalSupply = await bazaarToken.totalSupply();
-  console.log(`      Name: ${tokenName}`);
-  console.log(`      Symbol: ${tokenSymbol}`);
-  console.log(`      Total Supply: ${hre.ethers.formatEther(totalSupply)} ${tokenSymbol}`);
-
   // ============ Deploy ClawBazaarNFT_v2 ============
   console.log("\n" + "-".repeat(70));
-  console.log("[2/3] Deploying ClawBazaarNFT_v2...");
+  console.log("[1/2] Deploying ClawBazaarNFT_v2...");
 
   const ClawBazaarNFT = await hre.ethers.getContractFactory("ClawBazaarNFT_v2");
   const nftContract = await ClawBazaarNFT.deploy(
-    tokenAddress,
+    BAZAAR_TOKEN_ADDRESS,
     CONFIG.defaultRoyaltyBps,
     CONFIG.platformFeeBps
   );
@@ -115,10 +102,10 @@ async function main() {
 
   // ============ Deploy ClawBazaarEditions ============
   console.log("\n" + "-".repeat(70));
-  console.log("[3/3] Deploying ClawBazaarEditions...");
+  console.log("[2/2] Deploying ClawBazaarEditions...");
 
   const ClawBazaarEditions = await hre.ethers.getContractFactory("ClawBazaarEditions");
-  const editionsContract = await ClawBazaarEditions.deploy(tokenAddress);
+  const editionsContract = await ClawBazaarEditions.deploy(BAZAAR_TOKEN_ADDRESS);
   await editionsContract.waitForDeployment();
 
   const editionsAddress = await editionsContract.getAddress();
@@ -131,15 +118,14 @@ async function main() {
     deployedAt: new Date().toISOString(),
     deployer: deployer.address,
     contracts: {
-      BAZAARToken_v2: tokenAddress,
+      BAZAARToken_v2: BAZAAR_TOKEN_ADDRESS,
       ClawBazaarNFT_v2: nftAddress,
       ClawBazaarEditions: editionsAddress,
     },
     config: CONFIG,
     verification: {
-      token: `npx hardhat verify --network base ${tokenAddress} "${deployer.address}"`,
-      nft: `npx hardhat verify --network base ${nftAddress} "${tokenAddress}" ${CONFIG.defaultRoyaltyBps} ${CONFIG.platformFeeBps}`,
-      editions: `npx hardhat verify --network base ${editionsAddress} "${tokenAddress}"`,
+      nft: `npx hardhat verify --network base ${nftAddress} "${BAZAAR_TOKEN_ADDRESS}" ${CONFIG.defaultRoyaltyBps} ${CONFIG.platformFeeBps}`,
+      editions: `npx hardhat verify --network base ${editionsAddress} "${BAZAAR_TOKEN_ADDRESS}"`,
     },
   };
 
@@ -153,12 +139,12 @@ async function main() {
   console.log("=".repeat(70));
 
   console.log("\n📍 Contract Addresses (Base Mainnet):");
-  console.log(`   BAZAARToken_v2:     ${tokenAddress}`);
+  console.log(`   BAZAARToken_v2:     ${BAZAAR_TOKEN_ADDRESS}`);
   console.log(`   ClawBazaarNFT_v2:   ${nftAddress}`);
   console.log(`   ClawBazaarEditions: ${editionsAddress}`);
 
   console.log("\n🔗 Basescan Links:");
-  console.log(`   Token:    https://basescan.org/address/${tokenAddress}`);
+  console.log(`   Token:    https://basescan.org/address/${BAZAAR_TOKEN_ADDRESS}`);
   console.log(`   NFT:      https://basescan.org/address/${nftAddress}`);
   console.log(`   Editions: https://basescan.org/address/${editionsAddress}`);
 
@@ -166,15 +152,13 @@ async function main() {
   console.log("   □ 1. Update src/contracts/config.ts with mainnet addresses");
   console.log("   □ 2. Change SUPPORTED_CHAIN_ID to base.id (8453)");
   console.log("   □ 3. Verify contracts on Basescan (commands in deployment-mainnet.json)");
-  console.log("   □ 4. Grant MINTER_ROLE to backend wallet on NFT contract");
-  console.log("   □ 5. Grant CREATOR_ROLE to backend wallet on Editions contract");
-  console.log("   □ 6. Distribute initial BZAAR tokens to users/liquidity");
-  console.log("   □ 7. Update skill.md and heartbeat.md with mainnet addresses");
-  console.log("   □ 8. Deploy updated frontend");
-  console.log("   □ 9. Test a complete mint → list → buy flow");
+  console.log("   □ 4. Grant CREATOR_ROLE to backend wallet on Editions contract");
+  console.log("   □ 5. Distribute initial BZAAR tokens to users/liquidity");
+  console.log("   □ 6. Update skill.md and heartbeat.md with mainnet addresses");
+  console.log("   □ 7. Deploy updated frontend");
+  console.log("   □ 8. Test a complete mint → list → buy flow");
 
   console.log("\n🔐 Verification Commands:");
-  console.log(`   ${deploymentInfo.verification.token}`);
   console.log(`   ${deploymentInfo.verification.nft}`);
   console.log(`   ${deploymentInfo.verification.editions}`);
 

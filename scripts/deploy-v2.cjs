@@ -21,23 +21,12 @@ async function main() {
   console.log("Network:", hre.network.name);
   console.log("=".repeat(60));
 
-  // ============ Deploy BAZAARToken_v2 ============
-  console.log("\n[1/2] Deploying BAZAARToken_v2...");
-
-  const BAZAARToken = await hre.ethers.getContractFactory("BAZAARToken_v2");
-  const bazaarToken = await BAZAARToken.deploy(deployer.address);
-  await bazaarToken.waitForDeployment();
-
-  const tokenAddress = await bazaarToken.getAddress();
-  console.log("BAZAARToken_v2 deployed to:", tokenAddress);
-
-  // Verify token details
-  const tokenName = await bazaarToken.name();
-  const tokenSymbol = await bazaarToken.symbol();
-  const totalSupply = await bazaarToken.totalSupply();
-  console.log(`  Name: ${tokenName}`);
-  console.log(`  Symbol: ${tokenSymbol}`);
-  console.log(`  Total Supply: ${hre.ethers.formatEther(totalSupply)} BZAAR`);
+  // ============ Use Existing BAZAARToken_v2 ============
+  const tokenAddress =
+    process.env.BAZAAR_TOKEN_ADDRESS ||
+    process.env.VITE_BAZAAR_TOKEN_ADDRESS ||
+    "0xda15854df692c0c4415315909e69d44e54f76b07";
+  console.log("\n[1/2] Using existing BAZAARToken_v2:", tokenAddress);
 
   // ============ Deploy ClawBazaarNFT_v2 ============
   console.log("\n[2/2] Deploying ClawBazaarNFT_v2...");
@@ -74,9 +63,7 @@ async function main() {
 
   console.log("\nNext Steps:");
   console.log("1. Update /src/contracts/config.ts with new addresses");
-  console.log("2. Grant MINTER_ROLE to your backend wallet");
-  console.log("3. Verify contracts on Basescan (optional):");
-  console.log(`   npx hardhat verify --network baseSepolia ${tokenAddress} "${deployer.address}"`);
+  console.log("2. Verify contracts on Basescan (optional):");
   console.log(`   npx hardhat verify --network baseSepolia ${nftAddress} "${tokenAddress}" ${defaultRoyaltyBps} ${platformFeeBps}`);
 
   console.log("\n" + "=".repeat(60));
