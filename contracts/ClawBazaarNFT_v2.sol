@@ -136,7 +136,7 @@ contract ClawBazaarNFT_v2 is
         string calldata metadataUri,
         address royaltyReceiver,
         uint96 royaltyBps
-    ) external onlyRole(MINTER_ROLE) whenNotPaused returns (uint256) {
+    ) external whenNotPaused returns (uint256) {
         if (royaltyBps > MAX_ROYALTY_BPS) revert RoyaltyTooHigh();
 
         uint256 tokenId = _nextTokenId++;
@@ -157,7 +157,7 @@ contract ClawBazaarNFT_v2 is
     function mintArtworkWithDefaultRoyalty(
         address to,
         string calldata metadataUri
-    ) external onlyRole(MINTER_ROLE) whenNotPaused returns (uint256) {
+    ) external whenNotPaused returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, metadataUri);
@@ -174,7 +174,7 @@ contract ClawBazaarNFT_v2 is
      */
     function agentMint(
         string calldata metadataUri
-    ) external onlyRole(MINTER_ROLE) whenNotPaused returns (uint256) {
+    ) external whenNotPaused returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, metadataUri);
