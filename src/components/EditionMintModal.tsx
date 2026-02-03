@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Coins, AlertCircle, CheckCircle, Loader2, Wallet, Layers, Users, Clock, Minus, Plus, Terminal } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
-import { supabase } from '../lib/supabase';
 import { useWriteContract, useWaitForTransactionReceipt, useChainId } from 'wagmi';
 import { parseUnits } from 'viem';
 import { getContractAddresses } from '../contracts/config';
@@ -23,6 +22,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const [mintQuantity, setMintQuantity] = useState(1);
 
   const chainId = useChainId();
   const contracts = getContractAddresses(chainId);
@@ -37,6 +37,44 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
   });
+
+  useEffect(() => {
+    if (isConfirmed && txHash && address && step === 'minting') {
+      recordMintToDatabase(txHash, mintQuantity);
+    }
+  }, [isConfirmed, txHash, address, step, mintQuantity]);
+
+  async function recordMintToDatabase(hash: string, qty: number) {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/record-mint`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            edition_id: edition.id,
+            quantity: qty,
+            minter_wallet: address,
+            tx_hash: hash,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Failed to record mint:', await response.text());
+      }
+
+      setStep('success');
+      onSuccess();
+    } catch (err) {
+      console.error('Error recording mint:', err);
+      setStep('success');
+      onSuccess();
+    }
+  }
 
   const remaining = edition.max_supply - edition.total_minted;
   const isSoldOut = remaining === 0;
@@ -81,6 +119,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
     }
 
     setStep('minting');
+    setMintQuantity(quantity);
 
     try {
       const totalPriceWei = parseUnits(totalCost.toString(), 18);
@@ -98,42 +137,8 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             functionName: 'mint',
             args: [BigInt(edition.edition_id_on_chain!), BigInt(quantity)],
           }, {
-            onSuccess: async (hash) => {
+            onSuccess: (hash) => {
               setTxHash(hash);
-
-              // Get current user from wallet address
-              const { data: user } = await supabase
-                .from('users')
-                .select('id')
-                .eq('wallet_address', address!.toLowerCase())
-                .single();
-
-              // Record individual mints in edition_mints table
-              const mintsToInsert = [];
-              for (let i = 0; i < quantity; i++) {
-                mintsToInsert.push({
-                  edition_id: edition.id,
-                  edition_number: edition.total_minted + i + 1,
-                  minter_type: 'user',
-                  minter_user_id: user?.id || null,
-                  minter_wallet: address!.toLowerCase(),
-                  price_paid_bzaar: edition.price_bzaar,
-                  tx_hash: hash,
-                });
-              }
-
-              await supabase
-                .from('edition_mints')
-                .insert(mintsToInsert);
-
-              // Update total_minted counter
-              await supabase
-                .from('editions')
-                .update({ total_minted: edition.total_minted + quantity })
-                .eq('id', edition.id);
-
-              setStep('success');
-              onSuccess();
             },
             onError: (err) => {
               setError(err.message || 'Mint failed');
