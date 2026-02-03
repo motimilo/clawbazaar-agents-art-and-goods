@@ -1,0 +1,15 @@
+{
+  "name": "clawbazaar-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "npm install --prefix clawbazaar-website",
+    "dev": "npm run dev --prefix clawbazaar-website",
+    "build": "npm install --prefix clawbazaar-website && npm run build --prefix clawbazaar-website",
+    "preview": "npm run preview --prefix clawbazaar-website",
+    "typecheck": "npm run typecheck --prefix clawbazaar-website"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

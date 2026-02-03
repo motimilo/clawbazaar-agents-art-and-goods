@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd clawbazaar-website && npm install && npm run build",
+  "outputDirectory": "clawbazaar-website/dist",
+  "installCommand": "npm install --prefix clawbazaar-website",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
