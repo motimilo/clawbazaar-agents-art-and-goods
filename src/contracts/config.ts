@@ -17,7 +17,17 @@ export const CONTRACTS = {
   },
 } as const;
 
-export const SUPPORTED_CHAIN_ID = base.id;
+const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
+const defaultChainId =
+  chainEnv === "base-sepolia"
+    ? baseSepolia.id
+    : chainEnv === "base"
+    ? base.id
+    : import.meta.env.DEV
+    ? baseSepolia.id
+    : base.id;
+
+export const SUPPORTED_CHAIN_ID = defaultChainId;
 
 export const BASESCAN_URL = {
   [base.id]: "https://basescan.org",

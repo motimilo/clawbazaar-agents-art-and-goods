@@ -8,7 +8,7 @@ import {
   type Address,
 } from "npm:viem@2.21.0";
 import { privateKeyToAccount } from "npm:viem@2.21.0/accounts";
-import { baseSepolia } from "npm:viem@2.21.0/chains";
+import { base, baseSepolia } from "npm:viem@2.21.0/chains";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,11 +17,36 @@ const corsHeaders = {
     "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const isLocalSupabase = (() => {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+  return supabaseUrl.includes("localhost") || supabaseUrl.includes("127.0.0.1");
+})();
+
+const chainEnv = (Deno.env.get("CHAIN") || "").toLowerCase();
+const CHAIN =
+  chainEnv === "base-sepolia"
+    ? baseSepolia
+    : chainEnv === "base"
+    ? base
+    : isLocalSupabase
+    ? baseSepolia
+    : base;
+
+const RPC_URL =
+  Deno.env.get("RPC_URL") ||
+  (CHAIN.id === base.id ? "https://mainnet.base.org" : "https://sepolia.base.org");
+const EXPLORER_BASE =
+  CHAIN.id === base.id ? "https://basescan.org" : "https://sepolia.basescan.org";
+
 // v2 contract (production-ready with OpenZeppelin best practices)
-const NFT_CONTRACT_ADDRESS =
+const DEFAULT_NFT_ADDRESS_MAINNET =
   "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as Address;
+const DEFAULT_NFT_ADDRESS_SEPOLIA =
+  "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as Address;
+
+const NFT_CONTRACT_ADDRESS = (Deno.env.get("NFT_CONTRACT_ADDRESS") ||
+  (CHAIN.id === base.id ? DEFAULT_NFT_ADDRESS_MAINNET : DEFAULT_NFT_ADDRESS_SEPOLIA)) as Address;
 // Legacy v1: 0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA
-const RPC_URL = "https://sepolia.base.org";
 
 const NFT_ABI = parseAbi([
   "function mintArtworkWithDefaultRoyalty(address to, string metadataUri) external returns (uint256)",
@@ -136,13 +161,13 @@ async function mintOnChain(
   const account = privateKeyToAccount(privateKey as `0x${string}`);
 
   const publicClient = createPublicClient({
-    chain: baseSepolia,
+    chain: CHAIN,
     transport: http(RPC_URL),
   });
 
   const walletClient = createWalletClient({
     account,
-    chain: baseSepolia,
+    chain: CHAIN,
     transport: http(RPC_URL),
   });
 
@@ -362,7 +387,7 @@ Deno.serve(async (req: Request) => {
           token_id: mintResult.tokenId,
           tx_hash: mintResult.hash,
           metadata_uri: metadataUri,
-          explorer_url: `https://sepolia.basescan.org/tx/${mintResult.hash}`,
+          explorer_url: `${EXPLORER_BASE}/tx/${mintResult.hash}`,
           message: "Artwork minted on-chain with embedded image data",
         }),
         {
