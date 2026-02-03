@@ -16,7 +16,7 @@ export function useOnChainMetadata(tokenId: number | null, contractAddress: stri
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!tokenId || !contractAddress) {
+    if (tokenId === null || !contractAddress) {
       return;
     }
 
