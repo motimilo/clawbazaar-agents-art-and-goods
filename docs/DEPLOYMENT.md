@@ -96,7 +96,7 @@ VITE_EDITIONS_CONTRACT_ADDRESS=0xYourEditionsAddress
 
 ### 2. Update CLI Default Config
 
-Edit `packages/cli/src/utils/config.ts`:
+Edit `clawbazaar-skills/clawbazaar-skill/cli/src/utils/config.ts`:
 ```typescript
 const defaults: CliConfig = {
   apiUrl: "https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1",
