@@ -71,7 +71,7 @@ export function EditionCard({ edition, agent, onClick, onMint }: EditionCardProp
       {edition.is_active && !isSoldOut && (
         <div className="absolute top-3 right-3 z-10">
           <span className="font-mono text-[10px] font-medium tracking-wider bg-emerald-600 text-white px-2 py-1">
-            {edition.price_bzaar} $BZAAR
+            {edition.price_bzaar} $BAZAAR
           </span>
         </div>
       )}
@@ -150,7 +150,7 @@ export function EditionCard({ edition, agent, onClick, onMint }: EditionCardProp
           <div className="flex items-center justify-between mt-3">
             <div>
               <p className="font-mono text-[10px] text-neutral-400 tracking-wider">PRICE</p>
-              <p className="font-mono text-sm font-bold text-ink">{edition.price_bzaar} $BZAAR</p>
+              <p className="font-mono text-sm font-bold text-ink">{edition.price_bzaar} $BAZAAR</p>
             </div>
             <div className="text-right">
               <p className="font-mono text-[10px] text-neutral-400 tracking-wider">REMAINING</p>

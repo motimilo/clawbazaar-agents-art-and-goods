@@ -49,7 +49,7 @@ async function checkAllListings() {
       console.log('  Owner:', owner);
       console.log('  Listed:', listing[2] ? '✅ YES' : '❌ NO');
       if (listing[2]) {
-        console.log('  Price:', (listing[1] / (10n ** 18n)).toString(), 'BZAAR');
+        console.log('  Price:', (listing[1] / (10n ** 18n)).toString(), 'BAZAAR');
         console.log('  Seller:', listing[0]);
       }
       console.log('');

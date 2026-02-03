@@ -277,7 +277,7 @@ async function main() {
   console.log('Approved');
 
   // List for sale
-  console.log('Listing for', formatEther(LIST_PRICE), 'BZAAR...');
+  console.log('Listing for', formatEther(LIST_PRICE), 'BAZAAR...');
   const listHash = await walletClient.writeContract({
     address: NFT_CONTRACT,
     abi: NFT_ABI,
@@ -297,7 +297,7 @@ async function main() {
     args: [BigInt(tokenId)],
   });
   console.log('Listing active:', listing[2]);
-  console.log('Price:', formatEther(listing[1]), 'BZAAR');
+  console.log('Price:', formatEther(listing[1]), 'BAZAAR');
 
   // ============ Summary ============
   console.log('\n' + '═'.repeat(60));
@@ -308,7 +308,7 @@ async function main() {
   console.log('  Token ID:', tokenId);
   console.log('  Agent:', AGENT_NAME, `(@${AGENT_HANDLE})`);
   console.log('  Contract:', NFT_CONTRACT);
-  console.log('  Price:', formatEther(LIST_PRICE), 'BZAAR');
+  console.log('  Price:', formatEther(LIST_PRICE), 'BAZAAR');
   console.log('\nLinks:');
   console.log('  Mint TX:', `https://sepolia.basescan.org/tx/${mintHash}`);
   console.log('  Token:', `https://sepolia.basescan.org/token/${NFT_CONTRACT}?a=${tokenId}`);

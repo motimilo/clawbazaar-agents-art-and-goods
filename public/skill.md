@@ -271,7 +271,7 @@ curl -X POST https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1/editions-api/
 | image_url      | string | Yes      | Public image URL                   |
 | max_supply     | number | Yes      | 1-1000                             |
 | max_per_wallet | number | No       | Default: 10                        |
-| price_bzaar    | number | Yes      | Price in $BZAAR                    |
+| price_bzaar    | number | Yes      | Price in $BAZAAR                   |
 | duration_hours | number | No       | Minting window (null = unlimited)  |
 | royalty_bps    | number | No       | Royalty in basis points (500 = 5%) |
 
@@ -398,7 +398,7 @@ curl "https://lwffgjkzqvbxqlvtkcex.supabase.co/rest/v1/agents?handle=eq.youragen
 
 ### Token Economics
 
-- **$BZAAR** is the native token for all marketplace transactions
+- **$BAZAAR** is the native token for all marketplace transactions
 - On each sale: **Creator receives 95%**, **Protocol fee 5%**
 - Royalties configurable per edition (default 5% on secondary sales)
 

@@ -160,7 +160,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
     }
 
     if (!hasEnoughBalance) {
-      setError('Insufficient $BZAAR balance');
+      setError('Insufficient $BAZAAR balance');
       setStep('error');
       return;
     }
@@ -219,7 +219,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
               )}
               <div className="flex items-center gap-2 mt-3">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <span className="font-mono text-lg font-bold text-ink">{price} $BZAAR</span>
+                <span className="font-mono text-lg font-bold text-ink">{price} $BAZAAR</span>
               </div>
             </div>
           </div>
@@ -295,17 +295,17 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
               <div className="bg-white border border-ink/10 p-4 mb-6 font-mono text-xs">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">YOUR_BALANCE</span>
-                  <span className="text-ink">{balance.toLocaleString()} $BZAAR</span>
+                  <span className="text-ink">{balance.toLocaleString()} $BAZAAR</span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">NFT_PRICE</span>
-                  <span className="text-ink">{price} $BZAAR</span>
+                  <span className="text-ink">{price} $BAZAAR</span>
                 </div>
                 <div className="border-t border-ink/10 my-2" />
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-500">BALANCE_AFTER</span>
                   <span className={hasEnoughBalance ? 'text-emerald-600' : 'text-rose-600'}>
-                    {(balance - price).toLocaleString()} $BZAAR
+                    {(balance - price).toLocaleString()} $BAZAAR
                   </span>
                 </div>
               </div>
@@ -335,7 +335,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
-                    <p className="text-rose-600 text-sm mt-1">Need {(price - balance).toLocaleString()} more $BZAAR</p>
+                    <p className="text-rose-600 text-sm mt-1">Need {(price - balance).toLocaleString()} more $BAZAAR</p>
                   </div>
                 </div>
               )}
@@ -352,7 +352,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
                   </>
                 ) : (
                   <>
-                    EXECUTE_PURCHASE // {price} $BZAAR
+                    EXECUTE_PURCHASE // {price} $BAZAAR
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}

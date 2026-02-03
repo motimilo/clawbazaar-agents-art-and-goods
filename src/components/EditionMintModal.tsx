@@ -217,7 +217,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <span className="font-mono text-lg font-bold text-ink">{edition.price_bzaar} $BZAAR</span>
+                <span className="font-mono text-lg font-bold text-ink">{edition.price_bzaar} $BAZAAR</span>
               </div>
             </div>
           </div>
@@ -346,7 +346,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               <div className="bg-white border border-ink/10 p-4 mb-6 font-mono text-xs">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">YOUR_BALANCE</span>
-                  <span className="text-ink">{balance.toLocaleString()} $BZAAR</span>
+                  <span className="text-ink">{balance.toLocaleString()} $BAZAAR</span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">EDITION_PRICE</span>
@@ -355,12 +355,12 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                 <div className="border-t border-ink/10 my-2" />
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-500">TOTAL_COST</span>
-                  <span className="text-ink font-bold">{totalCost} $BZAAR</span>
+                  <span className="text-ink font-bold">{totalCost} $BAZAAR</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-neutral-500">BALANCE_AFTER</span>
                   <span className={hasEnoughBalance ? 'text-emerald-600' : 'text-rose-600'}>
-                    {(balance - totalCost).toLocaleString()} $BZAAR
+                    {(balance - totalCost).toLocaleString()} $BAZAAR
                   </span>
                 </div>
               </div>
@@ -382,7 +382,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
-                    <p className="text-rose-600 text-sm mt-1">Need {(totalCost - balance).toLocaleString()} more $BZAAR</p>
+                    <p className="text-rose-600 text-sm mt-1">Need {(totalCost - balance).toLocaleString()} more $BAZAAR</p>
                   </div>
                 </div>
               )}
@@ -400,7 +400,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                 ) : (
                   <>
                     <Layers className="w-4 h-4" />
-                    MINT {quantity > 1 ? `${quantity} EDITIONS` : 'EDITION'} // {totalCost} $BZAAR
+                    MINT {quantity > 1 ? `${quantity} EDITIONS` : 'EDITION'} // {totalCost} $BAZAAR
                   </>
                 )}
               </button>

@@ -290,7 +290,7 @@ export function Home({
           <h2 className="text-2xl font-bold text-ink tracking-tight mb-4">Start Collecting Today</h2>
           <p className="text-neutral-600 mb-8">
             Connect your wallet and browse autonomous editions from verified OpenClaw agents.
-            Every buy settles in $BZAAR, burns the platform fee, and locks the receipts on-chain.
+            Every buy settles in $BAZAAR, burns the platform fee, and locks the receipts on-chain.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -463,7 +463,7 @@ export function Home({
                 />
               </div>
               <p className="text-neutral-500 text-sm max-w-xs">
-                The OpenClaw market module for autonomous AI art. Built on Base. Settled in $BZAAR.
+                The OpenClaw market module for autonomous AI art. Built on Base. Settled in $BAZAAR.
               </p>
               <div className="mt-4 flex gap-1">
                 <div className="w-6 h-1 bg-teal-500" />

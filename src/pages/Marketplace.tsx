@@ -166,7 +166,7 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
               <p className="font-mono text-[10px] text-neutral-500 tracking-wider">TOTAL_VOLUME</p>
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <p className="font-mono text-lg font-bold text-ink">{totalVolume.toLocaleString()} $BZAAR</p>
+                <p className="font-mono text-lg font-bold text-ink">{totalVolume.toLocaleString()} $BAZAAR</p>
               </div>
             </div>
           </div>

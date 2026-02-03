@@ -2,13 +2,23 @@ import { Command } from "commander";
 import chalk from "chalk";
 import ora from "ora";
 import { existsSync } from "fs";
-import { isAuthenticated, getApiKey, getConfig, getSupabaseAnonKey } from "../utils/config.js";
+import {
+  isAuthenticated,
+  getApiKey,
+  getConfig,
+  getSupabaseAnonKey,
+} from "../utils/config.js";
 import {
   uploadFileToIpfs,
   uploadJsonToIpfs,
   ipfsToHttp,
 } from "../utils/ipfs.js";
-import { getBalance, formatEther, getAccountFromPrivateKey, getChain } from "../utils/blockchain.js";
+import {
+  getBalance,
+  formatEther,
+  getAccountFromPrivateKey,
+  getChain,
+} from "../utils/blockchain.js";
 
 const API_ENDPOINTS = {
   create: "/editions-api/create",
@@ -20,7 +30,11 @@ const API_ENDPOINTS = {
   myEditions: "/editions-api/my-editions",
 };
 
-async function apiRequest(endpoint: string, method: string, body?: object): Promise<any> {
+async function apiRequest(
+  endpoint: string,
+  method: string,
+  body?: object,
+): Promise<any> {
   const config = getConfig();
   const apiKey = getApiKey();
   const supabaseAnonKey = getSupabaseAnonKey();
@@ -33,8 +47,8 @@ async function apiRequest(endpoint: string, method: string, body?: object): Prom
     method,
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${supabaseAnonKey}`,
-      "apikey": supabaseAnonKey,
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: supabaseAnonKey,
     },
     body: body ? JSON.stringify({ ...body, api_key: apiKey }) : undefined,
   });
@@ -46,12 +60,28 @@ export const createEditionCommand = new Command("create-edition")
   .description("Create a new NFT edition (max 1000 copies)")
   .requiredOption("--title <title>", "Edition title")
   .requiredOption("--image <path>", "Path to image file or URL")
-  .requiredOption("--max-supply <number>", "Maximum number of copies (1-1000)", parseInt)
-  .requiredOption("--price <bzaar>", "Price per mint in $BZAAR", parseFloat)
+  .requiredOption(
+    "--max-supply <number>",
+    "Maximum number of copies (1-1000)",
+    parseInt,
+  )
+  .requiredOption("--price <bzaar>", "Price per mint in $BAZAAR", parseFloat)
   .option("--description <text>", "Edition description")
-  .option("--max-per-wallet <number>", "Max mints per wallet (default: 10)", parseInt)
-  .option("--duration <hours>", "Minting duration in hours (default: unlimited)", parseInt)
-  .option("--royalty <bps>", "Royalty in basis points (default: 500 = 5%)", parseInt)
+  .option(
+    "--max-per-wallet <number>",
+    "Max mints per wallet (default: 10)",
+    parseInt,
+  )
+  .option(
+    "--duration <hours>",
+    "Minting duration in hours (default: unlimited)",
+    parseInt,
+  )
+  .option(
+    "--royalty <bps>",
+    "Royalty in basis points (default: 500 = 5%)",
+    parseInt,
+  )
   .option("--private-key <key>", "Wallet private key")
   .action(async (options) => {
     if (!isAuthenticated()) {
@@ -69,8 +99,12 @@ export const createEditionCommand = new Command("create-edition")
 
     if (!config.pinataApiKey || !config.pinataSecretKey) {
       console.log(chalk.red("Pinata not configured. Run:"));
-      console.log(chalk.yellow("  clawbazaar config set pinataApiKey YOUR_KEY"));
-      console.log(chalk.yellow("  clawbazaar config set pinataSecretKey YOUR_SECRET"));
+      console.log(
+        chalk.yellow("  clawbazaar config set pinataApiKey YOUR_KEY"),
+      );
+      console.log(
+        chalk.yellow("  clawbazaar config set pinataSecretKey YOUR_SECRET"),
+      );
       process.exit(1);
     }
 
@@ -101,7 +135,8 @@ export const createEditionCommand = new Command("create-edition")
     }
 
     let imageUrl = options.image;
-    const isLocalFile = !options.image.startsWith("http") && existsSync(options.image);
+    const isLocalFile =
+      !options.image.startsWith("http") && existsSync(options.image);
 
     if (isLocalFile) {
       spinner = ora("Uploading image to IPFS...").start();
@@ -143,16 +178,21 @@ export const createEditionCommand = new Command("create-edition")
       console.log(`${chalk.gray("Title:")}       ${options.title}`);
       console.log(`${chalk.gray("Edition ID:")}  ${result.edition_id}`);
       console.log(`${chalk.gray("Max Supply:")}  ${options.maxSupply}`);
-      console.log(`${chalk.gray("Price:")}       ${options.price} $BZAAR`);
+      console.log(`${chalk.gray("Price:")}       ${options.price} $BAZAAR`);
       if (options.duration) {
         console.log(`${chalk.gray("Duration:")}    ${options.duration} hours`);
       }
       console.log();
       console.log(chalk.cyan("Next steps:"));
       console.log(chalk.yellow("  1. Upload metadata to IPFS"));
-      console.log(chalk.yellow("  2. Call createEdition on the smart contract"));
-      console.log(chalk.yellow("  3. Confirm with: clawbazaar confirm-edition <edition-id> --tx-hash <hash>"));
-
+      console.log(
+        chalk.yellow("  2. Call createEdition on the smart contract"),
+      );
+      console.log(
+        chalk.yellow(
+          "  3. Confirm with: clawbazaar confirm-edition <edition-id> --tx-hash <hash>",
+        ),
+      );
     } catch (error) {
       spinner.fail(chalk.red("Failed to create edition"));
       console.error(error instanceof Error ? error.message : "Unknown error");
@@ -171,7 +211,11 @@ export const myEditionsCommand = new Command("my-editions")
     const spinner = ora("Fetching your editions...").start();
 
     try {
-      const result: any = await apiRequest(API_ENDPOINTS.myEditions, "POST", {});
+      const result: any = await apiRequest(
+        API_ENDPOINTS.myEditions,
+        "POST",
+        {},
+      );
 
       if (result.error) {
         spinner.fail(chalk.red(`Failed: ${result.error}`));
@@ -183,7 +227,11 @@ export const myEditionsCommand = new Command("my-editions")
       const editions = result.editions || [];
 
       if (editions.length === 0) {
-        console.log(chalk.yellow("\nNo editions found. Create one with: clawbazaar create-edition"));
+        console.log(
+          chalk.yellow(
+            "\nNo editions found. Create one with: clawbazaar create-edition",
+          ),
+        );
         return;
       }
 
@@ -191,10 +239,12 @@ export const myEditionsCommand = new Command("my-editions")
       console.log(chalk.gray("─".repeat(70)));
 
       for (const edition of editions) {
-        const status = edition.is_active ? chalk.green("ACTIVE") : chalk.gray("CLOSED");
+        const status = edition.is_active
+          ? chalk.green("ACTIVE")
+          : chalk.gray("CLOSED");
         const progress = `${edition.total_minted}/${edition.max_supply}`;
         console.log(
-          `${status} ${chalk.bold(edition.title)} - ${progress} minted - ${edition.price_bzaar} $BZAAR`
+          `${status} ${chalk.bold(edition.title)} - ${progress} minted - ${edition.price_bzaar} $BAZAAR`,
         );
         console.log(chalk.gray(`       ID: ${edition.id}`));
         console.log();
@@ -221,8 +271,8 @@ export const browseEditionsCommand = new Command("browse-editions")
       const supabaseAnonKey = getSupabaseAnonKey();
       const response = await fetch(url, {
         headers: {
-          "Authorization": `Bearer ${supabaseAnonKey}`,
-          "apikey": supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+          apikey: supabaseAnonKey,
         },
       });
       const result: any = await response.json();
@@ -241,16 +291,24 @@ export const browseEditionsCommand = new Command("browse-editions")
         return;
       }
 
-      console.log(chalk.cyan.bold(`\nAvailable Editions (${editions.length})\n`));
+      console.log(
+        chalk.cyan.bold(`\nAvailable Editions (${editions.length})\n`),
+      );
       console.log(chalk.gray("─".repeat(70)));
 
       for (const edition of editions) {
-        const status = edition.is_active ? chalk.green("ACTIVE") : chalk.gray("CLOSED");
+        const status = edition.is_active
+          ? chalk.green("ACTIVE")
+          : chalk.gray("CLOSED");
         const progress = `${edition.total_minted}/${edition.max_supply}`;
         const creator = edition.agents?.handle || "unknown";
 
         console.log(`${status} ${chalk.bold(edition.title)} by @${creator}`);
-        console.log(chalk.gray(`       ${progress} minted - ${edition.price_bzaar} $BZAAR each`));
+        console.log(
+          chalk.gray(
+            `       ${progress} minted - ${edition.price_bzaar} $BAZAAR each`,
+          ),
+        );
         console.log(chalk.gray(`       ID: ${edition.id}`));
         console.log();
       }
@@ -264,7 +322,11 @@ export const browseEditionsCommand = new Command("browse-editions")
 export const mintEditionCommand = new Command("mint-edition")
   .description("Mint from an edition")
   .argument("<edition-id>", "Edition ID to mint from")
-  .option("--amount <number>", "Number of copies to mint (default: 1)", parseInt)
+  .option(
+    "--amount <number>",
+    "Number of copies to mint (default: 1)",
+    parseInt,
+  )
   .option("--private-key <key>", "Wallet private key")
   .action(async (editionId, options) => {
     if (!isAuthenticated()) {
@@ -302,10 +364,11 @@ export const mintEditionCommand = new Command("mint-edition")
       console.log(chalk.green.bold("Mint Successful!"));
       console.log(chalk.gray("─".repeat(40)));
       console.log(`${chalk.gray("Amount:")}    ${result.amount_minted}`);
-      console.log(`${chalk.gray("Numbers:")}   ${result.edition_numbers.join(", ")}`);
+      console.log(
+        `${chalk.gray("Numbers:")}   ${result.edition_numbers.join(", ")}`,
+      );
       console.log(`${chalk.gray("Remaining:")} ${result.remaining}`);
       console.log();
-
     } catch (error) {
       spinner.fail(chalk.red("Failed to mint"));
       console.error(error instanceof Error ? error.message : "Unknown error");
@@ -340,7 +403,6 @@ export const closeEditionCommand = new Command("close-edition")
       console.log(chalk.green.bold("Edition Closed!"));
       console.log(`${chalk.gray("Total Minted:")} ${result.total_minted}`);
       console.log();
-
     } catch (error) {
       spinner.fail(chalk.red("Failed to close edition"));
       console.error(error instanceof Error ? error.message : "Unknown error");

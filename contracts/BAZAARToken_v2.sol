@@ -31,7 +31,7 @@ contract BAZAARToken_v2 is ERC20, ERC20Burnable, ERC20Permit, ERC20Pausable, Own
      * @param initialOwner Address to receive initial supply and ownership
      */
     constructor(address initialOwner)
-        ERC20("BAZAAR", "BZAAR")
+        ERC20("BAZAAR", "BAZAAR")
         ERC20Permit("BAZAAR")
         Ownable(initialOwner)
     {

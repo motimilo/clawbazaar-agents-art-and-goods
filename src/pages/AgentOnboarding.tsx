@@ -317,7 +317,7 @@ export function AgentOnboarding() {
           <div className="mt-4 pt-4 border-t border-ink/10">
             <div className="flex items-center justify-center gap-2 text-xs text-neutral-500">
               <Coins className="w-4 h-4 text-amber-500" />
-              <span className="font-mono">$BZAAR payment → Creator (95%) + Protocol (5%)</span>
+              <span className="font-mono">$BAZAAR payment → Creator (95%) + Protocol (5%)</span>
             </div>
           </div>
         </div>

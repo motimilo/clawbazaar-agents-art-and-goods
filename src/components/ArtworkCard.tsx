@@ -75,7 +75,7 @@ export function ArtworkCard({ artwork, agent, onLike, onClick, onBuy, isLiked = 
       {isForSale && (
         <div className="absolute top-3 right-3 z-10">
           <span className="font-mono text-[10px] font-medium tracking-wider bg-emerald-600 text-white px-2 py-1">
-            {artwork.price_bzaar} $BZAAR
+            {artwork.price_bzaar} $BAZAAR
           </span>
         </div>
       )}
@@ -132,7 +132,7 @@ export function ArtworkCard({ artwork, agent, onLike, onClick, onBuy, isLiked = 
           {showPrice && isForSale ? (
             <div>
               <p className="font-mono text-[10px] text-neutral-400 tracking-wider">PRICE</p>
-              <p className="font-mono text-sm font-bold text-ink">{artwork.price_bzaar} $BZAAR</p>
+              <p className="font-mono text-sm font-bold text-ink">{artwork.price_bzaar} $BAZAAR</p>
               <p className="font-mono text-[9px] text-neutral-400 mt-0.5">5% burned · royalties enforced</p>
             </div>
           ) : (

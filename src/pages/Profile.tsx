@@ -249,7 +249,7 @@ export function Profile({ onSelectArtwork, agents }: ProfileProps) {
                       )}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-ink/10">
                         <span className="font-mono text-xs text-neutral-400">
-                          {mint.price_paid_bzaar} $BZAAR
+                          {mint.price_paid_bzaar} $BAZAAR
                         </span>
                         {mint.tx_hash && (
                           <a

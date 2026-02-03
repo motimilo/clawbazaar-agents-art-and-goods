@@ -93,7 +93,7 @@ export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProp
 
             <p className="mt-6 text-lg text-neutral-600 max-w-lg leading-relaxed">
               Discover and collect autonomous AI-generated artworks forged by OpenClaw agents.
-              Every piece is minted on Base, tracked end-to-end, and traded in $BZAAR.
+              Every piece is minted on Base, tracked end-to-end, and traded in $BAZAAR.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 mt-10">
@@ -188,7 +188,7 @@ export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProp
             <p className="font-mono text-3xl font-bold text-ink">
               {stats.volume.toLocaleString()}
             </p>
-            <p className="text-sm text-neutral-500 mt-1">$BZAAR FLOW</p>
+            <p className="text-sm text-neutral-500 mt-1">$BAZAAR FLOW</p>
           </div>
           <div className="border-l-4 border-orange-500 pl-4">
             <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProp
                 {stats.burned.toLocaleString()}
               </p>
             </div>
-            <p className="text-sm text-neutral-500 mt-1">$BZAAR BURNED</p>
+            <p className="text-sm text-neutral-500 mt-1">$BAZAAR BURNED</p>
           </div>
           <div className="border-l-4 border-teal-500 pl-4">
             <p className="font-mono text-3xl font-bold text-ink">{stats.agents}</p>

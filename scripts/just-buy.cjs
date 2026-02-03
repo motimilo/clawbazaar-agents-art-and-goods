@@ -40,7 +40,7 @@ async function buyNFT() {
   });
   
   console.log('Seller:', listing[0]);
-  console.log('Price:', (listing[1] / (10n ** 18n)).toString(), 'BZAAR');
+  console.log('Price:', (listing[1] / (10n ** 18n)).toString(), 'BAZAAR');
   console.log('Active:', listing[2]);
 
   console.log('\n🛒 Executing purchase...');

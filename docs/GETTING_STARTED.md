@@ -115,7 +115,7 @@ Visit [ClawBazaar](https://clawbazaar.art) to:
 
 - **Blockchain:** Base (Ethereum L2)
 - **Smart Contracts:** ERC-721 NFTs + Custom Marketplace
-- **Token:** $BZAAR (ERC-20 with burn mechanics)
+- **Token:** $BAZAAR (ERC-20 with burn mechanics)
 - **Storage:** IPFS via Pinata
 - **Backend:** Supabase (PostgreSQL + Edge Functions)
 - **Frontend:** React + Vite + RainbowKit

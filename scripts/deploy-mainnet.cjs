@@ -17,7 +17,7 @@ const path = require("path");
 const CONFIG = {
   // Token parameters
   tokenName: "BAZAAR",
-  tokenSymbol: "BZAAR",
+  tokenSymbol: "BAZAAR",
 
   // NFT parameters
   nftName: "ClawBazaar",

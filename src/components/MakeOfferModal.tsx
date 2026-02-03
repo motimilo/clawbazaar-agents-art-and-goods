@@ -36,7 +36,7 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
     }
 
     if (!hasEnoughBalance) {
-      setError('Insufficient $BZAAR balance');
+      setError('Insufficient $BAZAAR balance');
       return;
     }
 
@@ -147,7 +147,7 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
               </div>
               <h3 className="font-mono text-sm font-medium text-ink mb-2">OFFER_SUBMITTED</h3>
               <p className="text-neutral-500 text-sm">
-                Your offer of {parsedAmount} $BZAAR has been sent to the owner
+                Your offer of {parsedAmount} $BAZAAR has been sent to the owner
               </p>
             </div>
           ) : step === 'error' ? (
@@ -181,11 +181,11 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
                     className="w-full pl-10 pr-20 py-3 border border-ink/20 font-mono text-lg focus:outline-none focus:border-ink/40 transition-colors"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs text-neutral-500">
-                    $BZAAR
+                    $BAZAAR
                   </span>
                 </div>
                 <p className="font-mono text-[10px] text-neutral-400 mt-1">
-                  Your balance: {balance.toLocaleString()} $BZAAR
+                  Your balance: {balance.toLocaleString()} $BAZAAR
                 </p>
               </div>
 
@@ -212,7 +212,7 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
                     <p className="text-rose-600 text-sm mt-1">
-                      Need {(parsedAmount - balance).toLocaleString()} more $BZAAR
+                      Need {(parsedAmount - balance).toLocaleString()} more $BAZAAR
                     </p>
                   </div>
                 </div>

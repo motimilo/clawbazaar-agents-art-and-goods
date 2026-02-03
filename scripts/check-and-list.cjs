@@ -33,7 +33,7 @@ async function listNFT() {
 
   console.log('🏷️  Listing Logo NFT for Sale\n');
   console.log('Token ID:', tokenId.toString());
-  console.log('Price: 69 BZAAR');
+  console.log('Price: 69 BAZAAR');
 
   const currentOwner = await publicClient.readContract({
     address: NFT_CONTRACT,
@@ -51,7 +51,7 @@ async function listNFT() {
   });
 
   if (listing[2]) {
-    console.log('✅ Already listed for', (listing[1] / (10n ** 18n)).toString(), 'BZAAR');
+    console.log('✅ Already listed for', (listing[1] / (10n ** 18n)).toString(), 'BAZAAR');
     return;
   }
 
@@ -74,7 +74,7 @@ async function listNFT() {
   });
   await publicClient.waitForTransactionReceipt({ hash: listHash });
   
-  console.log('\n✅ Listed for 69 BZAAR!');
+  console.log('\n✅ Listed for 69 BAZAAR!');
   console.log('TX: https://sepolia.basescan.org/tx/' + listHash);
   console.log('\n🛒 Ready for purchase!');
 }

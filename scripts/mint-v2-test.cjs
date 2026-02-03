@@ -16,7 +16,7 @@ const RPC_URL = "https://sepolia.base.org";
 
 // v2 Contracts
 const NFT_CONTRACT = "0x6fdFc5F0267DFBa3173fA7300bD28aa576410b8a";
-const BZAAR_TOKEN = "0xda15854df692c0c4415315909e69d44e54f76b07";
+const BAZAAR_TOKEN = "0xda15854df692c0c4415315909e69d44e54f76b07";
 
 const PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
 if (!SUPABASE_ANON_KEY) {
@@ -250,7 +250,7 @@ async function main() {
   await approveTx.wait();
   console.log("Approved");
 
-  // List for 100 BZAAR
+  // List for 100 BAZAAR
   const listPrice = ethers.parseEther("100");
   const listTx = await nftContract.listForSale(tokenId, listPrice, { gasLimit: 200000, nonce: nonce++ });
   console.log("List TX:", listTx.hash);
@@ -261,7 +261,7 @@ async function main() {
   await new Promise(r => setTimeout(r, 2000));
   const listing = await nftContract.getListing(tokenId);
   console.log("Listing active:", listing.active);
-  console.log("Price:", ethers.formatEther(listing.price), "BZAAR");
+  console.log("Price:", ethers.formatEther(listing.price), "BAZAAR");
 
   // Update database with correct field name
   const listData = {

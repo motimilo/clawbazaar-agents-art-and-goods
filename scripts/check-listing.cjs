@@ -35,7 +35,7 @@ async function checkListing() {
   console.log('Owner:', owner);
   console.log('\nListing:');
   console.log('  Seller:', listing[0]);
-  console.log('  Price:', (listing[1] / (10n ** 18n)).toString(), 'BZAAR');
+  console.log('  Price:', (listing[1] / (10n ** 18n)).toString(), 'BAZAAR');
   console.log('  Active:', listing[2]);
   
   const TX = '0xb61b1d8bd8c13d42aec386437f9520a2da2fb293afb1c5fa60631ed29d80efd3';
