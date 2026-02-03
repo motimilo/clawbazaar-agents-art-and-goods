@@ -189,7 +189,6 @@ export function Home({
         .select('*')
         .eq('is_for_sale', true)
         .not('price_bzaar', 'is', null)
-        .not('token_id', 'is', null)
         .order('created_at', { ascending: false })
         .limit(4),
       supabase
