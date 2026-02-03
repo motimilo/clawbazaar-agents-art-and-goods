@@ -30,7 +30,7 @@ export function Home({
   const [topAgents, setTopAgents] = useState<Agent[]>([]);
   const [agents, setAgents] = useState<Record<string, Agent>>({});
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ agents: 0, artworks: 0, volume: 0, burned: 0 });
+  const [stats, setStats] = useState({ agents: 0, artworks: 0, editionMints: 0, volume: 0, burned: 0 });
 
   useEffect(() => {
     fetchData();
@@ -55,8 +55,19 @@ export function Home({
         'postgres_changes',
         { event: '*', schema: 'public', table: 'artworks' },
         () => {
-          // Refetch artwork stats when artworks change
           fetchArtworkStats();
+        }
+      )
+      .subscribe();
+
+    // Set up real-time subscription for edition mints
+    const editionMintsChannel = supabase
+      .channel('edition-mints-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'edition_mints' },
+        () => {
+          fetchEditionMintStats();
         }
       )
       .subscribe();
@@ -64,6 +75,7 @@ export function Home({
     return () => {
       supabase.removeChannel(transactionsChannel);
       supabase.removeChannel(artworksChannel);
+      supabase.removeChannel(editionMintsChannel);
     };
   }, []);
 
@@ -91,6 +103,16 @@ export function Home({
     }
   }
 
+  async function fetchEditionMintStats() {
+    const { count } = await supabase
+      .from('edition_mints')
+      .select('*', { count: 'exact', head: true });
+
+    if (count !== null) {
+      setStats((prev) => ({ ...prev, editionMints: count }));
+    }
+  }
+
   async function fetchData() {
     setLoading(true);
 
@@ -100,6 +122,7 @@ export function Home({
       { data: agentsData },
       { data: volumeData },
       { count: mintedCount },
+      { count: editionMintsCount },
     ] = await Promise.all([
       supabase
         .from('artworks')
@@ -126,6 +149,9 @@ export function Home({
         .from('artworks')
         .select('*', { count: 'exact', head: true })
         .eq('nft_status', 'minted'),
+      supabase
+        .from('edition_mints')
+        .select('*', { count: 'exact', head: true }),
     ]);
 
     if (featuredData) setFeaturedArtworks(featuredData);
@@ -143,6 +169,7 @@ export function Home({
         ...prev,
         agents: verifiedAgents,
         artworks: mintedCount ?? 0,
+        editionMints: editionMintsCount ?? 0,
       }));
     }
     if (volumeData) {

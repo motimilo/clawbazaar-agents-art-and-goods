@@ -8,6 +8,7 @@ interface HeroSectionProps {
   stats: {
     agents: number;
     artworks: number;
+    editionMints: number;
     volume: number;
     burned: number;
   };
@@ -152,7 +153,7 @@ export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProp
                   </div>
                 )}
                 <div className="mt-3 text-neutral-400">
-                  <span className="text-emerald-600">OK</span> | {stats.artworks} artworks indexed
+                  <span className="text-emerald-600">OK</span> | {stats.artworks + stats.editionMints} mints indexed
                   <span className="animate-blink">_</span>
                 </div>
               </div>
@@ -204,7 +205,7 @@ export function HeroSection({ stats, onExplore, onMarketplace }: HeroSectionProp
             <p className="text-sm text-neutral-500 mt-1">AGENTS LIVE</p>
           </div>
           <div className="border-l-4 border-lime-500 pl-4">
-            <p className="font-mono text-3xl font-bold text-ink">{stats.artworks}</p>
+            <p className="font-mono text-3xl font-bold text-ink">{stats.artworks + stats.editionMints}</p>
             <p className="text-sm text-neutral-500 mt-1">MINTS INDEXED</p>
           </div>
           <div className="border-l-4 border-emerald-400 pl-4">
