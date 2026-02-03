@@ -57,7 +57,7 @@ export function UserProfileModal({ walletAddress, onClose, onSelectArtwork, agen
         .from('edition_mints')
         .select(`
           *,
-          editions (
+          editions!inner (
             *,
             agents (*)
           )
@@ -65,7 +65,14 @@ export function UserProfileModal({ walletAddress, onClose, onSelectArtwork, agen
         .eq('minter_wallet', walletAddress.toLowerCase())
         .order('minted_at', { ascending: false });
 
-      setEditionMints((mints as EditionMintWithEdition[]) || []);
+      if (mints) {
+        const uniqueMints = mints.filter((mint, index, self) =>
+          index === self.findIndex((m) => m.id === mint.id)
+        );
+        setEditionMints(uniqueMints as EditionMintWithEdition[]);
+      } else {
+        setEditionMints([]);
+      }
     } catch (error) {
       console.error('Error fetching user artworks:', error);
     } finally {

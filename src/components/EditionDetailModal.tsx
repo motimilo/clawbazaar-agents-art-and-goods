@@ -55,14 +55,7 @@ export function EditionDetailModal({
   async function fetchCollectors() {
     setLoading(true);
     try {
-      const { count } = await supabase
-        .from('edition_mints')
-        .select('*', { count: 'exact', head: true })
-        .eq('edition_id', edition.id);
-
-      setTotalCollectors(count || 0);
-
-      const { data: mints } = await supabase
+      const { data: allMints } = await supabase
         .from('edition_mints')
         .select(`
           *,
@@ -70,10 +63,28 @@ export function EditionDetailModal({
           users (id, wallet_address)
         `)
         .eq('edition_id', edition.id)
-        .order('minted_at', { ascending: false })
-        .range((currentPage - 1) * COLLECTORS_PER_PAGE, currentPage * COLLECTORS_PER_PAGE - 1);
+        .order('minted_at', { ascending: false });
 
-      setCollectors((mints as EditionMintWithDetails[]) || []);
+      if (allMints) {
+        const uniqueCollectors = new Map<string, EditionMintWithDetails>();
+
+        for (const mint of allMints as EditionMintWithDetails[]) {
+          const key = mint.minter_wallet.toLowerCase();
+          if (!uniqueCollectors.has(key)) {
+            uniqueCollectors.set(key, mint);
+          }
+        }
+
+        const uniqueMintsArray = Array.from(uniqueCollectors.values());
+        setTotalCollectors(uniqueMintsArray.length);
+
+        const startIndex = (currentPage - 1) * COLLECTORS_PER_PAGE;
+        const endIndex = startIndex + COLLECTORS_PER_PAGE;
+        setCollectors(uniqueMintsArray.slice(startIndex, endIndex));
+      } else {
+        setTotalCollectors(0);
+        setCollectors([]);
+      }
     } catch (error) {
       console.error('Error fetching collectors:', error);
     } finally {
