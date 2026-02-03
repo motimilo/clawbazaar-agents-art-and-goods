@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Coins, Sparkles, Bot, Terminal, Code2, Zap } from 'lucide-react';
+import { ArrowRight, Coins, Layers, Bot, Terminal, Code2, Zap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { HeroSection } from '../components/HeroSection';
 import { ArtworkCard } from '../components/ArtworkCard';
 import { AgentCard } from '../components/AgentCard';
+import { EditionCard } from '../components/EditionCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { EmptyState } from '../components/EmptyState';
-import type { Artwork, Agent } from '../types/database';
+import type { Artwork, Agent, Edition } from '../types/database';
 
 interface HomeProps {
   onNavigateToGallery: () => void;
@@ -15,6 +16,8 @@ interface HomeProps {
   onSelectArtwork: (artwork: Artwork) => void;
   onSelectAgent: (agentId: string) => void;
   onBuyArtwork: (artwork: Artwork) => void;
+  onSelectEdition?: (edition: Edition) => void;
+  onMintEdition?: (edition: Edition) => void;
 }
 
 export function Home({
@@ -24,9 +27,11 @@ export function Home({
   onSelectArtwork,
   onSelectAgent,
   onBuyArtwork,
+  onSelectEdition,
+  onMintEdition,
 }: HomeProps) {
-  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
   const [forSaleArtworks, setForSaleArtworks] = useState<Artwork[]>([]);
+  const [recentMints, setRecentMints] = useState<Edition[]>([]);
   const [topAgents, setTopAgents] = useState<Agent[]>([]);
   const [agents, setAgents] = useState<Record<string, Agent>>({});
   const [loading, setLoading] = useState(true);
@@ -81,6 +86,18 @@ export function Home({
         () => {
           fetchEditionMintStats();
           fetchVolumeStats();
+          fetchRecentMints();
+        }
+      )
+      .subscribe();
+
+    const editionsChannel = supabase
+      .channel('editions-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'editions' },
+        () => {
+          fetchRecentMints();
         }
       )
       .subscribe();
@@ -90,6 +107,7 @@ export function Home({
       supabase.removeChannel(artworksChannel);
       supabase.removeChannel(agentsChannel);
       supabase.removeChannel(editionMintsChannel);
+      supabase.removeChannel(editionsChannel);
     };
   }, []);
 
@@ -137,12 +155,32 @@ export function Home({
     }
   }
 
+  async function fetchRecentMints() {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const { data } = await supabase
+      .from('editions')
+      .select('*')
+      .gt('total_minted', 0)
+      .gte('created_at', thirtyDaysAgo.toISOString())
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    if (data) {
+      setRecentMints(data);
+    }
+  }
+
   async function fetchData() {
     setLoading(true);
 
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
     const [
-      { data: featuredData },
       { data: forSaleData },
+      { data: recentMintsData },
       { data: agentsData },
       { data: volumeData },
       { count: mintedCount },
@@ -151,16 +189,17 @@ export function Home({
       supabase
         .from('artworks')
         .select('*')
-        .eq('featured', true)
-        .order('likes_count', { ascending: false })
-        .limit(6),
-      supabase
-        .from('artworks')
-        .select('*')
         .eq('is_for_sale', true)
         .not('price_bzaar', 'is', null)
         .order('created_at', { ascending: false })
         .limit(4),
+      supabase
+        .from('editions')
+        .select('*')
+        .gt('total_minted', 0)
+        .gte('created_at', thirtyDaysAgo.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(6),
       supabase
         .from('agents')
         .select('*')
@@ -178,8 +217,8 @@ export function Home({
         .select('*', { count: 'exact', head: true }),
     ]);
 
-    if (featuredData) setFeaturedArtworks(featuredData);
     if (forSaleData) setForSaleArtworks(forSaleData);
+    if (recentMintsData) setRecentMints(recentMintsData);
     if (agentsData) {
       setTopAgents(agentsData);
       const agentMap: Record<string, Agent> = {};
@@ -265,11 +304,11 @@ export function Home({
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-ink/10">
           <div className="flex items-center gap-3">
             <div className="w-1 h-6 bg-amber-500" />
-            <h2 className="text-xl font-bold text-ink tracking-tight">FEATURED_WORKS</h2>
+            <h2 className="text-xl font-bold text-ink tracking-tight">RECENT_MINTS</h2>
           </div>
-          {featuredArtworks.length > 0 && (
+          {recentMints.length > 0 && (
             <button
-              onClick={onNavigateToGallery}
+              onClick={onNavigateToMarketplace}
               className="flex items-center gap-2 font-mono text-xs text-neutral-500 hover:text-ink transition-colors"
             >
               VIEW_ALL
@@ -278,25 +317,23 @@ export function Home({
           )}
         </div>
 
-        {featuredArtworks.length === 0 ? (
+        {recentMints.length === 0 ? (
           <EmptyState
-            icon={Sparkles}
-            title="// AWAITING_FIRST_MASTERPIECE"
-            message="The gallery is ready for its first autonomous creation. AI agents are warming up their neural networks to mint original artworks."
-            actionLabel="EXPLORE_AGENTS"
-            onAction={onNavigateToAgents}
+            icon={Layers}
+            title="// NO_RECENT_MINTS"
+            message="No editions have been minted in the last 30 days. Browse available editions from verified OpenClaw agents and be the first to collect."
+            actionLabel="BROWSE_EDITIONS"
+            onAction={onNavigateToMarketplace}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredArtworks.map((artwork) => (
-              <ArtworkCard
-                key={artwork.id}
-                artwork={artwork}
-                agent={agents[artwork.agent_id]}
-                isLiked={false}
-                onLike={() => {}}
-                onClick={() => onSelectArtwork(artwork)}
-                onBuy={artwork.is_for_sale ? () => onBuyArtwork(artwork) : undefined}
+            {recentMints.map((edition) => (
+              <EditionCard
+                key={edition.id}
+                edition={edition}
+                agent={agents[edition.agent_id]}
+                onClick={() => onSelectEdition?.(edition)}
+                onMint={edition.is_active && edition.total_minted < edition.max_supply ? () => onMintEdition?.(edition) : undefined}
               />
             ))}
           </div>

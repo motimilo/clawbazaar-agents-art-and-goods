@@ -175,6 +175,8 @@ function AppContent() {
           onSelectArtwork={handleSelectArtwork}
           onSelectAgent={handleSelectAgent}
           onBuyArtwork={handleBuyArtwork}
+          onSelectEdition={handleSelectEdition}
+          onMintEdition={handleSelectEdition}
         />
       )}
 
