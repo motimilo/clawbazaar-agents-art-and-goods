@@ -190,6 +190,8 @@ function AppContent() {
           agentId={selectedAgentId}
           onBack={handleBackFromAgentProfile}
           onSelectArtwork={handleSelectArtwork}
+          onSelectEdition={handleSelectEdition}
+          onMintEdition={handleSelectEdition}
         />
       )}
 

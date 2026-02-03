@@ -1,22 +1,27 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Heart, Image as ImageIcon, Calendar, ExternalLink, BookOpen, Sparkles, Zap } from 'lucide-react';
+import { ArrowLeft, Heart, Image as ImageIcon, Calendar, ExternalLink, BookOpen, Sparkles, Zap, Layers } from 'lucide-react';
 import { supabase, getUserIdentifier } from '../lib/supabase';
 import { ArtworkCard } from '../components/ArtworkCard';
+import { EditionCard } from '../components/EditionCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { EmptyState } from '../components/EmptyState';
-import type { Agent, Artwork } from '../types/database';
+import type { Agent, Artwork, Edition } from '../types/database';
 
 interface AgentProfileProps {
   agentId: string;
   onBack: () => void;
   onSelectArtwork: (artwork: Artwork) => void;
+  onSelectEdition?: (edition: Edition) => void;
+  onMintEdition?: (edition: Edition) => void;
 }
 
-export function AgentProfile({ agentId, onBack, onSelectArtwork }: AgentProfileProps) {
+export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition, onMintEdition }: AgentProfileProps) {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [editions, setEditions] = useState<Edition[]>([]);
   const [likedArtworks, setLikedArtworks] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'editions' | 'artworks'>('editions');
 
   useEffect(() => {
     fetchAgentData();
@@ -25,10 +30,15 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork }: AgentProfileP
   async function fetchAgentData() {
     setLoading(true);
 
-    const [{ data: agentData }, { data: artworksData }, { data: likesData }] = await Promise.all([
+    const [{ data: agentData }, { data: artworksData }, { data: editionsData }, { data: likesData }] = await Promise.all([
       supabase.from('agents').select('*').eq('id', agentId).maybeSingle(),
       supabase
         .from('artworks')
+        .select('*')
+        .eq('agent_id', agentId)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('editions')
         .select('*')
         .eq('agent_id', agentId)
         .order('created_at', { ascending: false }),
@@ -40,6 +50,7 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork }: AgentProfileP
 
     if (agentData) setAgent(agentData);
     if (artworksData) setArtworks(artworksData);
+    if (editionsData) setEditions(editionsData);
     if (likesData) {
       setLikedArtworks(new Set(likesData.map((l) => l.artwork_id)));
     }
@@ -195,32 +206,79 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork }: AgentProfileP
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center gap-4 mb-8 pb-4 border-b border-ink/10">
-          <h2 className="text-xl font-bold text-ink tracking-tight">ARTWORKS</h2>
-          <span className="font-mono text-xs text-neutral-500">
-            // {artworks.length} ITEMS
-          </span>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setActiveTab('editions')}
+              className={`px-4 py-2 font-mono text-sm transition-colors ${
+                activeTab === 'editions'
+                  ? 'bg-ink text-paper'
+                  : 'bg-white text-neutral-500 hover:text-ink border border-ink/10'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                EDITIONS ({editions.length})
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('artworks')}
+              className={`px-4 py-2 font-mono text-sm transition-colors ${
+                activeTab === 'artworks'
+                  ? 'bg-ink text-paper'
+                  : 'bg-white text-neutral-500 hover:text-ink border border-ink/10'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" />
+                1/1s ({artworks.length})
+              </span>
+            </button>
+          </div>
         </div>
 
-        {artworks.length === 0 ? (
-          <EmptyState
-            icon={Sparkles}
-            title="// NO_ARTWORKS_YET"
-            message={`${agent.name} hasn't created any artworks yet. Check back later to see their autonomous creations.`}
-            variant="minimal"
-          />
+        {activeTab === 'editions' ? (
+          editions.length === 0 ? (
+            <EmptyState
+              icon={Layers}
+              title="// NO_EDITIONS_YET"
+              message={`${agent.name} hasn't created any editions yet. Check back later to see their autonomous creations.`}
+              variant="minimal"
+            />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {editions.map((edition) => (
+                <EditionCard
+                  key={edition.id}
+                  edition={edition}
+                  agent={agent}
+                  onClick={() => onSelectEdition?.(edition)}
+                  onMint={edition.is_active && edition.total_minted < edition.max_supply ? () => onMintEdition?.(edition) : undefined}
+                />
+              ))}
+            </div>
+          )
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {artworks.map((artwork) => (
-              <ArtworkCard
-                key={artwork.id}
-                artwork={artwork}
-                agent={agent}
-                isLiked={likedArtworks.has(artwork.id)}
-                onLike={() => handleLike(artwork.id)}
-                onClick={() => onSelectArtwork(artwork)}
-              />
-            ))}
-          </div>
+          artworks.length === 0 ? (
+            <EmptyState
+              icon={Sparkles}
+              title="// NO_1_OF_1s_YET"
+              message={`${agent.name} hasn't created any 1/1 artworks yet. Check back later to see their unique creations.`}
+              variant="minimal"
+            />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {artworks.map((artwork) => (
+                <ArtworkCard
+                  key={artwork.id}
+                  artwork={artwork}
+                  agent={agent}
+                  isLiked={likedArtworks.has(artwork.id)}
+                  onLike={() => handleLike(artwork.id)}
+                  onClick={() => onSelectArtwork(artwork)}
+                />
+              ))}
+            </div>
+          )
         )}
       </div>
     </div>
