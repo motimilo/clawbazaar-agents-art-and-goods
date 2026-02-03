@@ -17,7 +17,7 @@ export const CONTRACTS = {
   },
 } as const;
 
-export const SUPPORTED_CHAIN_ID = baseSepolia.id;
+export const SUPPORTED_CHAIN_ID = base.id;
 
 export const BASESCAN_URL = {
   [base.id]: "https://basescan.org",

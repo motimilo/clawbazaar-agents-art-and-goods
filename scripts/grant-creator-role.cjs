@@ -2,17 +2,24 @@
  * Grant CREATOR_ROLE on ClawBazaarEditions contract
  * This allows the specified wallet to create editions
  *
- * Usage: node scripts/grant-creator-role.cjs <wallet-address>
+ * Usage: node scripts/grant-creator-role.cjs <wallet-address> [--mainnet]
  *
  * Requires: DEPLOYER_PRIVATE_KEY env variable (admin wallet)
+ *           EDITIONS_CONTRACT_ADDRESS env variable (or uses default for testnet)
  */
 
 const { createPublicClient, createWalletClient, http, parseAbi } = require('viem');
 const { privateKeyToAccount } = require('viem/accounts');
-const { baseSepolia } = require('viem/chains');
+const { base, baseSepolia } = require('viem/chains');
 require('dotenv').config();
 
-const EDITIONS_CONTRACT = '0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1';
+const isMainnet = process.argv.includes('--mainnet');
+const NETWORK = isMainnet ? base : baseSepolia;
+const RPC_URL = isMainnet ? 'https://mainnet.base.org' : 'https://sepolia.base.org';
+const BASESCAN_URL = isMainnet ? 'https://basescan.org' : 'https://sepolia.basescan.org';
+
+const EDITIONS_CONTRACT = process.env.EDITIONS_CONTRACT_ADDRESS ||
+  (isMainnet ? '0x0000000000000000000000000000000000000000' : '0xcba9c427f35FA9a6393e8D652C17Ea1888D1DcF1');
 
 const EDITIONS_ABI = parseAbi([
   'function grantCreatorRole(address account) external',
@@ -38,22 +45,29 @@ async function main() {
   }
 
   console.log('\n🔑 Granting CREATOR_ROLE on ClawBazaarEditions\n');
+  console.log(`Network:  ${isMainnet ? 'Base Mainnet' : 'Base Sepolia'}`);
   console.log(`Contract: ${EDITIONS_CONTRACT}`);
   console.log(`Wallet:   ${walletToGrant}`);
   console.log();
+
+  if (EDITIONS_CONTRACT === '0x0000000000000000000000000000000000000000') {
+    console.error('❌ ERROR: EDITIONS_CONTRACT_ADDRESS not set');
+    console.error('   Set EDITIONS_CONTRACT_ADDRESS in .env or deploy first');
+    process.exit(1);
+  }
 
   const account = privateKeyToAccount(deployerKey);
   console.log(`Admin:    ${account.address}`);
 
   const publicClient = createPublicClient({
-    chain: baseSepolia,
-    transport: http('https://sepolia.base.org'),
+    chain: NETWORK,
+    transport: http(RPC_URL),
   });
 
   const walletClient = createWalletClient({
     account,
-    chain: baseSepolia,
-    transport: http('https://sepolia.base.org'),
+    chain: NETWORK,
+    transport: http(RPC_URL),
   });
 
   // Check admin balance
@@ -105,7 +119,7 @@ async function main() {
     if (receipt.status === 'success') {
       console.log(`\n✅ CREATOR_ROLE granted successfully!`);
       console.log(`   Wallet ${walletToGrant} can now create editions`);
-      console.log(`\n   View on Basescan: https://sepolia.basescan.org/tx/${hash}`);
+      console.log(`\n   View on Basescan: ${BASESCAN_URL}/tx/${hash}`);
     } else {
       console.error('\n❌ Transaction failed');
       process.exit(1);

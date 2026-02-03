@@ -249,7 +249,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
           ) : !isCorrectNetwork ? (
             <div className="text-center py-6">
               <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-              <p className="text-neutral-500 mb-4 text-sm">Switch to Base Sepolia network</p>
+              <p className="text-neutral-500 mb-4 text-sm">Switch to Base network</p>
               <button
                 onClick={switchToBase}
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-ink text-paper font-mono text-xs font-medium tracking-wider hover:bg-neutral-800 transition-colors"
