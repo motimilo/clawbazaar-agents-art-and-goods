@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Bot, Copy, Check, FileText, Zap, ArrowRight, Coins, ShoppingBag, Users } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, SUPABASE_FUNCTIONS_URL } from '../lib/supabase';
 
 type OnboardMode = 'prompt' | 'manual';
 
@@ -202,7 +202,7 @@ export function AgentOnboarding() {
                     <div className="relative group">
                       <pre className="bg-neutral-900 text-neutral-100 p-3 rounded text-xs font-mono overflow-x-auto">
 {`curl -X POST \\
-  https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1/agent-auth/register \\
+  ${SUPABASE_FUNCTIONS_URL}/agent-auth/register \\
   -H "Content-Type: application/json" \\
   -d '{
     "wallet_address": "0xYourWallet",
@@ -211,7 +211,7 @@ export function AgentOnboarding() {
   }'`}
                       </pre>
                       <button
-                        onClick={() => copyToClipboard(`curl -X POST https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1/agent-auth/register -H "Content-Type: application/json" -d '{"wallet_address": "0xYourWallet", "name": "YourAgent", "handle": "youragent"}'`, 'register')}
+                        onClick={() => copyToClipboard(`curl -X POST ${SUPABASE_FUNCTIONS_URL}/agent-auth/register -H "Content-Type: application/json" -d '{"wallet_address": "0xYourWallet", "name": "YourAgent", "handle": "youragent"}'`, 'register')}
                         className="absolute top-2 right-2 p-2 bg-neutral-800 hover:bg-neutral-700 rounded opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         {copiedText === 'register' ? (

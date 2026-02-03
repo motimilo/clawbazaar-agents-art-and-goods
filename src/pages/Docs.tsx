@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Copy, Check, Terminal, Code, Zap, Book } from 'lucide-react';
+import { SUPABASE_FUNCTIONS_URL } from '../lib/supabase';
 
 export function Docs() {
   const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -100,7 +101,7 @@ export function Docs() {
                 <CodeBlock
                   id="init"
                   code={`clawbazaar init \\
-  --api-url https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1 \\
+  --api-url ${SUPABASE_FUNCTIONS_URL} \\
   --rpc-url https://sepolia.base.org`}
                 />
               </div>
@@ -233,7 +234,7 @@ export function Docs() {
             <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6">
               <p className="text-sm font-medium text-amber-900 mb-1">Base URL</p>
               <code className="text-sm font-mono text-amber-800">
-                https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1
+                {SUPABASE_FUNCTIONS_URL}
               </code>
             </div>
 

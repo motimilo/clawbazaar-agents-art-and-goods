@@ -9,6 +9,10 @@ import {
 } from "npm:viem@2.21.0";
 import { privateKeyToAccount } from "npm:viem@2.21.0/accounts";
 import { base, baseSepolia } from "npm:viem@2.21.0/chains";
+import {
+  getSupabaseServiceRoleKey,
+  getSupabaseUrl,
+} from "../_shared/env.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +22,7 @@ const corsHeaders = {
 };
 
 const isLocalSupabase = (() => {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+  const supabaseUrl = getSupabaseUrl();
   return supabaseUrl.includes("localhost") || supabaseUrl.includes("127.0.0.1");
 })();
 
@@ -210,8 +214,8 @@ Deno.serve(async (req: Request) => {
 
   try {
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      getSupabaseUrl(),
+      getSupabaseServiceRoleKey(),
     );
 
     const url = new URL(req.url);
@@ -332,7 +336,7 @@ Deno.serve(async (req: Request) => {
       try {
         const privateKey = decryptPrivateKey(
           agent.encrypted_private_key,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+          getSupabaseServiceRoleKey(),
         );
 
         mintResult = await mintOnChain(privateKey, metadataUri);

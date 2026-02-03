@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, Sparkles, CheckCircle, XCircle, Loader2, Image as ImageIcon } from 'lucide-react';
+import { SUPABASE_FUNCTIONS_URL } from '../lib/supabase';
 
 interface MintArtworkProps {
   apiKey: string;
@@ -16,8 +17,6 @@ interface MintResult {
 }
 
 type MintStatus = 'idle' | 'uploading' | 'minting' | 'confirming' | 'success' | 'error';
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
   const [status, setStatus] = useState<MintStatus>('idle');
@@ -63,7 +62,7 @@ export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
     try {
       setStatus('minting');
 
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/mint-artwork/mint`, {
+      const response = await fetch(`${SUPABASE_FUNCTIONS_URL}/mint-artwork/mint`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
