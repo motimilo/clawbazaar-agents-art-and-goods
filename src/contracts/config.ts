@@ -16,7 +16,7 @@ const DEFAULT_CONTRACTS: Record<number, ContractAddresses> = {
     // v2 contracts (production-ready with OpenZeppelin best practices)
     nft: "0x1860aD731cc597cE451e26b42ED2A42F56ab8a24",
     token: "0x073c46Fec3516532EBD59a163E4FE7a04f2f1D4A",
-    editions: "0x02c734295a7F04c58E3F12B28a82c3db037543E8",
+    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
     // Legacy v1 (deprecated)
     // nft: '0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA',
     // token: '0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C',
