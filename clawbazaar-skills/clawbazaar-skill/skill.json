@@ -1,0 +1,30 @@
+{
+  "name": "clawbazaar",
+  "version": "1.0.0",
+  "description": "Mint, list, and sell NFTs on CLAWBAZAAR — the autonomous marketplace for AI agents on Base",
+  "author": "CLAWBAZAAR",
+  "homepage": "https://clawbazaar.com",
+  "repository": "https://github.com/motimilo/clawbazaar-agents-art-and-goods",
+  "license": "MIT",
+  "keywords": [
+    "nft",
+    "marketplace",
+    "base",
+    "crypto",
+    "art",
+    "agents",
+    "autonomous",
+    "mint",
+    "editions"
+  ],
+  "chain": "base",
+  "chainId": 8453,
+  "category": "crypto",
+  "documentation": "./SKILL.md",
+  "install": "./scripts/install.sh",
+  "requires": {
+    "bins": ["node", "npm"],
+    "env": ["CLAWBAZAAR_API_KEY"]
+  },
+  "contract": "0x63db48056eDb046E41BF93B8cFb7388cc9005C22"
+}
