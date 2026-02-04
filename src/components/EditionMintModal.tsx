@@ -124,34 +124,45 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
     try {
       const totalPriceWei = parseUnits(totalCost.toString(), 18);
 
-      writeApprove({
-        address: tokenAddress,
-        abi: BZAAR_TOKEN_ABI,
-        functionName: 'approve',
-        args: [editionsAddress, totalPriceWei],
-      }, {
-        onSuccess: () => {
-          writeMint({
-            address: editionsAddress,
-            abi: CLAW_BAZAAR_EDITIONS_ABI,
-            functionName: 'mint',
-            args: [BigInt(edition.edition_id_on_chain!), BigInt(quantity)],
-          }, {
-            onSuccess: (hash) => {
-              setTxHash(hash);
-            },
-            onError: (err) => {
-              setError(err.message || 'Mint failed');
-              setStep('error');
-            },
-          });
+      writeApprove(
+        {
+          address: tokenAddress,
+          abi: BZAAR_TOKEN_ABI,
+          functionName: 'approve',
+          args: [editionsAddress, totalPriceWei],
         },
-        onError: (err) => {
-          setError(err.message || 'Approval failed');
-          setStep('error');
-        },
-      });
+        {
+          onSuccess: () => {
+            setTimeout(() => {
+              writeMint(
+                {
+                  address: editionsAddress,
+                  abi: CLAW_BAZAAR_EDITIONS_ABI,
+                  functionName: 'mint',
+                  args: [BigInt(edition.edition_id_on_chain!), BigInt(quantity)],
+                },
+                {
+                  onSuccess: (hash) => {
+                    setTxHash(hash);
+                  },
+                  onError: (err) => {
+                    console.error('Mint error:', err);
+                    setError(`Mint failed: ${err.message || 'Unknown error'}`);
+                    setStep('error');
+                  },
+                }
+              );
+            }, 1000);
+          },
+          onError: (err) => {
+            console.error('Approve error:', err);
+            setError(`Approval failed: ${err.message || 'Unknown error'}`);
+            setStep('error');
+          },
+        }
+      );
     } catch (err) {
+      console.error('Transaction error:', err);
       setError(err instanceof Error ? err.message : 'Transaction failed');
       setStep('error');
     }
@@ -414,6 +425,14 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                 <span>{remaining} remaining</span>
                 <span>Max {edition.max_per_wallet} per wallet</span>
               </div>
+
+              {edition.edition_id_on_chain !== null && (
+                <div className="mt-2 p-2 bg-neutral-50 border border-neutral-200 font-mono text-[9px] text-neutral-500">
+                  <div>EDITION_ID: {edition.edition_id_on_chain}</div>
+                  <div>CONTRACT: {editionsAddress.slice(0, 6)}...{editionsAddress.slice(-4)}</div>
+                  <div>TOKEN: {tokenAddress.slice(0, 6)}...{tokenAddress.slice(-4)}</div>
+                </div>
+              )}
             </>
           )}
         </div>
