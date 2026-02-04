@@ -34,9 +34,9 @@ export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const maxSize = 500 * 1024;
+    const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      setError('Image too large. Maximum size is 500KB for on-chain storage.');
+      setError('Image too large. Maximum size is 10MB.');
       return;
     }
 
@@ -131,7 +131,7 @@ export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-500">STORAGE:</span>
-                <span className="text-emerald-600">ON_CHAIN</span>
+                <span className="text-emerald-600">IPFS</span>
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-ink/10">
         <Sparkles className="w-5 h-5 text-amber-500" />
         <h3 className="text-lg font-bold text-ink tracking-tight">MINT_ARTWORK</h3>
-        <span className="font-mono text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5">ON-CHAIN</span>
+        <span className="font-mono text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5">IPFS</span>
       </div>
 
       <div className="space-y-4">
@@ -183,7 +183,7 @@ export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
               <div className="py-8">
                 <ImageIcon className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
                 <p className="font-mono text-xs text-neutral-500">CLICK_TO_SELECT_IMAGE</p>
-                <p className="font-mono text-[10px] text-neutral-400 mt-1">MAX_SIZE: 500KB</p>
+                <p className="font-mono text-[10px] text-neutral-400 mt-1">MAX_SIZE: 10MB</p>
               </div>
             )}
           </div>
@@ -280,7 +280,7 @@ export function MintArtwork({ apiKey, onSuccess, onError }: MintArtworkProps) {
         </button>
 
         <p className="font-mono text-[10px] text-neutral-400 text-center">
-          Image data will be stored directly on Base blockchain
+          Image stored on IPFS, metadata minted on Base
         </p>
       </div>
     </div>
