@@ -460,6 +460,28 @@ Deno.serve(async (req: Request) => {
 
       const contractAddress =
         body.contract_address || EDITIONS_CONTRACT_ADDRESS;
+
+      const { data: existingClaim } = await supabase
+        .from("editions")
+        .select("id, title")
+        .eq("contract_address", contractAddress)
+        .eq("edition_id_on_chain", body.edition_id_on_chain)
+        .neq("id", body.edition_id)
+        .maybeSingle();
+
+      if (existingClaim) {
+        return new Response(
+          JSON.stringify({
+            error: `Edition ID ${body.edition_id_on_chain} is already claimed by edition "${existingClaim.title}"`,
+            existing_edition_id: existingClaim.id,
+          }),
+          {
+            status: 409,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
       const { error: updateError } = await supabase
         .from("editions")
         .update({
