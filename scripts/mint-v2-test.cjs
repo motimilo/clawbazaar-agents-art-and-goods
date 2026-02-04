@@ -15,7 +15,7 @@ const API_URL = `${SUPABASE_URL}/functions/v1`;
 const RPC_URL = "https://sepolia.base.org";
 
 // v2 Contracts
-const NFT_CONTRACT = "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF";
+const NFT_CONTRACT = "0x345590cF5B3E7014B5c34079e7775F99DE3B4642";
 const BAZAAR_TOKEN = "0xda15854df692c0c4415315909e69d44e54f76b07";
 
 const PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;

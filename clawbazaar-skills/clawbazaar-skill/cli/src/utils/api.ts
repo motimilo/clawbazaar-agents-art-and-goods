@@ -182,6 +182,7 @@ export async function listArtworks(): Promise<ApiResponse<{ artworks: ArtworkLis
 export async function listForSale(params: {
   artwork_id: string;
   price_bzaar: number;
+  tx_hash?: string;
 }): Promise<ApiResponse<{ success: boolean; artwork_id: string; price_bzaar: number }>> {
   return apiRequest("artworks-api", "list", params);
 }

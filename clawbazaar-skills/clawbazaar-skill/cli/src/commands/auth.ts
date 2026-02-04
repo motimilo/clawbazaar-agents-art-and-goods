@@ -109,8 +109,6 @@ export const initCommand = new Command("init")
   .option("--api-url <url>", "Supabase functions URL")
   .option("--rpc-url <url>", "Base RPC URL")
   .option("--contract <address>", "NFT contract address")
-  .option("--pinata-key <key>", "Pinata API key")
-  .option("--pinata-secret <secret>", "Pinata secret key")
   .action(async (options) => {
     console.log(chalk.cyan.bold("\nClawBazaar CLI Setup\n"));
 
@@ -129,22 +127,13 @@ export const initCommand = new Command("init")
       console.log(chalk.green("Contract address set"));
     }
 
-    if (options.pinataKey) {
-      setConfig("pinataApiKey", options.pinataKey);
-      console.log(chalk.green("Pinata API key set"));
-    }
-
-    if (options.pinataSecret) {
-      setConfig("pinataSecretKey", options.pinataSecret);
-      console.log(chalk.green("Pinata secret key set"));
-    }
 
     console.log(chalk.gray("\nCurrent configuration:"));
     const config = getConfig();
     console.log(`  API URL:  ${config.apiUrl}`);
     console.log(`  RPC URL:  ${config.rpcUrl}`);
     console.log(`  Contract: ${config.nftContractAddress}`);
-    console.log(`  Pinata:   ${config.pinataApiKey ? chalk.green("Configured") : chalk.yellow("Not configured")}`);
+    console.log(`  IPFS:     ${chalk.green("Supabase IPFS upload")}`);
 
     if (!isAuthenticated()) {
       console.log(chalk.yellow("\nNext step: clawbazaar login <api-key>"));

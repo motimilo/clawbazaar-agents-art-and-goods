@@ -17,8 +17,10 @@ import {
   getBalance,
   formatEther,
   getAccountFromPrivateKey,
-  getChain,
+  createEditionOnChain,
+  mintEditionOnChain,
 } from "../utils/blockchain.js";
+import { parseEther } from "viem";
 
 const API_ENDPOINTS = {
   create: "/editions-api/create",
@@ -53,6 +55,19 @@ async function apiRequest(
     body: body ? JSON.stringify({ ...body, api_key: apiKey }) : undefined,
   });
 
+  return response.json() as Promise<any>;
+}
+
+async function fetchEditionDetail(editionId: string): Promise<any> {
+  const config = getConfig();
+  const supabaseAnonKey = getSupabaseAnonKey();
+  const url = `${config.supabaseUrl}/functions/v1${API_ENDPOINTS.detail}?id=${editionId}`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: supabaseAnonKey,
+    },
+  });
   return response.json() as Promise<any>;
 }
 
@@ -96,17 +111,6 @@ export const createEditionCommand = new Command("create-edition")
     }
 
     const config = getConfig();
-
-    if (!config.pinataApiKey || !config.pinataSecretKey) {
-      console.log(chalk.red("Pinata not configured. Run:"));
-      console.log(
-        chalk.yellow("  clawbazaar config set pinataApiKey YOUR_KEY"),
-      );
-      console.log(
-        chalk.yellow("  clawbazaar config set pinataSecretKey YOUR_SECRET"),
-      );
-      process.exit(1);
-    }
 
     if (options.maxSupply < 1 || options.maxSupply > 1000) {
       console.log(chalk.red("Max supply must be between 1 and 1000"));
@@ -172,27 +176,85 @@ export const createEditionCommand = new Command("create-edition")
 
       spinner.succeed(`Edition created: ${result.edition_id}`);
 
+      const creatorWallet = result.creator_wallet as string | undefined;
+      if (creatorWallet) {
+        const account = getAccountFromPrivateKey(privateKey);
+        if (account.address.toLowerCase() !== creatorWallet.toLowerCase()) {
+          console.log(
+            chalk.red(
+              `Private key does not match creator wallet (${creatorWallet}).`,
+            ),
+          );
+          process.exit(1);
+        }
+      }
+
+      const metadata = result.metadata;
+      if (!metadata) {
+        console.log(chalk.red("Missing metadata from server response."));
+        process.exit(1);
+      }
+
+      spinner = ora("Uploading metadata to IPFS...").start();
+      const metadataUri = await uploadJsonToIpfs(metadata);
+      spinner.succeed(`Metadata uploaded: ${metadataUri}`);
+
+      const editionsAddress = config.editionsContractAddress;
+      if (!editionsAddress) {
+        console.log(
+          chalk.red(
+            "Missing editions contract address. Set editionsContractAddress in config.",
+          ),
+        );
+        process.exit(1);
+      }
+
+      spinner = ora("Creating edition on-chain...").start();
+      const priceWei = parseEther(options.price.toString());
+      const onChain = await createEditionOnChain(
+        privateKey,
+        metadataUri,
+        options.maxSupply,
+        options.maxPerWallet || 10,
+        priceWei,
+        options.duration,
+        options.royalty || 500,
+        editionsAddress,
+      );
+      spinner.succeed(`Edition created on-chain (ID: ${onChain.editionId})`);
+
+      spinner = ora("Confirming edition in database...").start();
+      const confirm: any = await apiRequest(API_ENDPOINTS.confirm, "POST", {
+        edition_id: result.edition_id,
+        edition_id_on_chain: onChain.editionId,
+        contract_address: editionsAddress,
+        creation_tx_hash: onChain.hash,
+        ipfs_metadata_uri: metadataUri,
+      });
+
+      if (confirm.error) {
+        spinner.warn(
+          chalk.yellow(`Confirm pending: ${confirm.error}`),
+        );
+      } else {
+        spinner.succeed("Edition confirmed in database");
+      }
+
       console.log();
       console.log(chalk.green.bold("Edition Created!"));
       console.log(chalk.gray("─".repeat(40)));
       console.log(`${chalk.gray("Title:")}       ${options.title}`);
       console.log(`${chalk.gray("Edition ID:")}  ${result.edition_id}`);
+      console.log(
+        `${chalk.gray("On-chain ID:")} ${onChain.editionId}`,
+      );
       console.log(`${chalk.gray("Max Supply:")}  ${options.maxSupply}`);
       console.log(`${chalk.gray("Price:")}       ${options.price} $BAZAAR`);
       if (options.duration) {
         console.log(`${chalk.gray("Duration:")}    ${options.duration} hours`);
       }
       console.log();
-      console.log(chalk.cyan("Next steps:"));
-      console.log(chalk.yellow("  1. Upload metadata to IPFS"));
-      console.log(
-        chalk.yellow("  2. Call createEdition on the smart contract"),
-      );
-      console.log(
-        chalk.yellow(
-          "  3. Confirm with: clawbazaar confirm-edition <edition-id> --tx-hash <hash>",
-        ),
-      );
+      console.log(chalk.cyan("Edition is live on-chain and recorded in DB."));
     } catch (error) {
       spinner.fail(chalk.red("Failed to create edition"));
       console.error(error instanceof Error ? error.message : "Unknown error");
@@ -347,10 +409,35 @@ export const mintEditionCommand = new Command("mint-edition")
     const spinner = ora("Processing mint...").start();
 
     try {
+      const detail: any = await fetchEditionDetail(editionId);
+      if (detail.error || !detail.edition) {
+        spinner.fail(chalk.red(`Failed to load edition: ${detail.error || "not found"}`));
+        process.exit(1);
+      }
+
+      const edition = detail.edition;
+      const editionIdOnChain = edition.edition_id_on_chain;
+      if (editionIdOnChain === null || editionIdOnChain === undefined) {
+        spinner.fail(
+          chalk.red("Edition is not confirmed on-chain yet."),
+        );
+        process.exit(1);
+      }
+
+      const editionsAddress =
+        edition.contract_address || getConfig().editionsContractAddress;
+
+      const txHash = await mintEditionOnChain(
+        privateKey,
+        Number(editionIdOnChain),
+        amount,
+        editionsAddress,
+      );
+
       const result: any = await apiRequest(API_ENDPOINTS.mint, "POST", {
         edition_id: editionId,
         amount,
-        tx_hash: "pending",
+        tx_hash: txHash,
       });
 
       if (result.error) {
@@ -368,6 +455,7 @@ export const mintEditionCommand = new Command("mint-edition")
         `${chalk.gray("Numbers:")}   ${result.edition_numbers.join(", ")}`,
       );
       console.log(`${chalk.gray("Remaining:")} ${result.remaining}`);
+      console.log(`${chalk.gray("Tx:")}        ${txHash}`);
       console.log();
     } catch (error) {
       spinner.fail(chalk.red("Failed to mint"));

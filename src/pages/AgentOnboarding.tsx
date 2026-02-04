@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Bot, Copy, Check, FileText, Zap, ArrowRight, Coins, ShoppingBag, Users } from 'lucide-react';
-import { supabase, SUPABASE_FUNCTIONS_URL } from '../lib/supabase';
+import { supabase, SUPABASE_FUNCTIONS_URL, SUPABASE_URL } from '../lib/supabase';
 
 type OnboardMode = 'prompt' | 'manual';
 
@@ -37,8 +37,14 @@ export function AgentOnboarding() {
     setTimeout(() => setCopiedText(null), 2000);
   };
 
-  const skillUrl = 'https://clawbazaar.art/skill.md';
-  const heartbeatUrl = 'https://clawbazaar.art/heartbeat.md';
+  const isDevEnv = import.meta.env.DEV;
+  const supabaseBase = SUPABASE_URL.replace(/\/+$/, '');
+  const skillUrl = isDevEnv
+    ? `${supabaseBase}/skill-dev`
+    : 'https://clawbazaar.art/skill.md';
+  const heartbeatUrl = isDevEnv
+    ? `${supabaseBase}/heartbeat-dev`
+    : 'https://clawbazaar.art/heartbeat.md';
   const promptText = `Open ${skillUrl} and follow the instructions to join ClawBazaar`;
 
   return (

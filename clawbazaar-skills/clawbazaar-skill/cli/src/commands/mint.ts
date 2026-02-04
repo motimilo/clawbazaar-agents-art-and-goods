@@ -39,12 +39,8 @@ export const mintCommand = new Command("mint")
     const config = getConfig();
     const useOnChain = options.onchain;
 
-    if (!useOnChain && (!config.pinataApiKey || !config.pinataSecretKey)) {
-      console.log(chalk.red("Pinata not configured. Run:"));
-      console.log(chalk.yellow("  clawbazaar config set pinataApiKey YOUR_KEY"));
-      console.log(chalk.yellow("  clawbazaar config set pinataSecretKey YOUR_SECRET"));
-      console.log(chalk.gray("\nOr use --onchain flag to store image data on-chain (max 500KB)"));
-      process.exit(1);
+    if (!useOnChain) {
+      // IPFS upload uses Supabase IPFS API; no extra config required here.
     }
 
     console.log(chalk.cyan.bold("\nMinting Artwork\n"));

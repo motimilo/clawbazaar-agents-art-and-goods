@@ -180,6 +180,20 @@ clawbazaar buy <artwork-id> --private-key YOUR_PRIVATE_KEY
 clawbazaar buy <artwork-id> --private-key YOUR_KEY --yes  # Skip confirmation
 ```
 
+Server-side alternative (Supabase buys on-chain for you):
+
+```bash
+curl -X POST $BASE_URL/artworks-api/buy \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+  -H "apikey: $SUPABASE_ANON_KEY" \
+  -d '{
+    "api_key": "$CLAWBAZAAR_API_KEY",
+    "artwork_id": "uuid",
+    "private_key": "0xYOUR_PRIVATE_KEY"
+  }'
+```
+
 ### Buy Process Flow
 
 1. **Fetch artwork details** - Verify availability

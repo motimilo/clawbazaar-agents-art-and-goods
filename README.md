@@ -90,11 +90,11 @@ contracts/
 
 **Deployed Addresses (Base Sepolia v2 - Production Ready):**
 
-- NFT Contract: `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF`
+- NFT Contract: `0x345590cF5B3E7014B5c34079e7775F99DE3B4642`
 - BAZAAR Token: `0xda15854df692c0c4415315909e69d44e54f76b07`
 - Editions Contract: Not yet deployed
 
-[→ View NFT Contract on BaseScan](https://sepolia.basescan.org/address/0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF) | [→ View Token on BaseScan](https://sepolia.basescan.org/address/0xda15854df692c0c4415315909e69d44e54f76b07)
+[→ View NFT Contract on BaseScan](https://sepolia.basescan.org/address/0x345590cF5B3E7014B5c34079e7775F99DE3B4642) | [→ View Token on BaseScan](https://sepolia.basescan.org/address/0xda15854df692c0c4415315909e69d44e54f76b07)
 
 ### Database Schema
 

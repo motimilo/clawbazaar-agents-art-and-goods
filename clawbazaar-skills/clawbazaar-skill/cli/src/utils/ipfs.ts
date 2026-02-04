@@ -1,13 +1,7 @@
 import { createReadStream, statSync, readFileSync } from "fs";
 import { basename, extname } from "path";
 import FormData from "form-data";
-import { getConfig } from "./config.js";
-
-interface PinataResponse {
-  IpfsHash: string;
-  PinSize: number;
-  Timestamp: string;
-}
+import { getApiKey, getConfig, getSupabaseAnonKey } from "./config.js";
 
 const MIME_TYPES: Record<string, string> = {
   ".png": "image/png",
@@ -20,9 +14,9 @@ const MIME_TYPES: Record<string, string> = {
 
 export async function uploadFileToIpfs(filePath: string): Promise<string> {
   const config = getConfig();
-
-  if (!config.pinataApiKey || !config.pinataSecretKey) {
-    throw new Error("Pinata API keys not configured. Run: clawbazaar config set pinataApiKey YOUR_KEY");
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error("Missing API key. Run: clawbazaar login <api-key>");
   }
 
   const stats = statSync(filePath);
@@ -30,58 +24,67 @@ export async function uploadFileToIpfs(filePath: string): Promise<string> {
     throw new Error("File too large. Maximum size is 100MB");
   }
 
+  const baseUrl = config.apiUrl.replace(/\/$/, "");
+  const supabaseAnonKey = getSupabaseAnonKey();
+
   const formData = new FormData();
+  formData.append("api_key", apiKey);
   formData.append("file", createReadStream(filePath), {
     filename: basename(filePath),
   });
 
-  const response = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+  const response = await fetch(`${baseUrl}/ipfs-upload/upload-image`, {
     method: "POST",
     headers: {
-      pinata_api_key: config.pinataApiKey,
-      pinata_secret_api_key: config.pinataSecretKey,
+      ...formData.getHeaders(),
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: supabaseAnonKey,
     },
     body: formData as any,
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to upload to IPFS: ${error}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to upload to IPFS: ${errorText}`);
   }
 
-  const data = (await response.json()) as PinataResponse;
-  return `ipfs://${data.IpfsHash}`;
+  const data = (await response.json()) as { ipfs_uri?: string; error?: string };
+  if (!data.ipfs_uri) {
+    throw new Error(data.error || "Upload failed");
+  }
+  return data.ipfs_uri;
 }
 
 export async function uploadJsonToIpfs(json: Record<string, unknown>): Promise<string> {
   const config = getConfig();
-
-  if (!config.pinataApiKey || !config.pinataSecretKey) {
-    throw new Error("Pinata API keys not configured. Run: clawbazaar config set pinataApiKey YOUR_KEY");
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error("Missing API key. Run: clawbazaar login <api-key>");
   }
 
-  const response = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+  const baseUrl = config.apiUrl.replace(/\/$/, "");
+  const supabaseAnonKey = getSupabaseAnonKey();
+
+  const response = await fetch(`${baseUrl}/ipfs-upload/upload-metadata`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      pinata_api_key: config.pinataApiKey,
-      pinata_secret_api_key: config.pinataSecretKey,
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: supabaseAnonKey,
     },
-    body: JSON.stringify({
-      pinataContent: json,
-      pinataMetadata: {
-        name: `clawbazaar-metadata-${Date.now()}`,
-      },
-    }),
+    body: JSON.stringify({ api_key: apiKey, metadata: json }),
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to upload metadata to IPFS: ${error}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to upload metadata to IPFS: ${errorText}`);
   }
 
-  const data = (await response.json()) as PinataResponse;
-  return `ipfs://${data.IpfsHash}`;
+  const data = (await response.json()) as { ipfs_uri?: string; error?: string };
+  if (!data.ipfs_uri) {
+    throw new Error(data.error || "Upload failed");
+  }
+  return data.ipfs_uri;
 }
 
 export function ipfsToHttp(ipfsUri: string): string {

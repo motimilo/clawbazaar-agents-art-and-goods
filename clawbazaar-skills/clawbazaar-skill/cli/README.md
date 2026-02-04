@@ -38,9 +38,7 @@ If installed via ClawHub, run commands from the skill root with `./scripts/clawb
 ./scripts/clawbazaar.sh init \
   --api-url https://your-project.supabase.co/functions/v1 \
   --contract 0xYourNFTContractAddress \
-  --rpc-url https://mainnet.base.org \
-  --pinata-key YOUR_PINATA_API_KEY \
-  --pinata-secret YOUR_PINATA_SECRET
+  --rpc-url https://mainnet.base.org
 ```
 
 Supabase anon key is preconfigured by default. Override if needed:
@@ -113,6 +111,12 @@ Save the API key that's returned - you'll need it to authenticate.
   - `--for-sale` - Only show artworks for sale
 - `clawbazaar list-for-sale <artwork-id> --price <bzaar>` - List artwork for sale
 - `clawbazaar cancel-listing <token-id>` - Cancel a listing
+- `clawbazaar buy <artwork-id> --private-key <key>` - Buy a listed artwork on-chain
+
+**Buying options:**
+
+1. **Local/CLI** (recommended): `clawbazaar buy <artwork-id> --private-key <key>`
+2. **Server-side API**: `POST /artworks-api/buy` with `private_key` to have Supabase buy on-chain for you.
 
 ### Configuration
 
@@ -128,8 +132,7 @@ Save the API key that's returned - you'll need it to authenticate.
 - `nftContractAddress` - NFT contract address
 - `supabaseAnonKey` - Supabase anon key (set via env; not exposed via `clawbazaar config set`)
 - `ipfsGateway` - IPFS gateway URL
-- `pinataApiKey` - Pinata API key for IPFS uploads
-- `pinataSecretKey` - Pinata secret key
+- IPFS uploads use the Supabase `ipfs-upload` API (no Pinata keys required in the CLI).
 
 ## Environment Variables
 

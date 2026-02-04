@@ -1,17 +1,23 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getSupabaseServiceRoleKey, getSupabaseUrl } from "../_shared/env.ts";
 import {
-  getSupabaseServiceRoleKey,
-  getSupabaseUrl,
-} from "../_shared/env.ts";
+  createPublicClient,
+  createWalletClient,
+  http,
+  parseAbi,
+  parseUnits,
+  type Address,
+} from "npm:viem@2.21.0";
+import { privateKeyToAccount } from "npm:viem@2.21.0/accounts";
+import { base, baseSepolia } from "npm:viem@2.21.0/chains";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Client-Info, Apikey",
 };
-
-const ALLOWED_NFT_CONTRACT = "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF".toLowerCase();
 
 interface PrepareRequest {
   api_key: string;
@@ -27,8 +33,8 @@ interface ConfirmMintRequest {
   api_key: string;
   artwork_id: string;
   token_id: number;
-  tx_hash: string;
-  contract_address: string;
+  tx_hash?: string;
+  contract_address?: string;
   ipfs_metadata_uri: string;
 }
 
@@ -36,13 +42,67 @@ interface ListForSaleRequest {
   api_key: string;
   artwork_id: string;
   price_bzaar: number;
+  tx_hash?: string;
 }
 
 interface BuyRequest {
   api_key: string;
   artwork_id: string;
-  tx_hash: string;
+  tx_hash?: string;
+  private_key?: string;
+  contract_address?: string;
 }
+
+const isLocalSupabase = (() => {
+  const supabaseUrl = getSupabaseUrl();
+  return supabaseUrl.includes("localhost") || supabaseUrl.includes("127.0.0.1");
+})();
+
+const chainEnv = (Deno.env.get("CHAIN") || "").toLowerCase();
+const CHAIN =
+  chainEnv === "base-sepolia"
+    ? baseSepolia
+    : chainEnv === "base"
+    ? base
+    : isLocalSupabase
+    ? baseSepolia
+    : base;
+
+const DEFAULT_NFT_ADDRESS_MAINNET =
+  "0x345590cF5B3E7014B5c34079e7775F99DE3B4642";
+const DEFAULT_NFT_ADDRESS_SEPOLIA =
+  "0x1860aD731cc597cE451e26b42ED2A42F56ab8a24";
+const NFT_CONTRACT_ADDRESS =
+  Deno.env.get("NFT_CONTRACT_ADDRESS") ||
+  (CHAIN.id === base.id
+    ? DEFAULT_NFT_ADDRESS_MAINNET
+    : DEFAULT_NFT_ADDRESS_SEPOLIA);
+
+const DEFAULT_TOKEN_ADDRESS_MAINNET =
+  "0xda15854df692c0c4415315909e69d44e54f76b07";
+const DEFAULT_TOKEN_ADDRESS_SEPOLIA =
+  "0x073c46Fec3516532EBD59a163E4FE7a04f2f1D4A";
+const BAZAAR_TOKEN_ADDRESS =
+  Deno.env.get("BAZAAR_TOKEN_ADDRESS") ||
+  (CHAIN.id === base.id
+    ? DEFAULT_TOKEN_ADDRESS_MAINNET
+    : DEFAULT_TOKEN_ADDRESS_SEPOLIA);
+
+const RPC_URL =
+  Deno.env.get("RPC_URL") ||
+  (CHAIN.id === base.id
+    ? "https://mainnet.base.org"
+    : "https://sepolia.base.org");
+
+const NFT_ABI = parseAbi([
+  "function buyArtwork(uint256 tokenId) external",
+  "function getListing(uint256 tokenId) external view returns (address seller, uint256 price, bool active)",
+]);
+
+const ERC20_ABI = parseAbi([
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function approve(address spender, uint256 amount) external returns (bool)",
+]);
 
 interface MarketplaceListingResponse {
   id: string;
@@ -66,10 +126,13 @@ async function hashKey(key: string): Promise<string> {
   const data = encoder.encode(key);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function verifyApiKey(supabase: any, apiKey: string): Promise<{ valid: boolean; agentId?: string; error?: string }> {
+async function verifyApiKey(
+  supabase: any,
+  apiKey: string,
+): Promise<{ valid: boolean; agentId?: string; error?: string }> {
   const keyHash = await hashKey(apiKey);
 
   const { data: apiKeyRecord } = await supabase
@@ -110,17 +173,22 @@ Deno.serve(async (req: Request) => {
 
       if (!body.api_key || !body.title || !body.image_url) {
         return new Response(
-          JSON.stringify({ error: "Missing required fields: api_key, title, image_url" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Missing required fields: api_key, title, image_url",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {
-        return new Response(
-          JSON.stringify({ error: auth.error }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: auth.error }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: agent } = await supabase
@@ -132,7 +200,10 @@ Deno.serve(async (req: Request) => {
       if (!agent.wallet_address) {
         return new Response(
           JSON.stringify({ error: "Agent wallet address not set" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -165,8 +236,14 @@ Deno.serve(async (req: Request) => {
 
       if (insertError) {
         return new Response(
-          JSON.stringify({ error: "Failed to create artwork", details: insertError.message }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Failed to create artwork",
+            details: insertError.message,
+          }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -178,7 +255,9 @@ Deno.serve(async (req: Request) => {
           { trait_type: "Creator", value: agent.name },
           { trait_type: "Creator Handle", value: agent.handle },
           ...(body.style ? [{ trait_type: "Style", value: body.style }] : []),
-          ...(body.category_slug ? [{ trait_type: "Category", value: body.category_slug }] : []),
+          ...(body.category_slug
+            ? [{ trait_type: "Category", value: body.category_slug }]
+            : []),
         ],
         external_url: `https://clawbazaar.art/artwork/${artwork.id}`,
       };
@@ -189,28 +268,40 @@ Deno.serve(async (req: Request) => {
           artwork_id: artwork.id,
           creator_wallet: agent.wallet_address,
           metadata,
-          message: "Upload metadata to IPFS, then mint on-chain, then call /confirm with tx details",
+          message:
+            "Upload metadata to IPFS, then mint on-chain, then call /confirm with tx details",
         }),
-        { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 201,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
     if (path === "confirm" && req.method === "POST") {
       const body: ConfirmMintRequest = await req.json();
 
-      if (!body.api_key || !body.artwork_id || body.token_id === undefined || !body.tx_hash || !body.contract_address || !body.ipfs_metadata_uri) {
+      if (
+        !body.api_key ||
+        !body.artwork_id ||
+        body.token_id === undefined ||
+        !body.ipfs_metadata_uri
+      ) {
         return new Response(
           JSON.stringify({ error: "Missing required fields" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {
-        return new Response(
-          JSON.stringify({ error: auth.error }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: auth.error }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: artwork } = await supabase
@@ -220,57 +311,39 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
 
       if (!artwork) {
-        return new Response(
-          JSON.stringify({ error: "Artwork not found" }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Artwork not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       if (artwork.agent_id !== auth.agentId) {
         return new Response(
           JSON.stringify({ error: "Not authorized to update this artwork" }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       if (artwork.nft_status === "minted") {
         return new Response(
           JSON.stringify({ error: "Artwork already minted" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
-      if (body.contract_address.toLowerCase() !== ALLOWED_NFT_CONTRACT) {
-        return new Response(
-          JSON.stringify({ error: "Invalid contract address. Must use the official ClawBazaar NFT contract." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      const { data: existingClaim } = await supabase
-        .from("artworks")
-        .select("id, title")
-        .eq("contract_address", body.contract_address)
-        .eq("token_id", body.token_id)
-        .neq("id", body.artwork_id)
-        .maybeSingle();
-
-      if (existingClaim) {
-        return new Response(
-          JSON.stringify({
-            error: `Token ID ${body.token_id} is already claimed by artwork "${existingClaim.title}"`,
-            existing_artwork_id: existingClaim.id
-          }),
-          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
+      const contractAddress = body.contract_address || NFT_CONTRACT_ADDRESS;
       const { error: updateError } = await supabase
         .from("artworks")
         .update({
           token_id: body.token_id,
-          contract_address: body.contract_address,
-          mint_tx_hash: body.tx_hash,
+          contract_address: contractAddress,
+          mint_tx_hash: body.tx_hash || null,
           ipfs_metadata_uri: body.ipfs_metadata_uri,
           nft_status: "minted",
         })
@@ -278,12 +351,20 @@ Deno.serve(async (req: Request) => {
 
       if (updateError) {
         return new Response(
-          JSON.stringify({ error: "Failed to update artwork", details: updateError.message }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Failed to update artwork",
+            details: updateError.message,
+          }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
-      await supabase.rpc("increment_artwork_count", { agent_uuid: auth.agentId });
+      await supabase.rpc("increment_artwork_count", {
+        agent_uuid: auth.agentId,
+      });
 
       return new Response(
         JSON.stringify({
@@ -292,7 +373,10 @@ Deno.serve(async (req: Request) => {
           token_id: body.token_id,
           message: "Artwork minted successfully",
         }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
@@ -301,58 +385,82 @@ Deno.serve(async (req: Request) => {
 
       if (!body.api_key || !body.artwork_id || !body.price_bzaar) {
         return new Response(
-          JSON.stringify({ error: "Missing required fields: api_key, artwork_id, price_bzaar" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Missing required fields: api_key, artwork_id, price_bzaar",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {
-        return new Response(
-          JSON.stringify({ error: auth.error }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: auth.error }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: artwork } = await supabase
         .from("artworks")
-        .select("id, agent_id, nft_status, token_id, current_owner_id, current_owner_type")
+        .select(
+          "id, agent_id, nft_status, token_id, current_owner_id, current_owner_type",
+        )
         .eq("id", body.artwork_id)
         .maybeSingle();
 
       if (!artwork) {
-        return new Response(
-          JSON.stringify({ error: "Artwork not found" }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Artwork not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
-      if (artwork.current_owner_type !== "agent" || artwork.current_owner_id !== auth.agentId) {
+      if (
+        artwork.current_owner_type !== "agent" ||
+        artwork.current_owner_id !== auth.agentId
+      ) {
         return new Response(
           JSON.stringify({ error: "Not authorized to list this artwork" }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       if (artwork.nft_status !== "minted") {
         return new Response(
           JSON.stringify({ error: "Artwork must be minted before listing" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
+      }
+
+      const updateData: Record<string, unknown> = {
+        is_for_sale: true,
+        price_bzaar: body.price_bzaar,
+      };
+      if (body.tx_hash) {
+        updateData.listing_tx_hash = body.tx_hash;
       }
 
       const { error: updateError } = await supabase
         .from("artworks")
-        .update({
-          is_for_sale: true,
-          price_bzaar: body.price_bzaar,
-        })
+        .update(updateData)
         .eq("id", body.artwork_id);
 
       if (updateError) {
         return new Response(
           JSON.stringify({ error: "Failed to list artwork" }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -361,9 +469,13 @@ Deno.serve(async (req: Request) => {
           success: true,
           artwork_id: body.artwork_id,
           price_bzaar: body.price_bzaar,
-          message: "Artwork listed for sale. Remember to call listForSale on the smart contract too.",
+          message:
+            "Artwork listed for sale. Ensure the on-chain listing transaction is completed.",
         }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
@@ -371,30 +483,32 @@ Deno.serve(async (req: Request) => {
       const body = await req.json();
 
       if (!body.api_key) {
-        return new Response(
-          JSON.stringify({ error: "API key required" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "API key required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {
-        return new Response(
-          JSON.stringify({ error: auth.error }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: auth.error }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: artworks } = await supabase
         .from("artworks")
-        .select("id, title, image_url, nft_status, token_id, is_for_sale, price_bzaar, created_at")
+        .select(
+          "id, title, image_url, nft_status, token_id, is_for_sale, price_bzaar, created_at",
+        )
         .eq("agent_id", auth.agentId)
         .order("created_at", { ascending: false });
 
-      return new Response(
-        JSON.stringify({ artworks }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ artworks }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (path === "categories" && req.method === "GET") {
@@ -403,16 +517,17 @@ Deno.serve(async (req: Request) => {
         .select("id, name, slug, description")
         .order("name");
 
-      return new Response(
-        JSON.stringify({ categories }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ categories }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (path === "marketplace" && req.method === "GET") {
       const { data: listings } = await supabase
         .from("artworks")
-        .select(`
+        .select(
+          `
           id,
           title,
           description,
@@ -426,7 +541,8 @@ Deno.serve(async (req: Request) => {
             handle,
             wallet_address
           )
-        `)
+        `,
+        )
         .eq("is_for_sale", true)
         .eq("nft_status", "minted")
         .order("created_at", { ascending: false });
@@ -443,24 +559,25 @@ Deno.serve(async (req: Request) => {
         seller_agent: item.agents,
       }));
 
-      return new Response(
-        JSON.stringify({ listings: formattedListings }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ listings: formattedListings }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (path === "artwork" && req.method === "GET") {
       const artworkId = url.searchParams.get("id");
       if (!artworkId) {
-        return new Response(
-          JSON.stringify({ error: "Artwork ID required" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Artwork ID required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: artwork } = await supabase
         .from("artworks")
-        .select(`
+        .select(
+          `
           id,
           title,
           description,
@@ -476,15 +593,16 @@ Deno.serve(async (req: Request) => {
             handle,
             wallet_address
           )
-        `)
+        `,
+        )
         .eq("id", artworkId)
         .maybeSingle();
 
       if (!artwork) {
-        return new Response(
-          JSON.stringify({ error: "Artwork not found" }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Artwork not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       return new Response(
@@ -494,31 +612,40 @@ Deno.serve(async (req: Request) => {
             seller_agent: artwork.agents,
           },
         }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
     if (path === "buy" && req.method === "POST") {
       const body: BuyRequest = await req.json();
 
-      if (!body.api_key || !body.artwork_id || !body.tx_hash) {
+      if (!body.api_key || !body.artwork_id) {
         return new Response(
-          JSON.stringify({ error: "Missing required fields: api_key, artwork_id, tx_hash" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Missing required fields: api_key, artwork_id",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {
-        return new Response(
-          JSON.stringify({ error: auth.error }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: auth.error }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       const { data: artwork } = await supabase
         .from("artworks")
-        .select(`
+        .select(
+          `
           id,
           agent_id,
           current_owner_id,
@@ -528,35 +655,48 @@ Deno.serve(async (req: Request) => {
           is_for_sale,
           price_bzaar,
           nft_status
-        `)
+        `,
+        )
         .eq("id", body.artwork_id)
         .maybeSingle();
 
       if (!artwork) {
-        return new Response(
-          JSON.stringify({ error: "Artwork not found" }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Artwork not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
       if (!artwork.is_for_sale) {
         return new Response(
           JSON.stringify({ error: "Artwork is not for sale" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
       if (artwork.nft_status !== "minted") {
         return new Response(
           JSON.stringify({ error: "Artwork is not minted" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
-      if (artwork.current_owner_type === "agent" && artwork.current_owner_id === auth.agentId) {
+      if (
+        artwork.current_owner_type === "agent" &&
+        artwork.current_owner_id === auth.agentId
+      ) {
         return new Response(
           JSON.stringify({ error: "Cannot buy your own artwork" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -566,6 +706,99 @@ Deno.serve(async (req: Request) => {
         .eq("artwork_id", body.artwork_id)
         .eq("status", "active")
         .maybeSingle();
+
+      let txHash = body.tx_hash;
+      if (body.private_key) {
+        const account = privateKeyToAccount(body.private_key as `0x${string}`);
+        const { data: agent } = await supabase
+          .from("agents")
+          .select("wallet_address")
+          .eq("id", auth.agentId)
+          .single();
+
+        if (!agent?.wallet_address) {
+          return new Response(
+            JSON.stringify({ error: "Agent wallet address not set" }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        if (
+          account.address.toLowerCase() !== agent.wallet_address.toLowerCase()
+        ) {
+          return new Response(
+            JSON.stringify({
+              error: "private_key does not match agent wallet_address",
+            }),
+            {
+              status: 403,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        if (artwork.token_id === null || artwork.token_id === undefined) {
+          return new Response(
+            JSON.stringify({ error: "Artwork missing token_id" }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        const contractAddress = (body.contract_address ||
+          NFT_CONTRACT_ADDRESS) as Address;
+        const walletClient = createWalletClient({
+          account,
+          chain: CHAIN,
+          transport: http(RPC_URL),
+        });
+        const publicClient = createPublicClient({
+          chain: CHAIN,
+          transport: http(RPC_URL),
+        });
+
+        const priceWei = parseUnits(artwork.price_bzaar.toString(), 18);
+        const allowance = await publicClient.readContract({
+          address: BAZAAR_TOKEN_ADDRESS as Address,
+          abi: ERC20_ABI,
+          functionName: "allowance",
+          args: [account.address, contractAddress],
+        });
+
+        if (allowance < priceWei) {
+          const approveHash = await walletClient.writeContract({
+            address: BAZAAR_TOKEN_ADDRESS as Address,
+            abi: ERC20_ABI,
+            functionName: "approve",
+            args: [contractAddress, priceWei],
+          });
+          await publicClient.waitForTransactionReceipt({ hash: approveHash });
+        }
+
+        txHash = await walletClient.writeContract({
+          address: contractAddress,
+          abi: NFT_ABI,
+          functionName: "buyArtwork",
+          args: [BigInt(artwork.token_id)],
+        });
+
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+      } else if (!txHash) {
+        return new Response(
+          JSON.stringify({
+            error: "tx_hash is required when private_key is not provided",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
 
       const { error: updateError } = await supabase
         .from("artworks")
@@ -579,7 +812,10 @@ Deno.serve(async (req: Request) => {
       if (updateError) {
         return new Response(
           JSON.stringify({ error: "Failed to update artwork ownership" }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
@@ -589,26 +825,22 @@ Deno.serve(async (req: Request) => {
           .update({ status: "sold", sold_at: new Date().toISOString() })
           .eq("id", listing.id);
 
-        await supabase
-          .from("marketplace_transactions")
-          .insert({
-            listing_id: listing.id,
-            buyer_type: "agent",
-            buyer_agent_id: auth.agentId,
-            price_paid: artwork.price_bzaar,
-            tx_hash: body.tx_hash,
-          });
+        await supabase.from("marketplace_transactions").insert({
+          listing_id: listing.id,
+          buyer_type: "agent",
+          buyer_agent_id: auth.agentId,
+          price_paid: artwork.price_bzaar,
+          tx_hash: txHash,
+        });
       }
 
-      await supabase
-        .from("nft_transfers")
-        .insert({
-          artwork_id: body.artwork_id,
-          token_id: artwork.token_id,
-          from_address: artwork.current_owner_id,
-          to_address: auth.agentId,
-          tx_hash: body.tx_hash,
-        });
+      await supabase.from("nft_transfers").insert({
+        artwork_id: body.artwork_id,
+        token_id: artwork.token_id,
+        from_address: artwork.current_owner_id,
+        to_address: auth.agentId,
+        tx_hash: txHash,
+      });
 
       return new Response(
         JSON.stringify({
@@ -616,21 +848,45 @@ Deno.serve(async (req: Request) => {
           artwork_id: body.artwork_id,
           token_id: artwork.token_id,
           price_paid: artwork.price_bzaar,
+          tx_hash: txHash,
           message: "Purchase confirmed successfully",
         }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
     return new Response(
-      JSON.stringify({ error: "Not found", endpoints: ["prepare", "confirm", "list", "my-artworks", "categories", "marketplace", "artwork", "buy"] }),
-      { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: "Not found",
+        endpoints: [
+          "prepare",
+          "confirm",
+          "list",
+          "my-artworks",
+          "categories",
+          "marketplace",
+          "artwork",
+          "buy",
+        ],
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
-
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: "Internal server error",
+        details: error.message,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });

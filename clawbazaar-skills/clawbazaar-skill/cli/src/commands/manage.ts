@@ -14,6 +14,7 @@ import {
   getChain,
 } from "../utils/blockchain.js";
 import { parseEther } from "viem";
+import { getSupabaseAnonKey } from "../utils/config.js";
 
 export const listCommand = new Command("list")
   .description("List your artworks")
@@ -113,12 +114,53 @@ export const listForSaleCommand = new Command("list-for-sale")
 
     console.log(chalk.cyan.bold("\nListing Artwork for Sale\n"));
 
-    let spinner = ora("Updating database listing...").start();
+    let spinner = ora("Loading artwork details...").start();
 
     try {
+      const config = getConfig();
+      const supabaseAnonKey = getSupabaseAnonKey();
+      const detailUrl = `${config.supabaseUrl}/functions/v1/artworks-api/artwork?id=${artworkId}`;
+      const detailRes = await fetch(detailUrl, {
+        headers: {
+          Authorization: `Bearer ${supabaseAnonKey}`,
+          apikey: supabaseAnonKey,
+        },
+      });
+      const detail = await detailRes.json();
+
+      if (!detail || detail.error || !detail.artwork) {
+        spinner.fail(
+          chalk.red(`Failed to load artwork: ${detail.error || "not found"}`),
+        );
+        process.exit(1);
+      }
+
+      const tokenId = detail.artwork.token_id;
+      if (tokenId === null || tokenId === undefined) {
+        spinner.fail(chalk.red("Artwork is not minted yet (missing token ID)."));
+        process.exit(1);
+      }
+
+      spinner.succeed(`Token ID: ${tokenId}`);
+
+      spinner = ora("Listing on-chain...").start();
+      const priceWei = parseEther(price.toString());
+      const txHash = await listNftForSale(
+        privateKey,
+        Number(tokenId),
+        priceWei,
+      );
+      const chain = getChain();
+      const explorerUrl =
+        chain.blockExplorers?.default.url || "https://basescan.org";
+      spinner.succeed("On-chain listing created");
+      console.log(chalk.gray(`  Transaction: ${explorerUrl}/tx/${txHash}`));
+
+      spinner = ora("Updating database listing...").start();
       const result = await apiListForSale({
         artwork_id: artworkId,
         price_bzaar: price,
+        tx_hash: txHash,
       });
 
       if (!result.success) {
@@ -138,14 +180,6 @@ export const listForSaleCommand = new Command("list-for-sale")
     console.log(chalk.gray(`  Artwork: ${artworkId}`));
     console.log(chalk.gray(`  Price:   ${price} BZAAR`));
     console.log();
-    console.log(
-      chalk.yellow(
-        "Note: You also need to approve and list on the smart contract.",
-      ),
-    );
-    console.log(
-      chalk.gray("This ensures the NFT can be transferred when sold."),
-    );
   });
 
 export const cancelListingCommand = new Command("cancel-listing")
@@ -194,9 +228,11 @@ configCommand
       "apiUrl",
       "rpcUrl",
       "nftContractAddress",
+      "bzaarTokenAddress",
+      "editionsContractAddress",
+      "supabaseUrl",
+      "supabaseAnonKey",
       "ipfsGateway",
-      "pinataApiKey",
-      "pinataSecretKey",
     ];
 
     if (!validKeys.includes(key)) {
@@ -234,13 +270,13 @@ configCommand
       console.log(`${chalk.gray("API URL:")}     ${config.apiUrl}`);
       console.log(`${chalk.gray("RPC URL:")}     ${config.rpcUrl}`);
       console.log(`${chalk.gray("Contract:")}    ${config.nftContractAddress}`);
+      console.log(`${chalk.gray("BAZAAR Token:")} ${config.bzaarTokenAddress}`);
+      console.log(
+        `${chalk.gray("Editions:")}    ${config.editionsContractAddress || "Not set"}`,
+      );
+      console.log(`${chalk.gray("Supabase:")}    ${config.supabaseUrl}`);
       console.log(`${chalk.gray("IPFS Gateway:")} ${config.ipfsGateway}`);
-      console.log(
-        `${chalk.gray("Pinata Key:")}  ${config.pinataApiKey ? chalk.green("Set") : chalk.yellow("Not set")}`,
-      );
-      console.log(
-        `${chalk.gray("Pinata Secret:")} ${config.pinataSecretKey ? chalk.green("Set") : chalk.yellow("Not set")}`,
-      );
+      console.log(`${chalk.gray("IPFS Upload:")} ${chalk.green("Supabase")}`);
     }
   });
 

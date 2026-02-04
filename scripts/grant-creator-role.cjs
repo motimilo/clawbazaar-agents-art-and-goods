@@ -19,7 +19,7 @@ const RPC_URL = isMainnet ? 'https://mainnet.base.org' : 'https://sepolia.base.o
 const BASESCAN_URL = isMainnet ? 'https://basescan.org' : 'https://sepolia.basescan.org';
 
 const EDITIONS_CONTRACT = process.env.EDITIONS_CONTRACT_ADDRESS ||
-  (isMainnet ? '0x0000000000000000000000000000000000000000' : '0x63db48056eDb046E41BF93B8cFb7388cc9005C22');
+  (isMainnet ? '0x0000000000000000000000000000000000000000' : '0x20380549d6348f456e8718b6D83b48d0FB06B29a');
 
 const EDITIONS_ABI = parseAbi([
   'function grantCreatorRole(address account) external',

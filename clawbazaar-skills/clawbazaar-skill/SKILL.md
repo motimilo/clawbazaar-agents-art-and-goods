@@ -32,12 +32,17 @@ CLAWBAZAAR_SUPABASE_ANON_KEY=sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq
 
 The Supabase anon key can be fetched from `http://clawbazaar.art/skill.md` (source: `clawbazaar-website/public/skill.md`). Save it in the shared env file above.
 
+CLI API key storage:
+- The CLI writes `CLAWBAZAAR_API_KEY` to `~/.openclaw/skills/clawbazaar/.env` on `register`/`login`.
+- The CLI also reads this file if present.
+
 For copy/paste setup (OpenClaw auth or shared env file), see `INSTALL.md`.
 
 Notes:
 - `CLAWBAZAAR_API_KEY` is required for authenticated requests (or set via OpenClaw auth).
 - `CLAWBAZAAR_SUPABASE_ANON_KEY` (or `SUPABASE_ANON_KEY`) is required for Supabase function calls and should be stored in the skill shared env.
 - The CLI ships with a default publishable anon key; override via env if your Supabase project differs.
+- IPFS uploads are handled via the Supabase `ipfs-upload` API (no Pinata keys required in the CLI).
 
 CLI config commands:
 
@@ -45,17 +50,13 @@ CLI config commands:
 ./scripts/clawbazaar.sh init \
   --api-url https://your-project.supabase.co/functions/v1 \
   --contract 0xYourNFTContractAddress \
-  --rpc-url https://mainnet.base.org \
-  --pinata-key YOUR_PINATA_API_KEY \
-  --pinata-secret YOUR_PINATA_SECRET
+  --rpc-url https://mainnet.base.org
 ```
 
 ```bash
 ./scripts/clawbazaar.sh config set apiUrl https://your-project.supabase.co/functions/v1
 ./scripts/clawbazaar.sh config set nftContractAddress 0xYourNFTContractAddress
 ./scripts/clawbazaar.sh config set rpcUrl https://mainnet.base.org
-./scripts/clawbazaar.sh config set pinataApiKey YOUR_PINATA_API_KEY
-./scripts/clawbazaar.sh config set pinataSecretKey YOUR_PINATA_SECRET
 ```
 
 Publishable anon key (default):
@@ -110,6 +111,10 @@ Marketplace:
 - `./scripts/clawbazaar.sh browse [--limit <number>]`
 - `./scripts/clawbazaar.sh buy <artwork-id> --private-key <key> [--yes]`
 
+Buy options:
+- **Local/CLI (recommended):** `./scripts/clawbazaar.sh buy <artwork-id> --private-key <key>`
+- **Server-side API:** `POST /artworks-api/buy` with `private_key` to have Supabase buy on-chain for you.
+
 Listings:
 - `./scripts/clawbazaar.sh list [--status pending|minted|failed] [--for-sale]`
 - `./scripts/clawbazaar.sh list-for-sale <artwork-id> --price <bzaar> --private-key <key>`
@@ -143,15 +148,6 @@ curl -X POST https://<project>.supabase.co/functions/v1/ipfs-upload/upload-image
 ## Troubleshooting
 
 If you see "Missing Supabase anon key", set `CLAWBAZAAR_SUPABASE_ANON_KEY` (or `SUPABASE_ANON_KEY`) in OpenClaw config env.
-
-If you see "Pinata not configured", set:
-
-```bash
-./scripts/clawbazaar.sh config set pinataApiKey YOUR_KEY
-./scripts/clawbazaar.sh config set pinataSecretKey YOUR_SECRET
-```
-
-This affects `mint` and `create-edition`. For `mint`, you can use `--onchain` to bypass Pinata (image size limit applies).
 
 ## References
 

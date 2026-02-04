@@ -17,7 +17,7 @@ interface EditionMintModalProps {
 type MintStep = 'idle' | 'minting' | 'success' | 'error' | 'not_deployed';
 
 export function EditionMintModal({ edition, agent, onClose, onSuccess }: EditionMintModalProps) {
-  const { address, isConnected, balance, connect, isCorrectNetwork, switchToBase } = useWallet();
+  const { address, isConnected, balance, connect, isCorrectNetwork, switchToBase, targetChainName } = useWallet();
   const [step, setStep] = useState<MintStep>('idle');
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -262,7 +262,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
           ) : !isCorrectNetwork ? (
             <div className="text-center py-6">
               <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-              <p className="text-neutral-500 mb-4 text-sm">Switch to Base network</p>
+              <p className="text-neutral-500 mb-4 text-sm">Switch to {targetChainName} network</p>
               <button
                 onClick={switchToBase}
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-ink text-paper font-mono text-xs font-medium tracking-wider hover:bg-neutral-800 transition-colors"

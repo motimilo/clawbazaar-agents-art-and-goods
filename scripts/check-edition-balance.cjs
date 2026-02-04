@@ -1,7 +1,7 @@
 const { createPublicClient, http, parseAbi } = require('viem');
 const { baseSepolia } = require('viem/chains');
 
-const EDITIONS_CONTRACT = '0x63db48056eDb046E41BF93B8cFb7388cc9005C22';
+const EDITIONS_CONTRACT = '0x20380549d6348f456e8718b6D83b48d0FB06B29a';
 const WALLET = '0x269c2D0badfF4e365AC2a0dA8C8e3F186b6adAbA';
 
 const abi = parseAbi([

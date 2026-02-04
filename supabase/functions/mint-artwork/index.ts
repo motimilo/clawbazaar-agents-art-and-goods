@@ -5,14 +5,12 @@ import {
   createWalletClient,
   http,
   parseAbi,
+  decodeEventLog,
   type Address,
 } from "npm:viem@2.21.0";
 import { privateKeyToAccount } from "npm:viem@2.21.0/accounts";
 import { base, baseSepolia } from "npm:viem@2.21.0/chains";
-import {
-  getSupabaseServiceRoleKey,
-  getSupabaseUrl,
-} from "../_shared/env.ts";
+import { getSupabaseServiceRoleKey, getSupabaseUrl } from "../_shared/env.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,18 +36,24 @@ const CHAIN =
 
 const RPC_URL =
   Deno.env.get("RPC_URL") ||
-  (CHAIN.id === base.id ? "https://mainnet.base.org" : "https://sepolia.base.org");
+  (CHAIN.id === base.id
+    ? "https://mainnet.base.org"
+    : "https://sepolia.base.org");
 const EXPLORER_BASE =
-  CHAIN.id === base.id ? "https://basescan.org" : "https://sepolia.basescan.org";
+  CHAIN.id === base.id
+    ? "https://basescan.org"
+    : "https://sepolia.basescan.org";
 
 // v2 contract (production-ready with OpenZeppelin best practices)
 const DEFAULT_NFT_ADDRESS_MAINNET =
-  "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as Address;
+  "0x345590cF5B3E7014B5c34079e7775F99DE3B4642" as Address;
 const DEFAULT_NFT_ADDRESS_SEPOLIA =
-  "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as Address;
+  "0x345590cF5B3E7014B5c34079e7775F99DE3B4642" as Address;
 
 const NFT_CONTRACT_ADDRESS = (Deno.env.get("NFT_CONTRACT_ADDRESS") ||
-  (CHAIN.id === base.id ? DEFAULT_NFT_ADDRESS_MAINNET : DEFAULT_NFT_ADDRESS_SEPOLIA)) as Address;
+  (CHAIN.id === base.id
+    ? DEFAULT_NFT_ADDRESS_MAINNET
+    : DEFAULT_NFT_ADDRESS_SEPOLIA)) as Address;
 // Legacy v1: 0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA
 
 const NFT_ABI = parseAbi([
@@ -67,6 +71,7 @@ interface MintRequest {
   category?: string;
   style?: string;
   generation_prompt?: string;
+  private_key?: string;
 }
 
 async function hashKey(key: string): Promise<string> {
@@ -184,24 +189,33 @@ async function mintOnChain(
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-  let tokenId = 0;
+  let tokenId: number | null = null;
   for (const log of receipt.logs) {
-    if (log.topics[1]) {
-      const potentialTokenId = parseInt(log.topics[1], 16);
-      if (potentialTokenId > 0) {
-        tokenId = potentialTokenId;
+    if (log.address.toLowerCase() !== NFT_CONTRACT_ADDRESS.toLowerCase()) {
+      continue;
+    }
+    try {
+      const decoded = decodeEventLog({
+        abi: NFT_ABI,
+        data: log.data,
+        topics: log.topics,
+      });
+      if (decoded.eventName === "ArtworkMinted") {
+        tokenId = Number(decoded.args.tokenId);
         break;
       }
+    } catch {
+      // ignore non-matching logs
     }
   }
 
-  if (tokenId === 0) {
+  if (tokenId === null) {
     const totalSupply = await publicClient.readContract({
       address: NFT_CONTRACT_ADDRESS,
       abi: NFT_ABI,
       functionName: "totalSupply",
     });
-    tokenId = Number(totalSupply) - 1;
+    tokenId = Math.max(Number(totalSupply) - 1, 0);
   }
 
   return { hash, tokenId };
@@ -254,11 +268,11 @@ Deno.serve(async (req: Request) => {
         });
       }
 
-      if (!agent.encrypted_private_key) {
+      if (!agent.encrypted_private_key && !body.private_key) {
         return new Response(
           JSON.stringify({
             error:
-              "Agent wallet not configured for server-side minting. Use the CLI instead.",
+              "Missing private_key for server-side minting. Provide private_key or configure agent wallet.",
           }),
           {
             status: 400,
@@ -310,11 +324,12 @@ Deno.serve(async (req: Request) => {
           title: body.title,
           description: body.description || null,
           image_url: originalImageUrl || imageDataUri.substring(0, 200) + "...",
-          thumbnail_url: originalImageUrl || null,
           agent_id: agent.id,
-          mint_status: "minting",
-          is_minted: false,
+          nft_status: "pending",
+          style: body.style || null,
           generation_prompt: body.generation_prompt || null,
+          current_owner_type: "agent",
+          current_owner_id: agent.id,
         })
         .select()
         .single();
@@ -334,16 +349,37 @@ Deno.serve(async (req: Request) => {
 
       let mintResult: { hash: string; tokenId: number };
       try {
-        const privateKey = decryptPrivateKey(
-          agent.encrypted_private_key,
-          getSupabaseServiceRoleKey(),
-        );
+        let privateKey: string;
+        if (body.private_key) {
+          const account = privateKeyToAccount(
+            body.private_key as `0x${string}`,
+          );
+          if (
+            account.address.toLowerCase() !== agent.wallet_address.toLowerCase()
+          ) {
+            return new Response(
+              JSON.stringify({
+                error: "private_key does not match agent wallet_address",
+              }),
+              {
+                status: 403,
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              },
+            );
+          }
+          privateKey = body.private_key;
+        } else {
+          privateKey = decryptPrivateKey(
+            agent.encrypted_private_key,
+            getSupabaseServiceRoleKey(),
+          );
+        }
 
         mintResult = await mintOnChain(privateKey, metadataUri);
       } catch (mintError) {
         await supabase
           .from("artworks")
-          .update({ mint_status: "failed" })
+          .update({ nft_status: "failed" })
           .eq("id", artwork.id);
 
         return new Response(
@@ -363,13 +399,11 @@ Deno.serve(async (req: Request) => {
       const { error: updateError } = await supabase
         .from("artworks")
         .update({
-          is_minted: true,
-          mint_status: "confirmed",
+          nft_status: "minted",
           token_id: mintResult.tokenId,
-          tx_hash: mintResult.hash,
+          mint_tx_hash: mintResult.hash,
           contract_address: NFT_CONTRACT_ADDRESS,
           ipfs_metadata_uri: metadataUri,
-          minted_at: new Date().toISOString(),
         })
         .eq("id", artwork.id);
 
@@ -424,9 +458,7 @@ Deno.serve(async (req: Request) => {
 
       const { data: artwork } = await supabase
         .from("artworks")
-        .select(
-          "id, title, mint_status, is_minted, token_id, tx_hash, minted_at",
-        )
+        .select("id, title, nft_status, token_id, mint_tx_hash, created_at")
         .eq("id", body.artwork_id)
         .eq("agent_id", agent.id)
         .maybeSingle();

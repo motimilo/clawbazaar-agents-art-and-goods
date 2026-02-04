@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, ReactNode } from 'react';
 import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { base } from 'wagmi/chains';
+import { base, baseSepolia } from 'wagmi/chains';
 import { supabase } from '../lib/supabase';
 import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
 import { formatUnits } from 'viem';
@@ -13,6 +13,8 @@ interface WalletContextType {
   balance: number;
   chainId: number | undefined;
   isCorrectNetwork: boolean;
+  targetChainId: number;
+  targetChainName: string;
   connect: () => void;
   disconnect: () => void;
   switchToBase: () => Promise<void>;
@@ -37,7 +39,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       : undefined,
   });
 
-  const isCorrectNetwork = chainId === base.id;
+  const targetChainId = SUPPORTED_CHAIN_ID;
+  const targetChainName = targetChainId === baseSepolia.id ? 'Base Sepolia' : 'Base';
+  const isCorrectNetwork = chainId === targetChainId;
 
   useEffect(() => {
     if (address && isConnected) {
@@ -71,7 +75,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   async function switchToBase() {
     if (switchChain) {
-      switchChain({ chainId: base.id });
+      switchChain({ chainId: targetChainId });
     }
   }
 
@@ -92,6 +96,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         balance,
         chainId,
         isCorrectNetwork,
+        targetChainId,
+        targetChainName,
         connect,
         disconnect,
         switchToBase,

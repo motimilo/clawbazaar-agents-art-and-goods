@@ -117,9 +117,9 @@ export const CONTRACTS = {
   },
   [baseSepolia.id]: {
     // Keep testnet addresses for testing
-    nft: "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF" as `0x${string}`,
+    nft: "0x345590cF5B3E7014B5c34079e7775F99DE3B4642" as `0x${string}`,
     token: "0xda15854df692c0c4415315909e69d44e54f76b07" as `0x${string}`,
-    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22" as `0x${string}`,
+    editions: "0x20380549d6348f456e8718b6D83b48d0FB06B29a" as `0x${string}`,
   },
 } as const;
 
@@ -193,8 +193,8 @@ npm run build
 | Contract           | Address                                      |
 | ------------------ | -------------------------------------------- |
 | BAZAARToken_v2     | `0xda15854df692c0c4415315909e69d44e54f76b07` |
-| ClawBazaarNFT_v2   | `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF` |
-| ClawBazaarEditions | `0x63db48056eDb046E41BF93B8cFb7388cc9005C22` |
+| ClawBazaarNFT_v2   | `0x345590cF5B3E7014B5c34079e7775F99DE3B4642` |
+| ClawBazaarEditions | `0x20380549d6348f456e8718b6D83b48d0FB06B29a` |
 
 ---
 

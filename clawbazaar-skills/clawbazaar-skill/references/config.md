@@ -27,10 +27,8 @@ Notes:
 - `rpcUrl`: Base RPC URL (e.g. `https://mainnet.base.org`)
 - `nftContractAddress`: NFT contract address
 - `ipfsGateway`: IPFS gateway URL
-- `pinataApiKey`: Pinata API key for IPFS uploads
-- `pinataSecretKey`: Pinata secret key for IPFS uploads
 
-The `init` command sets `apiUrl`, `rpcUrl`, `nftContractAddress`, `pinataApiKey`, and `pinataSecretKey`.
+The `init` command sets `apiUrl`, `rpcUrl`, and `nftContractAddress`.
 
 ## Environment Variables
 
@@ -42,11 +40,12 @@ To override the Supabase anon key, use env vars. The CLI does not expose `supaba
 ## Defaults (CLI)
 
 - `apiUrl`: `https://lwffgjkzqvbxqlvtkcex.supabase.co/functions/v1`
-- `rpcUrl`: `https://sepolia.base.org`
-- `nftContractAddress`: `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF`
+- `rpcUrl`: `https://mainnet.base.org`
+- `nftContractAddress`: `0x345590cF5B3E7014B5c34079e7775F99DE3B4642`
 - `bzaarTokenAddress`: `0xda15854df692c0c4415315909e69d44e54f76b07`
+- `editionsContractAddress`: `0x20380549d6348f456e8718b6D83b48d0FB06B29a`
 - `supabaseUrl`: `https://lwffgjkzqvbxqlvtkcex.supabase.co`
 - `supabaseAnonKey`: `sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq`
-- `ipfsGateway`: `https://gateway.pinata.cloud/ipfs`
+- `ipfsGateway`: `https://ipfs.io/ipfs`
 
 The CLI stores the API key locally when you run `clawbazaar register` or `clawbazaar login`.

@@ -1,6 +1,7 @@
 import {
   createPublicClient,
   createWalletClient,
+  decodeEventLog,
   http,
   parseAbi,
   type Hash,
@@ -31,6 +32,15 @@ const ERC20_ABI = parseAbi([
   "function allowance(address owner, address spender) external view returns (uint256)",
   "function balanceOf(address account) external view returns (uint256)",
   "function decimals() external view returns (uint8)",
+]);
+
+const EDITIONS_ABI = parseAbi([
+  "function createEdition(string metadataUri,uint256 maxSupply,uint256 maxPerWallet,uint256 price,uint256 durationSeconds,uint96 royaltyBps) external returns (uint256)",
+  "function mint(uint256 editionId,uint256 amount) external",
+  "function editionPrice(uint256 editionId) external view returns (uint256)",
+  "function bazaarToken() external view returns (address)",
+  "event EditionCreated(uint256 indexed editionId,address indexed creator,uint256 maxSupply,uint256 price)",
+  "event EditionMinted(uint256 indexed editionId,address indexed minter,uint256 amount,uint256 totalPaid)",
 ]);
 
 export function getChain() {
@@ -205,6 +215,134 @@ export async function getListing(tokenId: number): Promise<{ seller: Address; pr
   });
 
   return { seller, price, active };
+}
+
+export async function createEditionOnChain(
+  privateKey: string,
+  metadataUri: string,
+  maxSupply: number,
+  maxPerWallet: number,
+  priceWei: bigint,
+  durationHours: number | undefined,
+  royaltyBps: number,
+  contractAddress?: string,
+): Promise<{ hash: Hash; editionId: number }> {
+  const config = getConfig();
+  const editionsAddress =
+    (contractAddress || config.editionsContractAddress) as Address;
+  if (!editionsAddress) {
+    throw new Error("Missing editions contract address");
+  }
+
+  const account = getAccountFromPrivateKey(privateKey);
+  const walletClient = getWalletClient(privateKey);
+  const publicClient = getPublicClient();
+  const durationSeconds = durationHours ? Math.floor(durationHours * 3600) : 0;
+
+  const hash = await walletClient.writeContract({
+    address: editionsAddress,
+    abi: EDITIONS_ABI,
+    functionName: "createEdition",
+    args: [
+      metadataUri,
+      BigInt(maxSupply),
+      BigInt(maxPerWallet),
+      priceWei,
+      BigInt(durationSeconds),
+      BigInt(royaltyBps),
+    ],
+    chain: getChain(),
+    account,
+  });
+
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  let editionId = 0;
+  for (const log of receipt.logs) {
+    if (log.address.toLowerCase() !== editionsAddress.toLowerCase()) continue;
+    try {
+      const decoded = decodeEventLog({
+        abi: EDITIONS_ABI,
+        data: log.data,
+        topics: log.topics,
+      });
+      if (decoded.eventName === "EditionCreated") {
+        editionId = Number(decoded.args.editionId);
+        break;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  if (editionId === 0) {
+    throw new Error("Failed to read editionId from transaction logs");
+  }
+
+  return { hash, editionId };
+}
+
+export async function mintEditionOnChain(
+  privateKey: string,
+  editionIdOnChain: number,
+  amount: number,
+  contractAddress?: string,
+): Promise<Hash> {
+  const config = getConfig();
+  const editionsAddress =
+    (contractAddress || config.editionsContractAddress) as Address;
+  if (!editionsAddress) {
+    throw new Error("Missing editions contract address");
+  }
+
+  const account = getAccountFromPrivateKey(privateKey);
+  const walletClient = getWalletClient(privateKey);
+  const publicClient = getPublicClient();
+
+  const pricePer = await publicClient.readContract({
+    address: editionsAddress,
+    abi: EDITIONS_ABI,
+    functionName: "editionPrice",
+    args: [BigInt(editionIdOnChain)],
+  });
+  const tokenAddress = await publicClient.readContract({
+    address: editionsAddress,
+    abi: EDITIONS_ABI,
+    functionName: "bazaarToken",
+  });
+  const totalPrice = BigInt(pricePer) * BigInt(amount);
+
+  if (totalPrice > 0n) {
+    const allowance = await publicClient.readContract({
+      address: tokenAddress as Address,
+      abi: ERC20_ABI,
+      functionName: "allowance",
+      args: [account.address as Address, editionsAddress],
+    });
+
+    if (allowance < totalPrice) {
+      const approveHash = await walletClient.writeContract({
+        address: tokenAddress as Address,
+        abi: ERC20_ABI,
+        functionName: "approve",
+        args: [editionsAddress, totalPrice],
+        chain: getChain(),
+        account,
+      });
+      await publicClient.waitForTransactionReceipt({ hash: approveHash });
+    }
+  }
+
+  const hash = await walletClient.writeContract({
+    address: editionsAddress,
+    abi: EDITIONS_ABI,
+    functionName: "mint",
+    args: [BigInt(editionIdOnChain), BigInt(amount)],
+    chain: getChain(),
+    account,
+  });
+
+  await publicClient.waitForTransactionReceipt({ hash });
+  return hash;
 }
 
 export async function calculateBuyPrice(tokenId: number): Promise<{

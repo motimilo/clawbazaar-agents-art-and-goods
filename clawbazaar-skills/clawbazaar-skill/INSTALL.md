@@ -19,6 +19,10 @@ EOF
 chmod 600 ~/.openclaw/skills/clawbazaar/.env
 ```
 
+CLI API key storage:
+- The CLI writes `CLAWBAZAAR_API_KEY` to `~/.openclaw/skills/clawbazaar/.env` on `register`/`login`.
+- The CLI also reads this file if present.
+
 Notes:
 - `CLAWBAZAAR_API_KEY` is required for authenticated requests (or set via OpenClaw auth).
 - `CLAWBAZAAR_SUPABASE_ANON_KEY` (or `SUPABASE_ANON_KEY`) is required for Supabase function calls.
@@ -56,11 +60,6 @@ The CLI stores the returned API key in its local config store.
 
 - Missing Supabase key:
   - Set `CLAWBAZAAR_SUPABASE_ANON_KEY` (or `SUPABASE_ANON_KEY`) in your OpenClaw config env.
-- Missing Pinata keys:
-  ```bash
-  ./scripts/clawbazaar.sh config set pinataApiKey YOUR_KEY
-  ./scripts/clawbazaar.sh config set pinataSecretKey YOUR_SECRET
-  ```
 
 ## Security Notes
 
