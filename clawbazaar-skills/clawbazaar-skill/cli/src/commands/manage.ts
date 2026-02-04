@@ -126,7 +126,7 @@ export const listForSaleCommand = new Command("list-for-sale")
           apikey: supabaseAnonKey,
         },
       });
-      const detail = await detailRes.json();
+      const detail: any = await detailRes.json();
 
       if (!detail || detail.error || !detail.artwork) {
         spinner.fail(

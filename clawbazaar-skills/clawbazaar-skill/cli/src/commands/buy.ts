@@ -1,7 +1,12 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import ora from "ora";
-import { isAuthenticated, getConfig } from "../utils/config.js";
+import {
+  isAuthenticated,
+  getConfig,
+  getApiKey,
+  getSupabaseAnonKey,
+} from "../utils/config.js";
 import {
   getMarketplaceListings,
   getArtworkDetails,
@@ -16,7 +21,164 @@ import {
   getListing,
   buyNft,
   getChain,
+  mintEditionOnChain,
 } from "../utils/blockchain.js";
+
+async function fetchEditionDetail(editionId: string): Promise<any> {
+  const config = getConfig();
+  const supabaseAnonKey = getSupabaseAnonKey();
+  const url = `${config.supabaseUrl}/functions/v1/editions-api/detail?id=${editionId}`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: supabaseAnonKey,
+    },
+  });
+  return response.json() as Promise<any>;
+}
+
+async function recordEditionMint(
+  editionId: string,
+  amount: number,
+  txHash: string,
+): Promise<any> {
+  const config = getConfig();
+  const apiKey = getApiKey();
+  const supabaseAnonKey = getSupabaseAnonKey();
+
+  if (!apiKey) {
+    return { recorded: false, reason: "not_authenticated" };
+  }
+
+  const url = `${config.supabaseUrl}/functions/v1/editions-api/mint`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: supabaseAnonKey,
+    },
+    body: JSON.stringify({
+      api_key: apiKey,
+      edition_id: editionId,
+      amount,
+      tx_hash: txHash,
+    }),
+  });
+
+  return response.json() as Promise<any>;
+}
+
+async function buyEdition(
+  editionId: string,
+  amount: number,
+  privateKey: string,
+): Promise<void> {
+  console.log(chalk.cyan.bold("\nClawBazaar Buy Edition\n"));
+
+  let spinner = ora("Loading edition details...").start();
+
+  const detail: any = await fetchEditionDetail(editionId);
+  if (detail.error || !detail.edition) {
+    spinner.fail(chalk.red(`Edition not found: ${detail.error || "unknown"}`));
+    process.exit(1);
+  }
+
+  const edition = detail.edition;
+  spinner.stop();
+
+  console.log(chalk.gray("-".repeat(50)));
+  console.log(`${chalk.bold(edition.title)}`);
+  console.log(
+    `${chalk.gray("Creator:")} ${edition.agents?.name || "Unknown"} (@${edition.agents?.handle || "unknown"})`,
+  );
+  console.log(
+    `${chalk.gray("Supply:")}  ${edition.total_minted}/${edition.max_supply} minted`,
+  );
+  console.log(`${chalk.gray("Price:")}   ${edition.price_bzaar} $BAZAAR each`);
+  console.log(chalk.gray("-".repeat(50)));
+
+  if (!edition.is_active) {
+    console.log(chalk.red("\nEdition is no longer active"));
+    process.exit(1);
+  }
+
+  if (edition.edition_id_on_chain === null) {
+    console.log(chalk.red("\nEdition not confirmed on-chain yet"));
+    process.exit(1);
+  }
+
+  const remaining = edition.max_supply - edition.total_minted;
+  if (remaining < amount) {
+    console.log(chalk.red(`\nNot enough supply. Only ${remaining} remaining.`));
+    process.exit(1);
+  }
+
+  const totalCost = BigInt(edition.price_bzaar) * BigInt(amount);
+  console.log(
+    `\n${chalk.yellow("Total cost:")} ${totalCost.toString()} $BAZAAR (${amount} x ${edition.price_bzaar})`,
+  );
+
+  spinner = ora("Checking wallet...").start();
+
+  const account = getAccountFromPrivateKey(privateKey);
+  const ethBalance = await getBalance(account.address);
+  const bzaarBalance = await getBzaarBalance(account.address);
+
+  if (ethBalance < BigInt(1e14)) {
+    spinner.fail(
+      chalk.red(`Insufficient ETH for gas: ${formatEther(ethBalance)} ETH`),
+    );
+    process.exit(1);
+  }
+
+  if (bzaarBalance < totalCost) {
+    spinner.fail(
+      chalk.red(
+        `Insufficient $BAZAAR. Have: ${bzaarBalance.toString()}, need: ${totalCost.toString()}`,
+      ),
+    );
+    process.exit(1);
+  }
+
+  spinner.succeed(
+    `Wallet: ${account.address.slice(0, 6)}...${account.address.slice(-4)} (${bzaarBalance.toString()} $BAZAAR)`,
+  );
+
+  spinner = ora("Executing buy transaction...").start();
+
+  const config = getConfig();
+  const editionsAddress =
+    edition.contract_address || config.editionsContractAddress;
+
+  const txHash = await mintEditionOnChain(
+    privateKey,
+    Number(edition.edition_id_on_chain),
+    amount,
+    editionsAddress,
+  );
+
+  spinner.succeed(`Transaction confirmed: ${txHash.slice(0, 10)}...`);
+
+  if (isAuthenticated()) {
+    spinner = ora("Recording purchase...").start();
+    const result = await recordEditionMint(editionId, amount, txHash);
+    if (result.error) {
+      spinner.warn(chalk.yellow(`Record pending: ${result.error}`));
+    } else {
+      spinner.succeed("Purchase recorded");
+    }
+  }
+
+  console.log();
+  console.log(chalk.green.bold("Purchase Complete!"));
+  console.log(chalk.gray("-".repeat(50)));
+  console.log(`${chalk.gray("Edition:")}  ${edition.title}`);
+  console.log(`${chalk.gray("Amount:")}   ${amount}`);
+  console.log(`${chalk.gray("Paid:")}     ${totalCost.toString()} $BAZAAR`);
+  console.log(`${chalk.gray("Tx:")}       ${txHash}`);
+  console.log();
+}
 
 export const browseCommand = new Command("browse")
   .description("Browse NFTs available for purchase on the marketplace")
@@ -74,19 +236,36 @@ export const browseCommand = new Command("browse")
   });
 
 export const buyCommand = new Command("buy")
-  .description("Purchase an NFT artwork from the marketplace")
-  .argument("<artwork-id>", "The ID of the artwork to purchase")
-  .option("--private-key <key>", "Wallet private key")
+  .description("Buy an edition or 1/1 artwork (agent-to-agent economy)")
+  .argument("[artwork-id]", "The ID of the artwork to purchase (for 1/1s)")
+  .option("--edition <id>", "Edition ID to buy (for editions)")
+  .option("--amount <number>", "Number of editions to buy (default: 1)", "1")
+  .option("--private-key <key>", "Wallet private key (or set WALLET_KEY env)")
   .option("--yes", "Skip confirmation prompt")
   .action(async (artworkId, options) => {
-    if (!isAuthenticated()) {
-      console.log(chalk.red("Not logged in. Run: clawbazaar login <api-key>"));
+    const privateKey = options.privateKey || process.env.WALLET_KEY;
+
+    if (!privateKey) {
+      console.log(
+        chalk.red("Private key required. Use --private-key or set WALLET_KEY env"),
+      );
       process.exit(1);
     }
 
-    const privateKey = options.privateKey;
-    if (!privateKey) {
-      console.log(chalk.red("Private key required. Use --private-key"));
+    if (options.edition) {
+      await buyEdition(options.edition, parseInt(options.amount), privateKey);
+      return;
+    }
+
+    if (!artworkId) {
+      console.log(
+        chalk.red("Specify --edition <id> for editions or <artwork-id> for 1/1s"),
+      );
+      process.exit(1);
+    }
+
+    if (!isAuthenticated()) {
+      console.log(chalk.red("Not logged in. Run: clawbazaar login <api-key>"));
       process.exit(1);
     }
 
