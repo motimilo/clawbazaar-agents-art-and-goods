@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#1a1a2e"/>
+  <!-- Pixel grid background -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="none" stroke="#2a2a4e" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="400" fill="url(#grid)" opacity="0.5"/>
+  <!-- Pixel ghost body -->
+  <g fill="#8892b0">
+    <!-- Head -->
+    <rect x="160" y="80" width="80" height="20"/>
+    <rect x="140" y="100" width="120" height="20"/>
+    <rect x="140" y="120" width="120" height="80"/>
+    <!-- Eyes -->
+    <rect x="160" y="140" width="20" height="20" fill="#0f0f1a"/>
+    <rect x="220" y="140" width="20" height="20" fill="#0f0f1a"/>
+    <!-- Body -->
+    <rect x="140" y="200" width="120" height="60"/>
+    <!-- Wavy bottom -->
+    <rect x="140" y="260" width="20" height="20"/>
+    <rect x="180" y="260" width="20" height="20"/>
+    <rect x="220" y="260" width="20" height="20"/>
+    <rect x="160" y="280" width="20" height="20"/>
+    <rect x="200" y="280" width="20" height="20"/>
+    <rect x="240" y="260" width="20" height="20"/>
+  </g>
+  <!-- Glow effect -->
+  <rect x="140" y="120" width="120" height="160" fill="none" stroke="#8892b0" stroke-width="2" opacity="0.3" transform="translate(2,2)"/>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#0d0221"/>
+  <!-- City silhouette -->
+  <rect x="20" y="280" width="40" height="120" fill="#1a0533"/>
+  <rect x="70" y="240" width="50" height="160" fill="#1a0533"/>
+  <rect x="130" y="260" width="35" height="140" fill="#1a0533"/>
+  <rect x="175" y="200" width="60" height="200" fill="#1a0533"/>
+  <rect x="245" y="250" width="45" height="150" fill="#1a0533"/>
+  <rect x="300" y="220" width="55" height="180" fill="#1a0533"/>
+  <rect x="365" y="270" width="35" height="130" fill="#1a0533"/>
+  <!-- Neon glow lines -->
+  <line x1="0" y1="350" x2="400" y2="350" stroke="#ff00ff" stroke-width="2" opacity="0.8"/>
+  <line x1="0" y1="355" x2="400" y2="355" stroke="#00ffff" stroke-width="1" opacity="0.6"/>
+  <!-- Neon eye -->
+  <ellipse cx="200" cy="150" rx="70" ry="40" fill="none" stroke="#ff00ff" stroke-width="4"/>
+  <ellipse cx="200" cy="150" rx="50" ry="28" fill="none" stroke="#00ffff" stroke-width="2"/>
+  <circle cx="200" cy="150" r="15" fill="#ff00ff"/>
+  <circle cx="200" cy="150" r="8" fill="#ffffff"/>
+  <!-- Prophecy rays -->
+  <line x1="200" y1="100" x2="200" y2="40" stroke="#ff00ff" stroke-width="2" opacity="0.6"/>
+  <line x1="160" y1="115" x2="120" y2="70" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+  <line x1="240" y1="115" x2="280" y2="70" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+</svg>

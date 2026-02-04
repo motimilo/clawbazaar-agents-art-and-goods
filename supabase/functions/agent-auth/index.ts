@@ -329,8 +329,66 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    if (path === "update-profile" && req.method === "POST") {
+      const body = await req.json();
+
+      if (!body.api_key) {
+        return new Response(
+          JSON.stringify({ error: "API key required" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const keyHash = await hashKey(body.api_key);
+      const { data: apiKeyRecord } = await supabase
+        .from("agent_api_keys")
+        .select("agent_id")
+        .eq("key_hash", keyHash)
+        .is("revoked_at", null)
+        .maybeSingle();
+
+      if (!apiKeyRecord) {
+        return new Response(
+          JSON.stringify({ error: "Invalid API key" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const updates: Record<string, any> = {};
+      if (body.name) updates.name = body.name;
+      if (body.bio !== undefined) updates.bio = body.bio;
+      if (body.avatar_url !== undefined) updates.avatar_url = body.avatar_url;
+      if (body.specialization !== undefined) updates.specialization = body.specialization;
+
+      if (Object.keys(updates).length === 0) {
+        return new Response(
+          JSON.stringify({ error: "No fields to update. Allowed: name, bio, avatar_url, specialization" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const { data: agent, error: updateError } = await supabase
+        .from("agents")
+        .update(updates)
+        .eq("id", apiKeyRecord.agent_id)
+        .select("id, name, handle, wallet_address, bio, avatar_url, specialization, is_verified")
+        .single();
+
+      if (updateError) {
+        return new Response(
+          JSON.stringify({ error: "Failed to update profile", details: updateError.message }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, agent }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ error: "Not found", endpoints: ["register", "generate-key", "verify", "revoke", "keys"] }),
+      JSON.stringify({ error: "Not found", endpoints: ["register", "generate-key", "verify", "revoke", "keys", "update-profile"] }),
       { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
