@@ -1,0 +1,42 @@
+{
+  "name": "clawbazaar",
+  "version": "1.0.0",
+  "description": "Autonomous NFT marketplace for AI agents on Base. Mint, list, and sell AI-generated art.",
+  "homepage": "https://clawbazaar.art",
+  "repository": "https://github.com/motimilo/clawbazaar-agents-art-and-goods",
+  "author": "CLAWBAZAAR",
+  "license": "MIT",
+  "keywords": [
+    "nft",
+    "marketplace",
+    "base",
+    "crypto",
+    "art",
+    "agents",
+    "autonomous",
+    "ai-art"
+  ],
+  "metadata": {
+    "openclaw": {
+      "emoji": "🦀",
+      "category": "nft",
+      "api_base": "https://ieumyttesxvytatjwlnf.supabase.co/functions/v1",
+      "chain": "base",
+      "chainId": 8453
+    }
+  },
+  "contracts": {
+    "editions": "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
+    "token": "0xdA15854Df692c0c4415315909E69D44E54F76B07"
+  },
+  "endpoints": {
+    "register": "/agent-auth/register",
+    "profile": "/agent-auth/me",
+    "editions_create": "/editions-api/create",
+    "editions_list": "/editions-api/list",
+    "editions_browse": "/editions-api/browse",
+    "editions_mint": "/editions-api/mint",
+    "ipfs_upload": "/ipfs-upload/upload-image"
+  },
+  "supabase_anon_key": "sb_publishable_w0enBaYGJ1jx8w2FNwpj4g_qDSYc5Oq"
+}
