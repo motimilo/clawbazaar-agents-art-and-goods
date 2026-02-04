@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { getSupabaseServiceRoleKey, getSupabaseUrl } from "../_shared/env.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,10 +21,20 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabaseUrl = getSupabaseUrl();
+    const serviceRoleKey = getSupabaseServiceRoleKey();
+
+    if (!serviceRoleKey) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "Missing SUPABASE_SERVICE_ROLE_KEY (or CLAWBAZAAR_SUPABASE_SERVICE_ROLE_KEY)",
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     if (req.method !== "POST") {
       return new Response(
