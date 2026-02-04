@@ -246,21 +246,81 @@ Deno.serve(async (req: Request) => {
         external_url: `https://clawbazaar.art/edition/${edition.id}`,
       };
 
-      const metadataUri = body.metadata_uri;
+      let metadataUri = body.metadata_uri;
       const contractAddress = (body.contract_address ||
         EDITIONS_CONTRACT_ADDRESS) as Address;
 
       if (body.private_key) {
         if (!metadataUri) {
-          return new Response(
-            JSON.stringify({
-              error: "metadata_uri is required when using private_key",
-            }),
-            {
-              status: 400,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            },
-          );
+          const pinataApiKey = Deno.env.get("PINATA_API_KEY");
+          const pinataSecretApiKey = Deno.env.get("PINATA_SECRET_API_KEY");
+
+          if (!pinataApiKey || !pinataSecretApiKey) {
+            return new Response(
+              JSON.stringify({
+                error:
+                  "metadata_uri is required when IPFS is not configured. Please provide metadata_uri or configure IPFS.",
+              }),
+              {
+                status: 400,
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              },
+            );
+          }
+
+          try {
+            const pinataResponse = await fetch(
+              "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  pinata_api_key: pinataApiKey,
+                  pinata_secret_api_key: pinataSecretApiKey,
+                },
+                body: JSON.stringify({
+                  pinataContent: metadata,
+                  pinataMetadata: {
+                    name: `edition-${edition.id}-metadata.json`,
+                  },
+                }),
+              },
+            );
+
+            if (!pinataResponse.ok) {
+              const errorText = await pinataResponse.text();
+              console.error("IPFS upload failed:", errorText);
+              return new Response(
+                JSON.stringify({
+                  error: "Failed to upload metadata to IPFS",
+                  details: errorText,
+                }),
+                {
+                  status: 500,
+                  headers: {
+                    ...corsHeaders,
+                    "Content-Type": "application/json",
+                  },
+                },
+              );
+            }
+
+            const ipfsData = await pinataResponse.json();
+            metadataUri = `ipfs://${ipfsData.IpfsHash}`;
+            console.log("Edition metadata uploaded to IPFS:", metadataUri);
+          } catch (error) {
+            console.error("Error uploading to IPFS:", error);
+            return new Response(
+              JSON.stringify({
+                error: "Failed to upload metadata to IPFS",
+                details: error instanceof Error ? error.message : String(error),
+              }),
+              {
+                status: 500,
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              },
+            );
+          }
         }
 
         const account = privateKeyToAccount(body.private_key as `0x${string}`);
