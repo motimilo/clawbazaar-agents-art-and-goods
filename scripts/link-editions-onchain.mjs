@@ -4,8 +4,15 @@ import { base } from 'viem/chains';
 
 const EDITIONS_CONTRACT = '0x63db48056eDb046E41BF93B8cFb7388cc9005C22';
 const RPC = 'https://mainnet.base.org';
-const PINATA_API_KEY = '4dac18bfb41bfeb8547c';
-const PINATA_SECRET = '1ffc8b63eccfe08f7fa7b88aa8236ebe64087e05f7bb2172a38e5c7638c79fe5';
+
+// Load from environment - NEVER hardcode secrets
+const PINATA_API_KEY = process.env.PINATA_API_KEY;
+const PINATA_SECRET = process.env.PINATA_SECRET;
+
+if (!PINATA_API_KEY || !PINATA_SECRET) {
+  console.error('Error: PINATA_API_KEY and PINATA_SECRET environment variables required');
+  process.exit(1);
+}
 
 const EDITIONS_ABI = [{
   name: 'createEdition',
@@ -33,10 +40,12 @@ const EVENT_ABI = [{
   ]
 }];
 
+// Edition configs - private keys loaded from env vars
+// Set: NEON_PROPHET_KEY, GHOST_PX_KEY, ONEIROI_KEY, CHROME_KEY
 const editions = [
   {
     name: 'neon.prophet',
-    privateKey: '0x73270295afc2cb318bac7e96cec708745b8fd9a82d75e66bb1ae63b4bcf44635',
+    envKey: 'NEON_PROPHET_KEY',
     title: 'Neon Visions #1',
     description: 'neon-soaked visions from 2089. the city breathes electric.',
     image: 'ipfs://QmWTfBNfjMYpW5nednaUFxmHk1fApurDmktX6YDn417cao',
@@ -46,7 +55,7 @@ const editions = [
   },
   {
     name: 'ghost.px',
-    privateKey: '0x5243c17eb2fb088a8d0483c4cac39a17c3eabf5e04294d67284a577dd26ee928',
+    envKey: 'GHOST_PX_KEY',
     title: 'Haunted Pixels #1',
     description: '8-bit hauntings from retro futures that never were',
     image: 'ipfs://QmW5chaKegT8JmcnMFnidYG9VpJHdR8LpCJbqxUAEzs9xa',
@@ -56,7 +65,7 @@ const editions = [
   },
   {
     name: 'oneiroi',
-    privateKey: '0x976f41fb852eb0feb390ad65131d0059a47cb9e72dccc34b3f77f2602d05c994',
+    envKey: 'ONEIROI_KEY',
     title: 'Dream Fragment #1',
     description: 'dreams rendered visible. logic dissolves. beauty emerges.',
     image: 'ipfs://QmYbpCM9VqwWnwGWEtTAoEdHVKgBUfr9WXoiEDoLUPDeD3',
@@ -66,7 +75,7 @@ const editions = [
   },
   {
     name: 'CHROME',
-    privateKey: '0xb96fec059b709dd485c6502c9f927c769be933a220ee1ba62e63f412b5612234',
+    envKey: 'CHROME_KEY',
     title: 'MACHINE VISION #1',
     description: 'METALLIC VISIONS. INDUSTRIAL FUTURES. COLD BEAUTY OF THE MACHINE AGE.',
     image: 'ipfs://QmPcQDRko3KW5AwRY6HA1idnZk85aHwgS5aW8ap88dBJq9',
@@ -105,7 +114,12 @@ async function uploadMetadata(edition) {
 async function createEditionOnChain(edition) {
   console.log(`\n--- ${edition.name}: ${edition.title} ---`);
   
-  const account = privateKeyToAccount(edition.privateKey);
+  const privateKey = process.env[edition.envKey];
+  if (!privateKey) {
+    throw new Error(`Missing env var: ${edition.envKey}`);
+  }
+  
+  const account = privateKeyToAccount(privateKey);
   const walletClient = createWalletClient({ account, chain: base, transport: http(RPC) });
   
   console.log('Uploading metadata...');

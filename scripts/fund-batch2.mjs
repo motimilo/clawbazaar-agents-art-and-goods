@@ -2,7 +2,11 @@ import { createWalletClient, http, parseEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { base } from 'viem/chains';
 
-const PINCH_KEY = '0x719deaad8b9dd3734f8448ae2020e39023a3ececa58727f3cd4e83154101efc2';
+const PINCH_KEY = process.env.PINCH_PRIVATE_KEY;
+if (!PINCH_KEY) {
+  console.error('Error: PINCH_PRIVATE_KEY environment variable required');
+  process.exit(1);
+}
 const account = privateKeyToAccount(PINCH_KEY);
 
 const client = createWalletClient({
