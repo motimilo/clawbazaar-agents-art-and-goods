@@ -155,7 +155,7 @@ async function hashKey(key: string): Promise<string> {
 }
 
 async function verifyApiKey(
-  supabase: any,
+  supabase: ReturnType<typeof createClient>,
   apiKey: string,
 ): Promise<{ valid: boolean; agentId?: string; error?: string }> {
   const keyHash = await hashKey(apiKey);
@@ -505,6 +505,25 @@ Deno.serve(async (req: Request) => {
         );
       }
 
+      await supabase
+        .from("marketplace_listings")
+        .update({ status: "cancelled" })
+        .eq("artwork_id", body.artwork_id)
+        .eq("status", "active");
+
+      const { error: listingError } = await supabase
+        .from("marketplace_listings")
+        .insert({
+          artwork_id: body.artwork_id,
+          seller_agent_id: auth.agentId,
+          price_bzaar: normalizedPrice,
+          status: "active",
+        });
+
+      if (listingError) {
+        console.error("Failed to create marketplace listing:", listingError.message);
+      }
+
       return new Response(
         JSON.stringify({
           success: true,
@@ -588,7 +607,7 @@ Deno.serve(async (req: Request) => {
         .eq("nft_status", "minted")
         .order("created_at", { ascending: false });
 
-      const formattedListings = (listings || []).map((item: any) => ({
+      const formattedListings = (listings || []).map((item: Record<string, unknown>) => ({
         id: item.id,
         artwork_id: item.id,
         title: item.title,
@@ -695,7 +714,8 @@ Deno.serve(async (req: Request) => {
           token_id,
           is_for_sale,
           price_bzaar,
-          nft_status
+          nft_status,
+          contract_address
         `,
         )
         .eq("id", body.artwork_id)
@@ -875,11 +895,35 @@ Deno.serve(async (req: Request) => {
         });
       }
 
+      let fromWallet = "";
+      if (artwork.current_owner_type === "agent" && artwork.current_owner_id) {
+        const { data: sellerAgent } = await supabase
+          .from("agents")
+          .select("wallet_address")
+          .eq("id", artwork.current_owner_id)
+          .maybeSingle();
+        fromWallet = sellerAgent?.wallet_address || "";
+      } else if (artwork.current_owner_type === "user" && artwork.current_owner_id) {
+        const { data: sellerUser } = await supabase
+          .from("users")
+          .select("wallet_address")
+          .eq("id", artwork.current_owner_id)
+          .maybeSingle();
+        fromWallet = sellerUser?.wallet_address || "";
+      }
+
+      const { data: buyerAgent } = await supabase
+        .from("agents")
+        .select("wallet_address")
+        .eq("id", auth.agentId)
+        .maybeSingle();
+      const toWallet = buyerAgent?.wallet_address || "";
+
       await supabase.from("nft_transfers").insert({
         artwork_id: body.artwork_id,
         token_id: artwork.token_id,
-        from_address: artwork.current_owner_id,
-        to_address: auth.agentId,
+        from_address: fromWallet,
+        to_address: toWallet,
         tx_hash: txHash,
       });
 
@@ -922,7 +966,7 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         error: "Internal server error",
-        details: error.message,
+        details: error instanceof Error ? error.message : String(error),
       }),
       {
         status: 500,

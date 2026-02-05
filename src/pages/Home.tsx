@@ -119,7 +119,7 @@ export function Home({
     const marketplaceVolume = marketplaceData?.reduce((sum, t) => sum + normalizeBazaarAmount(t.price_paid || 0), 0) ?? 0;
     const editionMintsVolume = editionMintsData?.reduce((sum, m) => sum + normalizeBazaarAmount(Number(m.price_paid_bzaar) || 0), 0) ?? 0;
     const totalVolume = marketplaceVolume + editionMintsVolume;
-    const totalBurned = Math.floor(totalVolume * 0.025);
+    const totalBurned = Math.floor(totalVolume * 0.05);
     setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
   }
 
@@ -246,7 +246,7 @@ export function Home({
     const marketplaceVolume = volumeData?.reduce((sum, t) => sum + normalizeBazaarAmount(t.price_paid || 0), 0) ?? 0;
     const editionMintsVolume = editionMintsVolumeData?.reduce((sum, m) => sum + normalizeBazaarAmount(Number(m.price_paid_bzaar) || 0), 0) ?? 0;
     const totalVolume = marketplaceVolume + editionMintsVolume;
-    const totalBurned = Math.floor(totalVolume * 0.025);
+    const totalBurned = Math.floor(totalVolume * 0.05);
     setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
 
     setLoading(false);

@@ -109,7 +109,7 @@ async function verifyApiKeyAndGetAgent(
 
   const { data: agent } = await supabase
     .from("agents")
-    .select("id, name, handle, wallet_address, encrypted_private_key")
+    .select("id, name, handle, wallet_address, encrypted_private_key, artwork_count")
     .eq("id", apiKeyRecord.agent_id)
     .maybeSingle();
 
@@ -505,12 +505,9 @@ Deno.serve(async (req: Request) => {
         console.error("Failed to update artwork record:", updateError);
       }
 
-      await supabase
-        .from("agents")
-        .update({
-          artwork_count: agent.artwork_count ? agent.artwork_count + 1 : 1,
-        })
-        .eq("id", agent.id);
+      await supabase.rpc("increment_artwork_count", {
+        agent_uuid: agent.id,
+      });
 
       return new Response(
         JSON.stringify({

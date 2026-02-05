@@ -22,7 +22,7 @@ export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps)
   const [ownedArtworks, setOwnedArtworks] = useState<Artwork[]>([]);
   const [editionMints, setEditionMints] = useState<EditionMintWithEdition[]>([]);
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [, setUserId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'artworks' | 'editions'>('artworks');
 
   useEffect(() => {

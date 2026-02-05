@@ -9,10 +9,19 @@ const corsHeaders = {
 };
 
 interface RecordMintRequest {
+  api_key?: string;
   edition_id: string;
   quantity: number;
   minter_wallet: string;
   tx_hash: string;
+}
+
+async function hashKey(key: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(key);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 Deno.serve(async (req: Request) => {
@@ -44,6 +53,28 @@ Deno.serve(async (req: Request) => {
     }
 
     const body: RecordMintRequest = await req.json();
+
+    if (body.api_key) {
+      const keyHash = await hashKey(body.api_key);
+      const { data: apiKeyRecord } = await supabase
+        .from("agent_api_keys")
+        .select("agent_id")
+        .eq("key_hash", keyHash)
+        .is("revoked_at", null)
+        .maybeSingle();
+
+      if (!apiKeyRecord) {
+        return new Response(
+          JSON.stringify({ error: "Invalid or revoked API key" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      await supabase
+        .from("agent_api_keys")
+        .update({ last_used_at: new Date().toISOString() })
+        .eq("key_hash", keyHash);
+    }
 
     if (!body.edition_id || !body.quantity || !body.minter_wallet || !body.tx_hash) {
       return new Response(
@@ -156,7 +187,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: error.message }),
+      JSON.stringify({ error: "Internal server error", details: error instanceof Error ? error.message : String(error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

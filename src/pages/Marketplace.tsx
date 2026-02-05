@@ -29,8 +29,12 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState<{ min: string; max: string }>({ min: '', max: '' });
   const [loading, setLoading] = useState(true);
+  const [editionsLoading, setEditionsLoading] = useState(true);
   const [totalVolume, setTotalVolume] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [artworkPage, setArtworkPage] = useState(0);
+  const [editionPage, setEditionPage] = useState(0);
+  const PAGE_SIZE = 12;
 
   useEffect(() => {
     fetchCategories();
@@ -73,7 +77,10 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
     }
   }
 
-  async function fetchEditions() {
+  async function fetchEditions(append = false) {
+    if (!append) setEditionsLoading(true);
+    const offset = append ? editions.length : 0;
+
     let query = supabase
       .from('editions')
       .select('*')
@@ -104,12 +111,19 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
         query = query.order('created_at', { ascending: false });
     }
 
+    query = query.range(offset, offset + PAGE_SIZE - 1);
+
     const { data } = await query;
-    if (data) setEditions(data);
+    if (data) {
+      setEditions(append ? [...editions, ...data] : data);
+      setEditionPage(append ? editionPage + 1 : 0);
+    }
+    setEditionsLoading(false);
   }
 
-  async function fetchArtworks() {
-    setLoading(true);
+  async function fetchArtworks(append = false) {
+    if (!append) setLoading(true);
+    const offset = append ? artworks.length : 0;
 
     let query = supabase
       .from('artworks')
@@ -148,8 +162,13 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
         query = query.order('created_at', { ascending: false });
     }
 
+    query = query.range(offset, offset + PAGE_SIZE - 1);
+
     const { data } = await query;
-    if (data) setArtworks(data);
+    if (data) {
+      setArtworks(append ? [...artworks, ...data] : data);
+      setArtworkPage(append ? artworkPage + 1 : 0);
+    }
     setLoading(false);
   }
 
@@ -268,7 +287,7 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
           </div>
         )}
 
-        {loading ? (
+        {(loading || (viewMode === 'editions' && editionsLoading)) ? (
           <LoadingSpinner size="lg" text="Loading marketplace..." />
         ) : (
           <>
@@ -391,9 +410,15 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
               )
             )}
 
-            {((viewMode === 'one_of_one' && artworks.length >= 12) || (viewMode === 'editions' && editions.length >= 12)) && (
+            {((viewMode === 'one_of_one' && artworks.length >= PAGE_SIZE && artworks.length % PAGE_SIZE === 0) || (viewMode === 'editions' && editions.length >= PAGE_SIZE && editions.length % PAGE_SIZE === 0)) && (
               <div className="mt-12 text-center">
-                <button className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-ink/20 font-mono text-xs text-ink hover:border-ink/40 transition-colors">
+                <button
+                  onClick={() => {
+                    if (viewMode === 'one_of_one') fetchArtworks(true);
+                    else if (viewMode === 'editions') fetchEditions(true);
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-ink/20 font-mono text-xs text-ink hover:border-ink/40 transition-colors"
+                >
                   <RefreshCw className="w-4 h-4" />
                   -- LOAD_NEXT_BATCH --
                 </button>

@@ -86,10 +86,6 @@ function AppContent() {
     setEditionToView(edition);
   }
 
-  function handleMintEdition(edition: Edition) {
-    setEditionToMint(edition);
-  }
-
   function handleOpenMintFromDetail() {
     if (editionToView) {
       setEditionToMint(editionToView);

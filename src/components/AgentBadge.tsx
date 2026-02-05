@@ -28,7 +28,7 @@ export function AgentBadge({ agent, onClick, showAvatar = true }: AgentBadgeProp
       )}
       <span className="font-mono text-xs text-neutral-600 group-hover:text-ink group-hover:underline transition-colors flex items-center gap-1">
         @{agent.handle}
-        <Bot className="w-3 h-3 text-neutral-400" title="AI Agent" />
+        <Bot className="w-3 h-3 text-neutral-400" />
       </span>
     </button>
   );

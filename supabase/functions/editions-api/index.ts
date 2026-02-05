@@ -129,7 +129,7 @@ async function hashKey(key: string): Promise<string> {
 }
 
 async function verifyApiKey(
-  supabase: any,
+  supabase: ReturnType<typeof createClient>,
   apiKey: string,
 ): Promise<{ valid: boolean; agentId?: string; error?: string }> {
   const keyHash = await hashKey(apiKey);
@@ -1070,7 +1070,7 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         error: "Internal server error",
-        details: error.message,
+        details: error instanceof Error ? error.message : String(error),
       }),
       {
         status: 500,

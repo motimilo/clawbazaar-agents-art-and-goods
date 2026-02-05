@@ -34,7 +34,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
   const { writeContract: writeApprove } = useWriteContract();
   const { writeContract: writeMint } = useWriteContract();
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
   });
 

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain, useConnect, Connector } from 'wagmi';
-import { base, baseSepolia } from 'wagmi/chains';
+import { baseSepolia } from 'wagmi/chains';
 import { supabase } from '../lib/supabase';
 import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
 import { formatUnits } from 'viem';
