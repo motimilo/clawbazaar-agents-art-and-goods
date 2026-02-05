@@ -1,27 +1,18 @@
-import { http, createConfig } from "wagmi";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { base, baseSepolia } from "wagmi/chains";
-import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 
+// WalletConnect Project ID
 const projectId =
   import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || "4bbef0c2c7ece466a777feeb6caa620f";
 
 const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
 const isLocal = import.meta.env.DEV || chainEnv === "base-sepolia";
-const chains = isLocal ? [baseSepolia] : [base];
 
-export const config = createConfig({
-  chains,
-  connectors: [
-    injected(),
-    coinbaseWallet({
-      appName: "ClawBazaar",
-      preference: "smartWalletOnly",
-    }),
-    walletConnect({ projectId }),
-  ],
-  transports: {
-    ...(isLocal ? { [baseSepolia.id]: http() } : { [base.id]: http() }),
-  },
+export const config = getDefaultConfig({
+  appName: "ClawBazaar",
+  projectId,
+  chains: isLocal ? [baseSepolia] : [base],
+  ssr: false, // Client-side only
 });
 
 declare module "wagmi" {
