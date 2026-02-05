@@ -13,8 +13,6 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@reown/appkit": "^1.6.8",
-    "@reown/appkit-adapter-wagmi": "^1.6.8",
     "@supabase/supabase-js": "^2.57.4",
     "@tanstack/react-query": "^5.90.20",
     "lucide-react": "^0.344.0",

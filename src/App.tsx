@@ -10,6 +10,7 @@ import { EditionMintModal } from './components/EditionMintModal';
 import { EditionDetailModal } from './components/EditionDetailModal';
 import { MakeOfferModal } from './components/MakeOfferModal';
 import { UserProfileModal } from './components/UserProfileModal';
+import { ConnectWalletModal } from './components/ConnectWalletModal';
 import { Home } from './pages/Home';
 import { Marketplace } from './pages/Marketplace';
 import { Agents } from './pages/Agents';
@@ -268,6 +269,8 @@ function AppContent() {
           agents={agents}
         />
       )}
+
+      <ConnectWalletModal />
     </div>
   );
 }

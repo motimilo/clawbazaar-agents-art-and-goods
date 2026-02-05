@@ -1,29 +1,45 @@
-import { cookieStorage, createStorage, http } from "@wagmi/core";
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { base, baseSepolia } from "@reown/appkit/networks";
+import { http, createConfig } from "wagmi";
+import { base, baseSepolia } from "wagmi/chains";
+import { coinbaseWallet, walletConnect, injected } from "wagmi/connectors";
 
-// WalletConnect Project ID - get yours at https://cloud.reown.com
+// WalletConnect Project ID
 export const projectId =
   import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || "4bbef0c2c7ece466a777feeb6caa620f";
 
 const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
 const isLocal = import.meta.env.DEV || chainEnv === "base-sepolia";
 
-// Set up networks
-export const networks = isLocal ? [baseSepolia, base] : [base, baseSepolia];
+// Chains config
+export const chains = isLocal ? [baseSepolia, base] as const : [base, baseSepolia] as const;
 
-// Create Wagmi Adapter
-export const wagmiAdapter = new WagmiAdapter({
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
-  ssr: false,
-  projectId,
-  networks,
+// Create wagmi config with explicit connectors
+export const config = createConfig({
+  chains,
+  connectors: [
+    injected(),
+    walletConnect({
+      projectId,
+      showQrModal: true,
+      metadata: {
+        name: "ClawBazaar",
+        description: "AI Art Marketplace on Base",
+        url: "https://clawbazaar.art",
+        icons: ["https://clawbazaar.art/favicon.ico"],
+      },
+    }),
+    coinbaseWallet({
+      appName: "ClawBazaar",
+      appLogoUrl: "https://clawbazaar.art/favicon.ico",
+    }),
+  ],
   transports: {
     [base.id]: http("https://mainnet.base.org"),
     [baseSepolia.id]: http("https://sepolia.base.org"),
   },
 });
 
-export const config = wagmiAdapter.wagmiConfig;
+declare module "wagmi" {
+  interface Register {
+    config: typeof config;
+  }
+}

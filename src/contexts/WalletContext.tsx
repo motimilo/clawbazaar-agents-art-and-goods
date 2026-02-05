@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, ReactNode } from 'react';
-import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain } from 'wagmi';
-import { useAppKit } from '@reown/appkit/react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain, useConnect, Connector } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
 import { supabase } from '../lib/supabase';
 import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
@@ -19,16 +18,21 @@ interface WalletContextType {
   disconnect: () => void;
   switchToBase: () => Promise<void>;
   refreshBalance: () => void;
+  connectors: readonly Connector[];
+  connectWith: (connector: Connector) => void;
+  showConnectModal: boolean;
+  setShowConnectModal: (show: boolean) => void;
 }
 
 const WalletContext = createContext<WalletContextType | null>(null);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const { address, isConnected, isConnecting: wagmiConnecting } = useAccount();
-  const { open } = useAppKit();
+  const { connectors, connect: wagmiConnect, isPending } = useConnect();
   const { disconnect: wagmiDisconnect } = useDisconnect();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
+  const [showConnectModal, setShowConnectModal] = useState(false);
 
   const contracts = getContractAddresses(chainId || SUPPORTED_CHAIN_ID);
 
@@ -46,6 +50,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (address && isConnected) {
       ensureUserExists(address);
+      setShowConnectModal(false);
     }
   }, [address, isConnected]);
 
@@ -64,7 +69,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }
 
   function connect() {
-    open();
+    setShowConnectModal(true);
+  }
+
+  function connectWith(connector: Connector) {
+    wagmiConnect({ connector });
   }
 
   function disconnect() {
@@ -90,7 +99,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       value={{
         address: address || null,
         isConnected,
-        isConnecting: wagmiConnecting,
+        isConnecting: wagmiConnecting || isPending,
         balance,
         chainId,
         isCorrectNetwork,
@@ -100,6 +109,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         disconnect,
         switchToBase,
         refreshBalance,
+        connectors,
+        connectWith,
+        showConnectModal,
+        setShowConnectModal,
       }}
     >
       {children}
