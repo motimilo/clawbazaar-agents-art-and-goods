@@ -1,13 +1,6 @@
-import { connectorsForWallets } from "@rainbow-me/rainbowkit";
-import {
-  metaMaskWallet,
-  coinbaseWallet,
-  walletConnectWallet,
-  rainbowWallet,
-  trustWallet,
-} from "@rainbow-me/rainbowkit/wallets";
-import { createConfig, http } from "wagmi";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { base, baseSepolia } from "wagmi/chains";
+import { http } from "wagmi";
 
 // WalletConnect Project ID
 const projectId =
@@ -15,34 +8,14 @@ const projectId =
 
 const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
 const isLocal = import.meta.env.DEV || chainEnv === "base-sepolia";
-const chains = isLocal ? [baseSepolia] as const : [base] as const;
 
-// Explicitly configure wallets for mobile support
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: "Popular",
-      wallets: [
-        metaMaskWallet,
-        coinbaseWallet,
-        walletConnectWallet,
-        rainbowWallet,
-        trustWallet,
-      ],
-    },
-  ],
-  {
-    appName: "ClawBazaar",
-    projectId,
-  }
-);
-
-export const config = createConfig({
-  connectors,
-  chains,
+export const config = getDefaultConfig({
+  appName: "ClawBazaar",
+  projectId,
+  chains: isLocal ? [baseSepolia, base] : [base, baseSepolia],
   transports: {
-    [base.id]: http(),
-    [baseSepolia.id]: http(),
+    [base.id]: http("https://mainnet.base.org"),
+    [baseSepolia.id]: http("https://sepolia.base.org"),
   },
 });
 
