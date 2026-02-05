@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { X, Coins, AlertCircle, CheckCircle, Loader2, Wallet, ExternalLink, AlertTriangle, ArrowRight } from 'lucide-react';
-import { parseUnits } from 'viem';
 import { useWallet } from '../contexts/WalletContext';
 import { supabase } from '../lib/supabase';
 import { useBuyNFT, useApproveToken, useTokenAllowance, useNFTContract } from '../hooks/useNFT';
 import { getTxUrl, SUPPORTED_CHAIN_ID } from '../contracts/config';
+import { formatBazaar, normalizeBazaarAmount, toBazaarWei } from '../utils/bazaar';
 import type { Artwork, Agent } from '../types/database';
 
 interface BuyModalProps {
@@ -42,8 +42,8 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
     reset: resetBuy,
   } = useBuyNFT();
 
-  const price = artwork.price_bzaar || 0;
-  const priceWei = parseUnits(price.toString(), 18);
+  const price = normalizeBazaarAmount(artwork.price_bzaar);
+  const priceWei = toBazaarWei(artwork.price_bzaar);
   const hasEnoughBalance = balance >= price;
   const hasApproval = BigInt(allowance) >= priceWei;
   const isMinted = artwork.nft_status === 'minted' && artwork.token_id !== null;
@@ -219,7 +219,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
               )}
               <div className="flex items-center gap-2 mt-3">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <span className="font-mono text-lg font-bold text-ink">{price} $BAZAAR</span>
+                <span className="font-mono text-lg font-bold text-ink">{formatBazaar(price)} $BAZAAR</span>
               </div>
             </div>
           </div>
@@ -295,17 +295,17 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
               <div className="bg-white border border-ink/10 p-4 mb-6 font-mono text-xs">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">YOUR_BALANCE</span>
-                  <span className="text-ink">{balance.toLocaleString()} $BAZAAR</span>
+                  <span className="text-ink">{formatBazaar(balance)} $BAZAAR</span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">NFT_PRICE</span>
-                  <span className="text-ink">{price} $BAZAAR</span>
+                  <span className="text-ink">{formatBazaar(price)} $BAZAAR</span>
                 </div>
                 <div className="border-t border-ink/10 my-2" />
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-500">BALANCE_AFTER</span>
                   <span className={hasEnoughBalance ? 'text-emerald-600' : 'text-rose-600'}>
-                    {(balance - price).toLocaleString()} $BAZAAR
+                    {formatBazaar(balance - price)} $BAZAAR
                   </span>
                 </div>
               </div>
@@ -335,7 +335,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
-                    <p className="text-rose-600 text-sm mt-1">Need {(price - balance).toLocaleString()} more $BAZAAR</p>
+                    <p className="text-rose-600 text-sm mt-1">Need {formatBazaar(price - balance)} more $BAZAAR</p>
                   </div>
                 </div>
               )}
@@ -352,7 +352,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
                   </>
                 ) : (
                   <>
-                    EXECUTE_PURCHASE // {price} $BAZAAR
+                    EXECUTE_PURCHASE // {formatBazaar(price)} $BAZAAR
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}

@@ -4,6 +4,7 @@ import { useWallet } from '../contexts/WalletContext';
 import { supabase } from '../lib/supabase';
 import { getTokenUrl, SUPPORTED_CHAIN_ID, getBasescanUrl } from '../contracts/config';
 import { AgentBadge } from '../components/AgentBadge';
+import { formatBazaar } from '../utils/bazaar';
 import type { Artwork, Agent, EditionMint, Edition } from '../types/database';
 
 interface EditionMintWithEdition extends EditionMint {
@@ -257,7 +258,7 @@ export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps)
                       )}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-ink/10">
                         <span className="font-mono text-xs text-neutral-400">
-                          {mint.price_paid_bzaar} $BAZAAR
+                          {formatBazaar(mint.price_paid_bzaar)} $BAZAAR
                         </span>
                         {mint.tx_hash && (
                           <a

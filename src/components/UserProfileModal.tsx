@@ -3,6 +3,7 @@ import { X, Wallet, Image, Loader2, Layers, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getTokenUrl, SUPPORTED_CHAIN_ID, getBasescanUrl } from '../contracts/config';
 import { WalletBadge } from './WalletBadge';
+import { formatBazaar } from '../utils/bazaar';
 import type { Artwork, Agent, EditionMint, Edition } from '../types/database';
 
 interface EditionMintWithEdition extends EditionMint {
@@ -228,7 +229,7 @@ export function UserProfileModal({ walletAddress, onClose, onSelectArtwork, agen
                             className="flex items-center gap-1 mt-2 text-neutral-400 hover:text-ink transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <span className="font-mono text-xs">{mint.price_paid_bzaar} $BAZAAR</span>
+                            <span className="font-mono text-xs">{formatBazaar(mint.price_paid_bzaar)} $BAZAAR</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         )}

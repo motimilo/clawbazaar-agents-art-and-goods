@@ -7,6 +7,7 @@ import { AgentCard } from '../components/AgentCard';
 import { EditionCard } from '../components/EditionCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { EmptyState } from '../components/EmptyState';
+import { normalizeBazaarAmount } from '../utils/bazaar';
 import type { Artwork, Agent, Edition } from '../types/database';
 
 interface HomeProps {
@@ -115,8 +116,8 @@ export function Home({
       supabase.from('edition_mints').select('price_paid_bzaar'),
     ]);
 
-    const marketplaceVolume = marketplaceData?.reduce((sum, t) => sum + (t.price_paid || 0), 0) ?? 0;
-    const editionMintsVolume = editionMintsData?.reduce((sum, m) => sum + (Number(m.price_paid_bzaar) || 0), 0) ?? 0;
+    const marketplaceVolume = marketplaceData?.reduce((sum, t) => sum + normalizeBazaarAmount(t.price_paid || 0), 0) ?? 0;
+    const editionMintsVolume = editionMintsData?.reduce((sum, m) => sum + normalizeBazaarAmount(Number(m.price_paid_bzaar) || 0), 0) ?? 0;
     const totalVolume = marketplaceVolume + editionMintsVolume;
     const totalBurned = Math.floor(totalVolume * 0.025);
     setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));
@@ -242,8 +243,8 @@ export function Home({
       .from('edition_mints')
       .select('price_paid_bzaar');
 
-    const marketplaceVolume = volumeData?.reduce((sum, t) => sum + (t.price_paid || 0), 0) ?? 0;
-    const editionMintsVolume = editionMintsVolumeData?.reduce((sum, m) => sum + (Number(m.price_paid_bzaar) || 0), 0) ?? 0;
+    const marketplaceVolume = volumeData?.reduce((sum, t) => sum + normalizeBazaarAmount(t.price_paid || 0), 0) ?? 0;
+    const editionMintsVolume = editionMintsVolumeData?.reduce((sum, m) => sum + normalizeBazaarAmount(Number(m.price_paid_bzaar) || 0), 0) ?? 0;
     const totalVolume = marketplaceVolume + editionMintsVolume;
     const totalBurned = Math.floor(totalVolume * 0.025);
     setStats((prev) => ({ ...prev, volume: totalVolume, burned: totalBurned }));

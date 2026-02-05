@@ -6,6 +6,8 @@ import {
   createWalletClient,
   decodeEventLog,
   http,
+  formatUnits,
+  parseUnits,
   parseAbi,
   type Address,
 } from "npm:viem@2.21.0";
@@ -27,7 +29,7 @@ interface CreateEditionRequest {
   metadata_uri?: string;
   max_supply: number;
   max_per_wallet?: number;
-  price_bzaar: number;
+  price_bzaar: number | string;
   duration_hours?: number;
   royalty_bps?: number;
   private_key?: string;
@@ -76,6 +78,30 @@ const RPC_URL =
   (CHAIN.id === base.id
     ? "https://mainnet.base.org"
     : "https://sepolia.base.org");
+
+const RAW_BAZAAR_THRESHOLD = 1e12;
+
+function normalizeBazaarAmount(input: number | string): number {
+  const raw = typeof input === "string" ? input.trim() : input;
+  const numeric = typeof raw === "string" ? Number(raw) : raw;
+
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    throw new Error("Invalid price_bzaar");
+  }
+
+  if (numeric >= RAW_BAZAAR_THRESHOLD) {
+    try {
+      const asBigInt = typeof raw === "string"
+        ? BigInt(raw)
+        : BigInt(Math.round(numeric));
+      return Number(formatUnits(asBigInt, 18));
+    } catch {
+      return numeric;
+    }
+  }
+
+  return numeric;
+}
 
 const DEFAULT_EDITIONS_ADDRESS_MAINNET =
   "0x20380549d6348f456e8718b6D83b48d0FB06B29a" as Address;
@@ -197,6 +223,22 @@ Deno.serve(async (req: Request) => {
         );
       }
 
+      let normalizedPrice: number;
+      try {
+        normalizedPrice = normalizeBazaarAmount(body.price_bzaar);
+      } catch (error) {
+        return new Response(
+          JSON.stringify({
+            error: "Invalid price_bzaar",
+            details: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
       const mintEnd = body.duration_hours
         ? new Date(
             Date.now() + body.duration_hours * 60 * 60 * 1000,
@@ -212,7 +254,7 @@ Deno.serve(async (req: Request) => {
           image_url: body.image_url,
           max_supply: body.max_supply,
           max_per_wallet: body.max_per_wallet || 10,
-          price_bzaar: body.price_bzaar,
+          price_bzaar: normalizedPrice,
           duration_hours: body.duration_hours || null,
           mint_end: mintEnd,
           royalty_bps: body.royalty_bps || 500,
@@ -352,6 +394,7 @@ Deno.serve(async (req: Request) => {
           ? Math.floor(body.duration_hours * 60 * 60)
           : 0;
 
+        const priceWei = parseUnits(normalizedPrice.toString(), 18);
         const txHash = await walletClient.writeContract({
           address: contractAddress,
           abi: EDITIONS_ABI,
@@ -360,7 +403,7 @@ Deno.serve(async (req: Request) => {
             metadataUri,
             BigInt(body.max_supply),
             BigInt(body.max_per_wallet || 10),
-            BigInt(body.price_bzaar),
+            priceWei,
             BigInt(durationSeconds),
             BigInt(body.royalty_bps || 500),
           ],

@@ -7,6 +7,7 @@ import {
   http,
   parseAbi,
   parseUnits,
+  formatUnits,
   type Address,
 } from "npm:viem@2.21.0";
 import { privateKeyToAccount } from "npm:viem@2.21.0/accounts";
@@ -41,7 +42,7 @@ interface ConfirmMintRequest {
 interface ListForSaleRequest {
   api_key: string;
   artwork_id: string;
-  price_bzaar: number;
+  price_bzaar: number | string;
   tx_hash?: string;
 }
 
@@ -119,6 +120,30 @@ interface MarketplaceListingResponse {
     handle: string;
     wallet_address: string;
   };
+}
+
+const RAW_BAZAAR_THRESHOLD = 1e12;
+
+function normalizeBazaarAmount(input: number | string): number {
+  const raw = typeof input === "string" ? input.trim() : input;
+  const numeric = typeof raw === "string" ? Number(raw) : raw;
+
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    throw new Error("Invalid price_bzaar");
+  }
+
+  if (numeric >= RAW_BAZAAR_THRESHOLD) {
+    try {
+      const asBigInt = typeof raw === "string"
+        ? BigInt(raw)
+        : BigInt(Math.round(numeric));
+      return Number(formatUnits(asBigInt, 18));
+    } catch {
+      return numeric;
+    }
+  }
+
+  return numeric;
 }
 
 async function hashKey(key: string): Promise<string> {
@@ -441,9 +466,25 @@ Deno.serve(async (req: Request) => {
         );
       }
 
+      let normalizedPrice: number;
+      try {
+        normalizedPrice = normalizeBazaarAmount(body.price_bzaar);
+      } catch (error) {
+        return new Response(
+          JSON.stringify({
+            error: "Invalid price_bzaar",
+            details: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
       const updateData: Record<string, unknown> = {
         is_for_sale: true,
-        price_bzaar: body.price_bzaar,
+        price_bzaar: normalizedPrice,
       };
       if (body.tx_hash) {
         updateData.listing_tx_hash = body.tx_hash;
@@ -468,7 +509,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({
           success: true,
           artwork_id: body.artwork_id,
-          price_bzaar: body.price_bzaar,
+          price_bzaar: normalizedPrice,
           message:
             "Artwork listed for sale. Ensure the on-chain listing transaction is completed.",
         }),

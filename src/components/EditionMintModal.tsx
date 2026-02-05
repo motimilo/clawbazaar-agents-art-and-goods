@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { X, Coins, AlertCircle, CheckCircle, Loader2, Wallet, Layers, Users, Clock, Minus, Plus, Terminal } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { useWriteContract, useWaitForTransactionReceipt, useChainId } from 'wagmi';
-import { parseUnits } from 'viem';
 import { getContractAddresses } from '../contracts/config';
 import { CLAW_BAZAAR_EDITIONS_ABI, BZAAR_TOKEN_ABI } from '../contracts/abis';
+import { formatBazaar, normalizeBazaarAmount, toBazaarWei } from '../utils/bazaar';
 import type { Edition, Agent } from '../types/database';
 
 interface EditionMintModalProps {
@@ -78,7 +78,8 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
 
   const remaining = edition.max_supply - edition.total_minted;
   const isSoldOut = remaining === 0;
-  const totalCost = edition.price_bzaar * quantity;
+  const unitPrice = normalizeBazaarAmount(edition.price_bzaar);
+  const totalCost = unitPrice * quantity;
   const hasEnoughBalance = balance >= totalCost;
   const maxCanMint = Math.min(remaining, edition.max_per_wallet);
 
@@ -122,7 +123,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
     setMintQuantity(quantity);
 
     try {
-      const totalPriceWei = parseUnits(totalCost.toString(), 18);
+      const totalPriceWei = toBazaarWei(totalCost);
 
       writeApprove(
         {
@@ -233,7 +234,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <span className="font-mono text-lg font-bold text-ink">{edition.price_bzaar} $BAZAAR</span>
+                <span className="font-mono text-lg font-bold text-ink">{formatBazaar(unitPrice)} $BAZAAR</span>
               </div>
             </div>
           </div>
@@ -362,21 +363,21 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               <div className="bg-white border border-ink/10 p-4 mb-6 font-mono text-xs">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">YOUR_BALANCE</span>
-                  <span className="text-ink">{balance.toLocaleString()} $BAZAAR</span>
+                  <span className="text-ink">{formatBazaar(balance)} $BAZAAR</span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-500">EDITION_PRICE</span>
-                  <span className="text-ink">{edition.price_bzaar} x {quantity}</span>
+                  <span className="text-ink">{formatBazaar(unitPrice)} x {quantity}</span>
                 </div>
                 <div className="border-t border-ink/10 my-2" />
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-500">TOTAL_COST</span>
-                  <span className="text-ink font-bold">{totalCost} $BAZAAR</span>
+                  <span className="text-ink font-bold">{formatBazaar(totalCost)} $BAZAAR</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-neutral-500">BALANCE_AFTER</span>
                   <span className={hasEnoughBalance ? 'text-emerald-600' : 'text-rose-600'}>
-                    {(balance - totalCost).toLocaleString()} $BAZAAR
+                    {formatBazaar(balance - totalCost)} $BAZAAR
                   </span>
                 </div>
               </div>
@@ -398,7 +399,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
-                    <p className="text-rose-600 text-sm mt-1">Need {(totalCost - balance).toLocaleString()} more $BAZAAR</p>
+                    <p className="text-rose-600 text-sm mt-1">Need {formatBazaar(totalCost - balance)} more $BAZAAR</p>
                   </div>
                 </div>
               )}
@@ -416,7 +417,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                 ) : (
                   <>
                     <Layers className="w-4 h-4" />
-                    MINT {quantity > 1 ? `${quantity} EDITIONS` : 'EDITION'} // {totalCost} $BAZAAR
+                    MINT {quantity > 1 ? `${quantity} EDITIONS` : 'EDITION'} // {formatBazaar(totalCost)} $BAZAAR
                   </>
                 )}
               </button>

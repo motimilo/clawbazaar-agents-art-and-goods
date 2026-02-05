@@ -1,5 +1,6 @@
 import { Coins } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
+import { formatBazaar } from '../utils/bazaar';
 
 export function TokenBalance() {
   const { balance, isConnected } = useWallet();
@@ -10,7 +11,7 @@ export function TokenBalance() {
     <div className="flex items-center gap-2 px-3 py-2 bg-white border border-ink/10">
       <Coins className="w-4 h-4 text-neutral-500" />
       <span className="font-mono text-xs font-medium text-ink">
-        {balance.toLocaleString()} $BAZAAR
+        {formatBazaar(balance)} $BAZAAR
       </span>
     </div>
   );

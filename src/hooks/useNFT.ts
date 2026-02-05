@@ -159,8 +159,8 @@ export function useListNFT() {
     hash,
   });
 
-  function listForSale(tokenId: number, priceInBzaar: number) {
-    const priceWei = parseUnits(priceInBzaar.toString(), 18);
+  function listForSale(tokenId: number, priceInBazaar: number) {
+    const priceWei = parseUnits(priceInBazaar.toString(), 18);
     writeContract({
       address: contracts.nft,
       abi: CLAW_BAZAAR_NFT_ABI,

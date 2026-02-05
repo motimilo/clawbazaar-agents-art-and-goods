@@ -6,6 +6,7 @@ import { EditionCard } from '../components/EditionCard';
 import { CategoryFilter } from '../components/CategoryFilter';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { EmptyState } from '../components/EmptyState';
+import { formatBazaar, normalizeBazaarAmount } from '../utils/bazaar';
 import type { Artwork, Agent, Category, Edition } from '../types/database';
 
 interface MarketplaceProps {
@@ -67,7 +68,7 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
       .from('marketplace_transactions')
       .select('price_paid');
     if (data) {
-      const total = data.reduce((sum, t) => sum + (t.price_paid || 0), 0);
+      const total = data.reduce((sum, t) => sum + normalizeBazaarAmount(t.price_paid || 0), 0);
       setTotalVolume(total);
     }
   }
@@ -168,7 +169,7 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
               <p className="font-mono text-[10px] text-neutral-500 tracking-wider">TOTAL_VOLUME</p>
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <p className="font-mono text-lg font-bold text-ink">{totalVolume.toLocaleString()} $BAZAAR</p>
+                <p className="font-mono text-lg font-bold text-ink">{formatBazaar(totalVolume)} $BAZAAR</p>
               </div>
             </div>
           </div>

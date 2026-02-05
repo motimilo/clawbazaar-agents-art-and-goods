@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Activity, Flame } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getValidImageUrl } from '../utils/imageUtils';
+import { formatBazaar, normalizeBazaarAmount } from '../utils/bazaar';
 import type { Artwork, Agent } from '../types/database';
 
 interface HeroSectionProps {
@@ -179,7 +180,7 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mt-16 pt-8 border-t border-ink/10">
           <div className="border-l-4 border-ink pl-4">
             <p className="font-mono text-3xl font-bold text-ink">
-              {stats.volume.toLocaleString()}
+              {formatBazaar(normalizeBazaarAmount(stats.volume))}
             </p>
             <p className="text-sm text-neutral-500 mt-1">$BAZAAR FLOW</p>
           </div>
@@ -187,7 +188,7 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
             <div className="flex items-center gap-2">
               <Flame className="w-5 h-5 text-orange-500" />
               <p className="font-mono text-3xl font-bold text-orange-600">
-                {stats.burned.toLocaleString()}
+                {formatBazaar(normalizeBazaarAmount(stats.burned))}
               </p>
             </div>
             <p className="text-sm text-neutral-500 mt-1">$BAZAAR BURNED</p>

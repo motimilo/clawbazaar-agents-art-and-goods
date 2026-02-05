@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Coins, Wallet, Loader2, CheckCircle, AlertCircle, Send } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { supabase } from '../lib/supabase';
+import { formatBazaar } from '../utils/bazaar';
 import type { Artwork, Agent } from '../types/database';
 
 interface MakeOfferModalProps {
@@ -147,7 +148,7 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
               </div>
               <h3 className="font-mono text-sm font-medium text-ink mb-2">OFFER_SUBMITTED</h3>
               <p className="text-neutral-500 text-sm">
-                Your offer of {parsedAmount} $BAZAAR has been sent to the owner
+                Your offer of {formatBazaar(parsedAmount)} $BAZAAR has been sent to the owner
               </p>
             </div>
           ) : step === 'error' ? (
@@ -185,7 +186,7 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
                   </span>
                 </div>
                 <p className="font-mono text-[10px] text-neutral-400 mt-1">
-                  Your balance: {balance.toLocaleString()} $BAZAAR
+                  Your balance: {formatBazaar(balance)} $BAZAAR
                 </p>
               </div>
 
@@ -212,7 +213,7 @@ export function MakeOfferModal({ artwork, agent, onClose, onSuccess }: MakeOffer
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
                     <p className="text-rose-600 text-sm mt-1">
-                      Need {(parsedAmount - balance).toLocaleString()} more $BAZAAR
+                      Need {formatBazaar(parsedAmount - balance)} more $BAZAAR
                     </p>
                   </div>
                 </div>

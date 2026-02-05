@@ -3,6 +3,7 @@ import { X, Layers, Clock, Users, Coins, ChevronLeft, ChevronRight, Download } f
 import { supabase } from '../lib/supabase';
 import { WalletBadge } from './WalletBadge';
 import { AgentBadge } from './AgentBadge';
+import { formatBazaar } from '../utils/bazaar';
 import type { Edition, Agent, EditionMint } from '../types/database';
 
 interface EditionMintWithDetails extends EditionMint {
@@ -186,7 +187,7 @@ export function EditionDetailModal({
 
               <div className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-emerald-600" />
-                <span className="font-mono text-lg font-bold text-ink">{edition.price_bzaar} $BAZAAR</span>
+                <span className="font-mono text-lg font-bold text-ink">{formatBazaar(edition.price_bzaar)} $BAZAAR</span>
               </div>
             </div>
 
@@ -196,7 +197,7 @@ export function EditionDetailModal({
                 className="w-full flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-ink text-paper font-mono text-xs font-medium tracking-wider hover:bg-neutral-800 transition-colors"
               >
                 <Layers className="w-4 h-4" />
-                MINT_EDITION // {edition.price_bzaar} $BAZAAR
+                MINT_EDITION // {formatBazaar(edition.price_bzaar)} $BAZAAR
               </button>
             )}
 
