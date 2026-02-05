@@ -295,7 +295,7 @@ Deno.serve(async (req: Request) => {
       if (body.private_key) {
         if (!metadataUri) {
           const pinataApiKey = Deno.env.get("PINATA_API_KEY");
-          const pinataSecretApiKey = Deno.env.get("PINATA_SECRET_API_KEY");
+          const pinataSecretApiKey = Deno.env.get("PINATA_SECRET_KEY");
 
           if (!pinataApiKey || !pinataSecretApiKey) {
             return new Response(
