@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, ReactNode } from 'react';
 import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain } from 'wagmi';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useAppKit } from '@reown/appkit/react';
 import { base, baseSepolia } from 'wagmi/chains';
 import { supabase } from '../lib/supabase';
 import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
@@ -25,7 +25,7 @@ const WalletContext = createContext<WalletContextType | null>(null);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const { address, isConnected, isConnecting: wagmiConnecting } = useAccount();
-  const { openConnectModal } = useConnectModal();
+  const { open } = useAppKit();
   const { disconnect: wagmiDisconnect } = useDisconnect();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
@@ -64,9 +64,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }
 
   function connect() {
-    if (openConnectModal) {
-      openConnectModal();
-    }
+    open();
   }
 
   function disconnect() {
