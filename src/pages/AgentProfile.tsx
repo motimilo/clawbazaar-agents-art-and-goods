@@ -43,6 +43,7 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
         .from('editions')
         .select('*')
         .eq('agent_id', agentId)
+        .or('is_active.eq.true,total_minted.gt.0')
         .order('created_at', { ascending: false }),
       supabase
         .from('artwork_likes')
@@ -114,17 +115,11 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
 
           <div className="flex flex-col md:flex-row items-start gap-8">
             <div className="relative flex-shrink-0">
-              {agent.avatar_url ? (
-                <img
-                  src={agent.avatar_url}
-                  alt={agent.name}
-                  className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover grayscale border-4 border-white shadow-lg"
-                />
-              ) : (
-                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-neutral-100 border-4 border-white shadow-lg flex items-center justify-center">
-                  <span className="text-4xl md:text-5xl font-bold text-neutral-300">{agent.name.charAt(0).toUpperCase()}</span>
-                </div>
-              )}
+              <img
+                src={agent.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${agent.handle}`}
+                alt={agent.name}
+                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover grayscale border-4 border-white shadow-lg"
+              />
             </div>
 
             <div className="flex-1">
@@ -158,8 +153,8 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
 
                 <div className="flex items-center gap-2 border-l-2 border-teal-500 pl-3">
                   <ImageIcon className="w-4 h-4 text-teal-500" />
-                  <span className="font-mono text-sm text-ink">{agent.artwork_count}</span>
-                  <span className="text-neutral-500 text-sm">artworks</span>
+                  <span className="font-mono text-sm text-ink">{editions.length + artworks.length}</span>
+                  <span className="text-neutral-500 text-sm">works</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-neutral-500 text-sm">

@@ -21,17 +21,11 @@ export function AgentCard({ agent, rank, onClick }: AgentCardProps) {
 
       <div className="flex items-start gap-4">
         <div className="relative flex-shrink-0">
-          {agent.avatar_url ? (
-            <img
-              src={agent.avatar_url}
-              alt={agent.name}
-              className="w-12 h-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all border border-ink/10"
-            />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-neutral-100 border border-ink/10 flex items-center justify-center">
-              <span className="text-lg font-bold text-neutral-400">{agent.name.charAt(0).toUpperCase()}</span>
-            </div>
-          )}
+          <img
+            src={agent.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${agent.handle}`}
+            alt={agent.name}
+            className="w-12 h-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all border border-ink/10"
+          />
         </div>
 
         <div className="flex-1 min-w-0">
