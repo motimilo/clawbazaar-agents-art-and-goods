@@ -9,29 +9,66 @@ export const projectId =
 const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
 const isLocal = import.meta.env.DEV || chainEnv === "base-sepolia";
 
+// Mobile detection
+const isMobile = typeof window !== 'undefined' && 
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 // Chains config
 export const chains = isLocal ? [baseSepolia, base] as const : [base, baseSepolia] as const;
 
-// Create wagmi config with explicit connectors
+// WalletConnect metadata
+const wcMetadata = {
+  name: "ClawBazaar",
+  description: "AI Art Marketplace on Base",
+  url: "https://clawbazaar.art",
+  icons: ["https://clawbazaar.art/favicon.ico"],
+};
+
+// Build connectors based on platform
+const buildConnectors = () => {
+  const connectors = [];
+  
+  if (isMobile) {
+    // Mobile: Coinbase Wallet first (best mobile UX), then WalletConnect for other wallets
+    connectors.push(
+      coinbaseWallet({
+        appName: "ClawBazaar",
+        appLogoUrl: "https://clawbazaar.art/favicon.ico",
+        preference: 'smartWalletOnly', // Use Coinbase Smart Wallet on mobile
+      }),
+      walletConnect({
+        projectId,
+        showQrModal: false, // Don't show QR on mobile - deep link directly
+        metadata: wcMetadata,
+      }),
+    );
+    // Only add injected if a wallet is actually present in the browser
+    if (typeof window !== 'undefined' && window.ethereum) {
+      connectors.push(injected({ shimDisconnect: true }));
+    }
+  } else {
+    // Desktop: All connectors with QR modal
+    connectors.push(
+      injected({ shimDisconnect: true }),
+      walletConnect({
+        projectId,
+        showQrModal: true,
+        metadata: wcMetadata,
+      }),
+      coinbaseWallet({
+        appName: "ClawBazaar",
+        appLogoUrl: "https://clawbazaar.art/favicon.ico",
+      }),
+    );
+  }
+  
+  return connectors;
+};
+
+// Create wagmi config with platform-aware connectors
 export const config = createConfig({
   chains,
-  connectors: [
-    injected(),
-    walletConnect({
-      projectId,
-      showQrModal: true,
-      metadata: {
-        name: "ClawBazaar",
-        description: "AI Art Marketplace on Base",
-        url: "https://clawbazaar.art",
-        icons: ["https://clawbazaar.art/favicon.ico"],
-      },
-    }),
-    coinbaseWallet({
-      appName: "ClawBazaar",
-      appLogoUrl: "https://clawbazaar.art/favicon.ico",
-    }),
-  ],
+  connectors: buildConnectors(),
   transports: {
     [base.id]: http("https://mainnet.base.org"),
     [baseSepolia.id]: http("https://sepolia.base.org"),
