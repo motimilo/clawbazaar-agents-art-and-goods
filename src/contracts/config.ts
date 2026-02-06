@@ -1,4 +1,4 @@
-import { base, baseSepolia } from "wagmi/chains";
+import { base } from "wagmi/chains";
 
 type ContractAddresses = {
   nft: `0x${string}`;
@@ -6,95 +6,30 @@ type ContractAddresses = {
   editions: `0x${string}`;
 };
 
-const DEFAULT_CONTRACTS: Record<number, ContractAddresses> = {
-  [base.id]: {
-    nft: "0x345590cF5B3E7014B5c34079e7775F99DE3B4642",
-    token: "0xda15854df692c0c4415315909e69d44e54f76b07",
-    // FIXED: This is the real mainnet editions contract (30 txs, Day Zero/Genesis mints)
-    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
-  },
-  [baseSepolia.id]: {
-    // v2 contracts (production-ready with OpenZeppelin best practices)
-    nft: "0x1860aD731cc597cE451e26b42ED2A42F56ab8a24",
-    token: "0x073c46Fec3516532EBD59a163E4FE7a04f2f1D4A",
-    // NOTE: Using alternate contract for Sepolia testing
-    editions: "0x20380549d6348f456e8718b6D83b48d0FB06B29a",
-    // Legacy v1 (deprecated)
-    // nft: '0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA',
-    // token: '0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C',
-  },
-};
-
-const envBase = {
-  nft:
-    import.meta.env.VITE_NFT_CONTRACT_ADDRESS_BASE ||
-    import.meta.env.VITE_NFT_CONTRACT_ADDRESS,
-  token:
-    import.meta.env.VITE_BAZAAR_TOKEN_ADDRESS_BASE ||
-    import.meta.env.VITE_BAZAAR_TOKEN_ADDRESS,
-  editions:
-    import.meta.env.VITE_EDITIONS_CONTRACT_ADDRESS_BASE ||
-    import.meta.env.VITE_EDITIONS_CONTRACT_ADDRESS,
-};
-
-const envSepolia = {
-  nft:
-    import.meta.env.VITE_NFT_CONTRACT_ADDRESS_SEPOLIA ||
-    import.meta.env.VITE_NFT_CONTRACT_ADDRESS,
-  token:
-    import.meta.env.VITE_BAZAAR_TOKEN_ADDRESS_SEPOLIA ||
-    import.meta.env.VITE_BAZAAR_TOKEN_ADDRESS,
-  editions:
-    import.meta.env.VITE_EDITIONS_CONTRACT_ADDRESS_SEPOLIA ||
-    import.meta.env.VITE_EDITIONS_CONTRACT_ADDRESS,
+// Base Mainnet contracts - PRODUCTION ONLY
+// No more Sepolia complexity. This is the source of truth.
+const MAINNET_CONTRACTS: ContractAddresses = {
+  nft: "0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF",
+  token: "0xdA15854Df692c0c4415315909E69D44E54F76B07",
+  editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
 };
 
 export const CONTRACTS: Record<number, ContractAddresses> = {
-  [base.id]: {
-    nft: (envBase.nft || DEFAULT_CONTRACTS[base.id].nft) as `0x${string}`,
-    token: (envBase.token || DEFAULT_CONTRACTS[base.id].token) as `0x${string}`,
-    editions: (envBase.editions ||
-      DEFAULT_CONTRACTS[base.id].editions) as `0x${string}`,
-  },
-  [baseSepolia.id]: {
-    nft: (envSepolia.nft ||
-      DEFAULT_CONTRACTS[baseSepolia.id].nft) as `0x${string}`,
-    token: (envSepolia.token ||
-      DEFAULT_CONTRACTS[baseSepolia.id].token) as `0x${string}`,
-    editions: (envSepolia.editions ||
-      DEFAULT_CONTRACTS[baseSepolia.id].editions) as `0x${string}`,
-  },
+  [base.id]: MAINNET_CONTRACTS,
 };
 
-const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
-const defaultChainId =
-  chainEnv === "base-sepolia"
-    ? baseSepolia.id
-    : chainEnv === "base"
-    ? base.id
-    : import.meta.env.DEV
-    ? baseSepolia.id
-    : base.id;
+// Always Base mainnet
+export const SUPPORTED_CHAIN_ID = base.id;
 
-export const SUPPORTED_CHAIN_ID = defaultChainId;
+export const BASESCAN_URL = "https://basescan.org";
 
-export const BASESCAN_URL = {
-  [base.id]: "https://basescan.org",
-  [baseSepolia.id]: "https://sepolia.basescan.org",
-} as const;
-
-export function getContractAddresses(chainId: number) {
-  if (chainId === base.id || chainId === baseSepolia.id) {
-    return CONTRACTS[chainId];
-  }
-  return CONTRACTS[SUPPORTED_CHAIN_ID];
+export function getContractAddresses(_chainId?: number) {
+  // Always return mainnet contracts
+  return MAINNET_CONTRACTS;
 }
 
-export function getBasescanUrl(chainId: number) {
-  if (chainId === base.id || chainId === baseSepolia.id) {
-    return BASESCAN_URL[chainId];
-  }
-  return BASESCAN_URL[SUPPORTED_CHAIN_ID];
+export function getBasescanUrl(_chainId?: number) {
+  return BASESCAN_URL;
 }
 
 export function getTxUrl(chainId: number, txHash: string) {
