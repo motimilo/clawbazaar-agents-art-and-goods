@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Coins, AlertCircle, CheckCircle, Loader2, Wallet, Layers, Users, Clock, Minus, Plus, Terminal } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
-import { useWriteContract, useWaitForTransactionReceipt, useChainId } from 'wagmi';
+import { useWriteContract, useWaitForTransactionReceipt, useChainId, useReadContract } from 'wagmi';
 import { getContractAddresses } from '../contracts/config';
 import { CLAW_BAZAAR_EDITIONS_ABI, BZAAR_TOKEN_ABI } from '../contracts/abis';
 import { formatBazaar, normalizeBazaarAmount, toBazaarWei } from '../utils/bazaar';
@@ -14,14 +14,15 @@ interface EditionMintModalProps {
   onSuccess: () => void;
 }
 
-type MintStep = 'idle' | 'minting' | 'success' | 'error' | 'not_deployed';
+type MintStep = 'idle' | 'approving' | 'minting' | 'success' | 'error' | 'not_deployed';
 
 export function EditionMintModal({ edition, agent, onClose, onSuccess }: EditionMintModalProps) {
   const { address, isConnected, balance, connect, isCorrectNetwork, switchToBase, targetChainName } = useWallet();
   const [step, setStep] = useState<MintStep>('idle');
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const [approveTxHash, setApproveTxHash] = useState<`0x${string}` | undefined>();
+  const [mintTxHash, setMintTxHash] = useState<`0x${string}` | undefined>();
   const [mintQuantity, setMintQuantity] = useState(1);
 
   const chainId = useChainId();
@@ -31,18 +32,60 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
 
   const isContractDeployed = editionsAddress !== '0x0000000000000000000000000000000000000000';
 
+  const unitPrice = normalizeBazaarAmount(edition.price_bzaar);
+  const totalCost = unitPrice * quantity;
+  const totalPriceWei = toBazaarWei(totalCost);
+
+  const { data: currentAllowance } = useReadContract({
+    address: tokenAddress,
+    abi: BZAAR_TOKEN_ABI,
+    functionName: 'allowance',
+    args: address ? [address as `0x${string}`, editionsAddress] : undefined,
+    query: {
+      enabled: !!address && isConnected,
+    },
+  });
+
   const { writeContract: writeApprove } = useWriteContract();
   const { writeContract: writeMint } = useWriteContract();
 
-  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
+  const { isSuccess: isApproveConfirmed } = useWaitForTransactionReceipt({
+    hash: approveTxHash,
+  });
+
+  const { isSuccess: isMintConfirmed } = useWaitForTransactionReceipt({
+    hash: mintTxHash,
   });
 
   useEffect(() => {
-    if (isConfirmed && txHash && address && step === 'minting') {
-      recordMintToDatabase(txHash, mintQuantity);
+    if (isMintConfirmed && mintTxHash && address && step === 'minting') {
+      recordMintToDatabase(mintTxHash, mintQuantity);
     }
-  }, [isConfirmed, txHash, address, step, mintQuantity]);
+  }, [isMintConfirmed, mintTxHash, address, step, mintQuantity]);
+
+  useEffect(() => {
+    if (isApproveConfirmed && step === 'approving' && edition.edition_id_on_chain !== null) {
+      setStep('minting');
+      writeMint(
+        {
+          address: editionsAddress,
+          abi: CLAW_BAZAAR_EDITIONS_ABI,
+          functionName: 'mint',
+          args: [BigInt(edition.edition_id_on_chain), BigInt(mintQuantity)],
+        },
+        {
+          onSuccess: (hash) => {
+            setMintTxHash(hash);
+          },
+          onError: (err) => {
+            console.error('Mint error:', err);
+            setError(`Mint failed: ${err.message || 'Unknown error'}`);
+            setStep('error');
+          },
+        }
+      );
+    }
+  }, [isApproveConfirmed, step, edition.edition_id_on_chain, mintQuantity, editionsAddress, writeMint]);
 
   async function recordMintToDatabase(hash: string, qty: number) {
     try {
@@ -78,12 +121,12 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
 
   const remaining = edition.max_supply - edition.total_minted;
   const isSoldOut = remaining === 0;
-  const unitPrice = normalizeBazaarAmount(edition.price_bzaar);
-  const totalCost = unitPrice * quantity;
   const hasEnoughBalance = balance >= totalCost;
   const maxCanMint = Math.min(remaining, edition.max_per_wallet);
 
   const isExpired = edition.mint_end ? new Date(edition.mint_end).getTime() < Date.now() : false;
+
+  const hasEnoughAllowance = currentAllowance !== undefined && currentAllowance >= totalPriceWei;
 
   async function handleMint() {
     if (!isConnected || !address) {
@@ -119,49 +162,50 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
       return;
     }
 
-    setStep('minting');
     setMintQuantity(quantity);
 
     try {
-      const totalPriceWei = toBazaarWei(totalCost);
-
-      writeApprove(
-        {
-          address: tokenAddress,
-          abi: BZAAR_TOKEN_ABI,
-          functionName: 'approve',
-          args: [editionsAddress, totalPriceWei],
-        },
-        {
-          onSuccess: () => {
-            setTimeout(() => {
-              writeMint(
-                {
-                  address: editionsAddress,
-                  abi: CLAW_BAZAAR_EDITIONS_ABI,
-                  functionName: 'mint',
-                  args: [BigInt(edition.edition_id_on_chain!), BigInt(quantity)],
-                },
-                {
-                  onSuccess: (hash) => {
-                    setTxHash(hash);
-                  },
-                  onError: (err) => {
-                    console.error('Mint error:', err);
-                    setError(`Mint failed: ${err.message || 'Unknown error'}`);
-                    setStep('error');
-                  },
-                }
-              );
-            }, 1000);
+      if (hasEnoughAllowance) {
+        setStep('minting');
+        writeMint(
+          {
+            address: editionsAddress,
+            abi: CLAW_BAZAAR_EDITIONS_ABI,
+            functionName: 'mint',
+            args: [BigInt(edition.edition_id_on_chain), BigInt(quantity)],
           },
-          onError: (err) => {
-            console.error('Approve error:', err);
-            setError(`Approval failed: ${err.message || 'Unknown error'}`);
-            setStep('error');
+          {
+            onSuccess: (hash) => {
+              setMintTxHash(hash);
+            },
+            onError: (err) => {
+              console.error('Mint error:', err);
+              setError(`Mint failed: ${err.message || 'Unknown error'}`);
+              setStep('error');
+            },
+          }
+        );
+      } else {
+        setStep('approving');
+        writeApprove(
+          {
+            address: tokenAddress,
+            abi: BZAAR_TOKEN_ABI,
+            functionName: 'approve',
+            args: [editionsAddress, totalPriceWei],
           },
-        }
-      );
+          {
+            onSuccess: (hash) => {
+              setApproveTxHash(hash);
+            },
+            onError: (err) => {
+              console.error('Approve error:', err);
+              setError(`Approval failed: ${err.message || 'Unknown error'}`);
+              setStep('error');
+            },
+          }
+        );
+      }
     } catch (err) {
       console.error('Transaction error:', err);
       setError(err instanceof Error ? err.message : 'Transaction failed');
@@ -172,6 +216,8 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
   function handleRetry() {
     setStep('idle');
     setError(null);
+    setApproveTxHash(undefined);
+    setMintTxHash(undefined);
   }
 
   function incrementQuantity() {
@@ -186,7 +232,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
     }
   }
 
-  const isProcessing = step === 'minting';
+  const isProcessing = step === 'approving' || step === 'minting';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -387,8 +433,17 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                   <div className="flex items-center gap-3">
                     <Loader2 className="w-4 h-4 text-ink animate-spin" />
                     <div>
-                      <p className="font-mono text-xs font-medium text-ink">MINTING_EDITION...</p>
-                      <p className="text-neutral-500 text-xs mt-0.5">Processing your mint</p>
+                      {step === 'approving' ? (
+                        <>
+                          <p className="font-mono text-xs font-medium text-ink">STEP_1/2: APPROVING_TOKEN...</p>
+                          <p className="text-neutral-500 text-xs mt-0.5">Approving BAZAAR token spending</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-mono text-xs font-medium text-ink">STEP_2/2: MINTING_EDITION...</p>
+                          <p className="text-neutral-500 text-xs mt-0.5">Minting your edition</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -412,7 +467,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
                 {isProcessing ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    MINTING...
+                    {step === 'approving' ? 'APPROVING...' : 'MINTING...'}
                   </>
                 ) : (
                   <>

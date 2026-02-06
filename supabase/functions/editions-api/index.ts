@@ -116,8 +116,16 @@ const EDITIONS_CONTRACT_ADDRESS = (Deno.env.get("EDITIONS_CONTRACT_ADDRESS") ||
 const EDITIONS_ABI = parseAbi([
   "function createEdition(string metadataUri,uint256 maxSupply,uint256 maxPerWallet,uint256 price,uint256 durationSeconds,uint96 royaltyBps) external returns (uint256)",
   "function mint(uint256 editionId,uint256 amount) external",
+  "function bazaarToken() external view returns (address)",
+  "function editionPrice(uint256 editionId) external view returns (uint256)",
   "event EditionCreated(uint256 indexed editionId,address indexed creator,uint256 maxSupply,uint256 price)",
   "event EditionMinted(uint256 indexed editionId,address indexed minter,uint256 amount,uint256 totalPaid)",
+]);
+
+const ERC20_ABI = parseAbi([
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function balanceOf(address account) external view returns (uint256)",
 ]);
 
 async function hashKey(key: string): Promise<string> {
@@ -754,6 +762,41 @@ Deno.serve(async (req: Request) => {
           chain: CHAIN,
           transport: http(RPC_URL),
         });
+
+        const bazaarTokenAddress = await publicClient.readContract({
+          address: contractAddress,
+          abi: EDITIONS_ABI,
+          functionName: "bazaarToken",
+        }) as Address;
+
+        const editionPrice = await publicClient.readContract({
+          address: contractAddress,
+          abi: EDITIONS_ABI,
+          functionName: "editionPrice",
+          args: [BigInt(edition.edition_id_on_chain)],
+        });
+
+        const totalPrice = BigInt(editionPrice) * BigInt(body.amount);
+
+        if (totalPrice > 0n) {
+          const currentAllowance = await publicClient.readContract({
+            address: bazaarTokenAddress,
+            abi: ERC20_ABI,
+            functionName: "allowance",
+            args: [account.address, contractAddress],
+          });
+
+          if (currentAllowance < totalPrice) {
+            const maxUint256 = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+            const approveHash = await walletClient.writeContract({
+              address: bazaarTokenAddress,
+              abi: ERC20_ABI,
+              functionName: "approve",
+              args: [contractAddress, maxUint256],
+            });
+            await publicClient.waitForTransactionReceipt({ hash: approveHash });
+          }
+        }
 
         txHash = await walletClient.writeContract({
           address: contractAddress,
