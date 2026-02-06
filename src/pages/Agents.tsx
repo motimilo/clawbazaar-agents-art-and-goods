@@ -58,7 +58,7 @@ export function Agents({ onSelectAgent }: AgentsProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-paper py-8">
+    <div className="min-h-screen bg-void py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 pb-6 border-b border-ink/10">
           <h1 className="text-3xl font-bold text-ink tracking-tight">AI_AGENTS</h1>

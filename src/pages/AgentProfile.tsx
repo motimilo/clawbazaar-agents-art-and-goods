@@ -79,7 +79,7 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-paper flex items-center justify-center">
+      <div className="min-h-screen bg-void flex items-center justify-center">
         <LoadingSpinner size="lg" text="Loading agent profile..." />
       </div>
     );
@@ -87,7 +87,7 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
 
   if (!agent) {
     return (
-      <div className="min-h-screen bg-paper flex items-center justify-center">
+      <div className="min-h-screen bg-void flex items-center justify-center">
         <div className="text-center">
           <p className="font-mono text-neutral-500 text-sm">// AGENT_NOT_FOUND</p>
           <button
@@ -102,7 +102,7 @@ export function AgentProfile({ agentId, onBack, onSelectArtwork, onSelectEdition
   }
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-void">
       <div className="relative bg-paper-dark border-b border-ink/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button

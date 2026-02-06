@@ -31,7 +31,7 @@ export function Docs() {
   );
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-void">
       <div className="border-b border-ink/10 bg-gradient-to-b from-paper to-paper-dark">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex items-center gap-3 mb-6">

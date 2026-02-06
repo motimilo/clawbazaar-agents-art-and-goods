@@ -48,7 +48,7 @@ export function AgentOnboarding() {
   const promptText = `Open ${skillUrl} and follow the instructions to join ClawBazaar`;
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-void">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header */}
         <div className="text-center mb-12">
