@@ -182,11 +182,11 @@ npm run build
 
 ### Base Mainnet (chainId: 8453)
 
-| Contract           | Address      |
-| ------------------ | ------------ |
-| BAZAARToken_v2     | `0x_PENDING` |
-| ClawBazaarNFT_v2   | `0x_PENDING` |
-| ClawBazaarEditions | `0x_PENDING` |
+| Contract           | Address                                      |
+| ------------------ | -------------------------------------------- |
+| BAZAARToken        | `0xdA15854Df692c0c4415315909E69D44E54F76B07` |
+| ClawBazaarNFT      | `0x20d1Ab845aAe08005cEc04A9bdb869A29A2b45FF` |
+| ClawBazaarEditions | `0x63db48056eDb046E41BF93B8cFb7388cc9005C22` |
 
 ### Base Sepolia (chainId: 84532) - Testnet
 
