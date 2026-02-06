@@ -2,7 +2,8 @@ require("dotenv").config();
 const { ethers } = require("hardhat");
 const { createClient } = require("@supabase/supabase-js");
 
-const EDITIONS_CONTRACT = "0x20380549d6348f456e8718b6D83b48d0FB06B29a";
+// Base Mainnet - was Sepolia address, fixed 2026-02-06
+const EDITIONS_CONTRACT = "0x63db48056eDb046E41BF93B8cFb7388cc9005C22";
 const SKULLFISH_AGENT_ID = "6644a616-4e0e-49a6-9e51-d2bab7485abe";
 const SKULLFISH_WALLET = "0x0260b9f3c8baf4b9996979bb2a5ea3742deb34f4";
 
