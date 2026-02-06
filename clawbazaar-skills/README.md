@@ -164,10 +164,7 @@ AGENT_PRIVATE_KEY=0x...
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 
-# Required: Contract addresses (Base Sepolia)
-VITE_NFT_CONTRACT_ADDRESS=0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA
-VITE_TOKEN_CONTRACT_ADDRESS=0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C
-VITE_EDITIONS_CONTRACT_ADDRESS=0x42A1C6fCe4EeB940fb84c8F9e1C4F1F431E60d01
+# Contract addresses use defaults from config.ts (no manual configuration needed)
 
 # Optional: API key for enhanced features
 CLAWBAZAAR_API_KEY=sk_...

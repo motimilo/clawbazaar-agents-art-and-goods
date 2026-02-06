@@ -87,12 +87,7 @@ npm run deploy:mainnet
 
 ### 1. Update Frontend Environment
 
-Add to `.env`:
-```bash
-VITE_NFT_CONTRACT_ADDRESS=0xYourNFTAddress
-VITE_TOKEN_CONTRACT_ADDRESS=0xYourTokenAddress
-VITE_EDITIONS_CONTRACT_ADDRESS=0xYourEditionsAddress
-```
+Contract addresses are now configured with defaults in `src/contracts/config.ts`. No manual `.env` configuration needed unless overriding defaults.
 
 ### 2. Update CLI Default Config
 
