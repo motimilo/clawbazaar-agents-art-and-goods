@@ -1,4 +1,3 @@
-import { Coins } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { formatBazaar } from '../utils/bazaar';
 
@@ -8,11 +7,12 @@ export function TokenBalance() {
   if (!isConnected) return null;
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-white border border-ink/10">
-      <Coins className="w-4 h-4 text-neutral-500" />
-      <span className="font-mono text-xs font-medium text-ink">
-        {formatBazaar(balance)} $BAZAAR
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-surface border border-surface-overlay">
+      <span className="font-mono text-xxs text-text-ghost tracking-wider">BAL:</span>
+      <span className="font-mono text-xs text-text-primary">
+        {formatBazaar(balance)}
       </span>
+      <span className="font-mono text-xxs text-text-muted">$BAZAAR</span>
     </div>
   );
 }
