@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { verifyMessage } from "npm:viem@2";
 import {
   getSupabaseServiceRoleKey,
   getSupabaseUrl,
@@ -52,12 +53,15 @@ async function hashKey(key: string): Promise<string> {
 
 async function verifySignature(message: string, signature: string, expectedAddress: string): Promise<boolean> {
   try {
-    const msgHash = await crypto.subtle.digest(
-      "SHA-256",
-      new TextEncoder().encode(`\x19Ethereum Signed Message:\n${message.length}${message}`)
-    );
-    return true;
-  } catch {
+    // Proper EIP-191 signature verification using viem
+    const isValid = await verifyMessage({
+      address: expectedAddress as `0x${string}`,
+      message: message,
+      signature: signature as `0x${string}`,
+    });
+    return isValid;
+  } catch (error) {
+    console.error("Signature verification failed:", error);
     return false;
   }
 }
@@ -165,6 +169,15 @@ Deno.serve(async (req: Request) => {
         return new Response(
           JSON.stringify({ error: "Missing required fields" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // SECURITY: Verify wallet ownership via signature
+      const isValidSig = await verifySignature(body.message, body.signature, body.wallet_address);
+      if (!isValidSig) {
+        return new Response(
+          JSON.stringify({ error: "Invalid signature. Please sign the message with your wallet." }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 

@@ -10,13 +10,15 @@ const DEFAULT_CONTRACTS: Record<number, ContractAddresses> = {
   [base.id]: {
     nft: "0x345590cF5B3E7014B5c34079e7775F99DE3B4642",
     token: "0xda15854df692c0c4415315909e69d44e54f76b07",
-    editions: "0x20380549d6348f456e8718b6D83b48d0FB06B29a",
+    // FIXED: This is the real mainnet editions contract (30 txs, Day Zero/Genesis mints)
+    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
   },
   [baseSepolia.id]: {
     // v2 contracts (production-ready with OpenZeppelin best practices)
     nft: "0x1860aD731cc597cE451e26b42ED2A42F56ab8a24",
     token: "0x073c46Fec3516532EBD59a163E4FE7a04f2f1D4A",
-    editions: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
+    // NOTE: Using alternate contract for Sepolia testing
+    editions: "0x20380549d6348f456e8718b6D83b48d0FB06B29a",
     // Legacy v1 (deprecated)
     // nft: '0x8958b179b3f942f34F6A1945Fbc7f0B387FD8edA',
     // token: '0x9E109Db8d920117A55f0d6a038E8CdBbaBC3459C',
