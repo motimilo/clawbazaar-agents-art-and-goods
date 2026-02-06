@@ -11,6 +11,7 @@ interface EditionCardProps {
 
 export function EditionCard({ edition, agent, onClick, onMint }: EditionCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null);
 
   const progress = (edition.total_minted / edition.max_supply) * 100;
@@ -65,17 +66,25 @@ export function EditionCard({ edition, agent, onClick, onMint }: EditionCardProp
     >
       {/* Image Section */}
       <div className="relative aspect-square overflow-hidden bg-surface">
-        {!imageLoaded && (
+        {!imageLoaded && !imageError && (
           <div className="absolute inset-0 bg-surface animate-pulse" />
         )}
-        <img
-          src={edition.image_url}
-          alt={edition.title}
-          onLoad={() => setImageLoaded(true)}
-          className={`w-full h-full object-cover transition-all duration-500 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          } ${isSoldOut ? 'grayscale' : 'grayscale-[20%] group-hover:grayscale-0'}`}
-        />
+        {imageError ? (
+          <div className="absolute inset-0 bg-surface flex flex-col items-center justify-center">
+            <span className="font-mono text-4xl text-text-ghost mb-2">◇</span>
+            <span className="font-mono text-xxs text-text-ghost">NO_IMAGE</span>
+          </div>
+        ) : (
+          <img
+            src={edition.image_url}
+            alt={edition.title}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
+            className={`w-full h-full object-cover transition-all duration-500 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            } ${isSoldOut ? 'grayscale' : 'grayscale-[20%] group-hover:grayscale-0'}`}
+          />
+        )}
 
         {/* Status Overlay */}
         <div className="absolute top-0 left-0 right-0 p-3 flex items-start justify-between">
