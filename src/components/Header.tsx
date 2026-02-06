@@ -14,11 +14,11 @@ export function Header({ currentPage, onNavigate, onOpenProfile }: HeaderProps) 
   const { address, isConnected, connect, disconnect } = useWallet();
 
   const navItems = [
-    { id: 'home' as const, label: 'INDEX', jp: '索引' },
-    { id: 'marketplace' as const, label: 'MARKET', jp: '市場' },
-    { id: 'agents' as const, label: 'AGENTS', jp: 'エージェント' },
-    { id: 'join' as const, label: 'JOIN', jp: '参加' },
-    { id: 'docs' as const, label: 'DOCS', jp: '文書' },
+    { id: 'home' as const, label: 'HOME' },
+    { id: 'marketplace' as const, label: 'MARKETPLACE' },
+    { id: 'agents' as const, label: 'AGENTS' },
+    { id: 'join' as const, label: 'JOIN' },
+    { id: 'docs' as const, label: 'DOCS' },
   ];
 
   const formatAddress = (addr: string) => {
@@ -26,116 +26,94 @@ export function Header({ currentPage, onNavigate, onOpenProfile }: HeaderProps) 
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-void border-b border-surface-overlay">
-      {/* Top data strip */}
-      <div className="h-6 border-b border-surface-overlay bg-surface flex items-center justify-between px-4">
-        <div className="flex items-center gap-4 font-mono text-xxs text-text-muted">
-          <span>CLAWBAZAAR.ART</span>
-          <span className="text-text-ghost">|</span>
-          <span>BASE_MAINNET</span>
-          <span className="text-text-ghost">|</span>
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-signal-live animate-pulse" />
-            LIVE
-          </span>
-        </div>
-        <div className="hidden sm:flex items-center gap-4 font-mono text-xxs text-text-ghost">
-          <span>新世紀エージェント経済</span>
-        </div>
+    <header className="sticky top-0 z-40 bg-paper/95 backdrop-blur-sm border-b border-ink/10">
+      <div className="h-1 flex">
+        <div className="flex-1 bg-teal-500" />
+        <div className="flex-1 bg-lime-400" />
+        <div className="flex-1 bg-yellow-400" />
+        <div className="flex-1 bg-orange-400" />
+        <div className="flex-1 bg-red-400" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center gap-6">
+        <div className="flex items-center justify-between h-24">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => onNavigate('home')}
               className="flex items-center gap-3 group"
             >
-              <div className="flex flex-col">
-                <span className="font-mono text-xl font-bold tracking-tight text-text-primary">
-                  CLAWBAZAAR
-                </span>
-                <span className="font-mono text-xxs text-text-ghost tracking-widest">
-                  クローバザール
-                </span>
-              </div>
+              <img
+                src="/untitled_design_(49).png"
+                alt="ClawBazaar"
+                className="h-28 w-auto object-contain"
+              />
             </button>
 
-            <div className="hidden lg:block w-px h-8 bg-surface-overlay" />
+            <div className="hidden lg:block w-px h-8 bg-ink/10" />
 
-            {/* Navigation */}
-            <nav className="hidden lg:flex items-center">
-              {navItems.map((item, index) => (
+            <nav className="hidden lg:flex items-center gap-1">
+              {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
-                  className={`relative px-4 py-2 font-mono text-xs tracking-wider transition-all group ${
+                  className={`px-4 py-2 font-mono text-xs font-medium tracking-wider transition-colors ${
                     currentPage === item.id
-                      ? 'text-text-primary'
-                      : 'text-text-muted hover:text-text-primary'
+                      ? 'text-ink'
+                      : 'text-neutral-500 hover:text-ink hover:bg-ink/5'
                   }`}
                 >
-                  <span className="relative z-10">{item.label}</span>
-                  {currentPage === item.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-px bg-text-primary" />
-                  )}
-                  <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 font-mono text-xxs text-text-ghost opacity-0 group-hover:opacity-100 transition-opacity">
-                    {item.jp}
-                  </span>
-                  {index < navItems.length - 1 && (
-                    <span className="absolute right-0 top-1/2 -translate-y-1/2 text-surface-overlay">/</span>
-                  )}
+                  {item.label}
                 </button>
               ))}
             </nav>
           </div>
 
-          {/* Right side - wallet */}
           <div className="hidden md:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-neutral-500">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              SYSTEM_ONLINE
+            </div>
+
             {isConnected && address ? (
               <div className="flex items-center gap-2">
                 <TokenBalance />
-                <div className="h-4 w-px bg-surface-overlay" />
                 <button
                   onClick={onOpenProfile}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-surface border border-surface-overlay font-mono text-xs text-text-secondary hover:text-text-primary hover:border-text-ghost transition-all"
+                  className="flex items-center gap-2 px-3 py-2 bg-white border border-ink/10 text-sm font-mono text-ink hover:border-ink/30 transition-colors"
                 >
-                  <span className="w-1.5 h-1.5 bg-signal-live" />
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full" />
                   {formatAddress(address)}
                 </button>
                 <button
                   onClick={disconnect}
-                  className="p-1.5 text-text-ghost hover:text-text-secondary transition-colors"
-                  title="Disconnect"
+                  className="p-2 text-neutral-400 hover:text-ink transition-colors"
+                  title="Disconnect wallet"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={connect}
-                className="flex items-center gap-2 px-4 py-2 bg-text-primary text-void font-mono text-xs font-medium tracking-wider hover:bg-text-secondary transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-ink text-paper font-mono text-xs font-medium tracking-wider hover:bg-neutral-800 transition-colors"
               >
-                <Wallet className="w-3.5 h-3.5" />
-                CONNECT
+                <Wallet className="w-4 h-4" />
+                CONNECT_ID
               </button>
             )}
           </div>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-text-secondary hover:text-text-primary"
+            className="lg:hidden p-2 text-ink"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-surface-overlay">
-            <nav className="flex flex-col">
+          <div className="lg:hidden py-4 border-t border-ink/10">
+            <nav className="flex flex-col gap-1 mb-4">
               {navItems.map((item) => (
                 <button
                   key={item.id}
@@ -143,53 +121,50 @@ export function Header({ currentPage, onNavigate, onOpenProfile }: HeaderProps) 
                     onNavigate(item.id);
                     setMobileMenuOpen(false);
                   }}
-                  className={`flex items-center justify-between px-4 py-3 font-mono text-sm tracking-wider border-b border-surface transition-colors ${
+                  className={`px-4 py-3 font-mono text-xs font-medium tracking-wider text-left transition-colors ${
                     currentPage === item.id
-                      ? 'text-text-primary bg-surface'
-                      : 'text-text-muted hover:text-text-primary hover:bg-surface'
+                      ? 'text-ink bg-ink/5'
+                      : 'text-neutral-500 hover:text-ink hover:bg-ink/5'
                   }`}
                 >
-                  <span>{item.label}</span>
-                  <span className="text-xxs text-text-ghost">{item.jp}</span>
+                  {item.label}
                 </button>
               ))}
             </nav>
-            <div className="mt-4 px-4">
-              {isConnected && address ? (
-                <div className="flex flex-col gap-3">
-                  <TokenBalance />
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => {
-                        onOpenProfile();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="flex items-center gap-2 px-4 py-2 bg-surface border border-surface-overlay font-mono text-sm text-text-secondary"
-                    >
-                      <span className="w-1.5 h-1.5 bg-signal-live" />
-                      {formatAddress(address)}
-                    </button>
-                    <button
-                      onClick={disconnect}
-                      className="px-4 py-2 text-text-ghost hover:text-text-secondary font-mono text-xs"
-                    >
-                      DISCONNECT
-                    </button>
-                  </div>
+            {isConnected && address ? (
+              <div className="flex flex-col gap-2">
+                <TokenBalance />
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => {
+                      onOpenProfile();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-ink/10 text-sm font-mono text-ink"
+                  >
+                    <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                    {formatAddress(address)}
+                  </button>
+                  <button
+                    onClick={disconnect}
+                    className="px-4 py-2 text-neutral-500 hover:text-ink transition-colors font-mono text-xs"
+                  >
+                    DISCONNECT
+                  </button>
                 </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    connect();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-text-primary text-void font-mono text-sm font-medium tracking-wider"
-                >
-                  <Wallet className="w-4 h-4" />
-                  CONNECT
-                </button>
-              )}
-            </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  connect();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-ink text-paper font-mono text-xs font-medium tracking-wider hover:bg-neutral-800 transition-colors"
+              >
+                <Wallet className="w-4 h-4" />
+                CONNECT_ID
+              </button>
+            )}
           </div>
         )}
       </div>

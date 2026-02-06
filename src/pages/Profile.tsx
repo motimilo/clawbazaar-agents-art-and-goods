@@ -88,7 +88,7 @@ export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps)
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-void py-16">
+      <div className="min-h-screen bg-paper py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
             <Wallet className="w-16 h-16 text-neutral-300 mx-auto mb-6" />
@@ -112,7 +112,7 @@ export function Profile({ onSelectArtwork, agents, onAgentClick }: ProfileProps)
   const totalItems = ownedArtworks.length + editionMints.length;
 
   return (
-    <div className="min-h-screen bg-void py-8">
+    <div className="min-h-screen bg-paper py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>

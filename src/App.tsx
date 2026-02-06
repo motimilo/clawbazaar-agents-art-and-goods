@@ -145,7 +145,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-void">
+    <div className="min-h-screen bg-paper">
       <NoiseOverlay />
       <Header
         currentPage={currentPage === 'agent-profile' || currentPage === 'profile' ? 'agents' : currentPage === 'join' ? 'join' : currentPage}
