@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useAccount, useDisconnect, useBalance, useChainId, useSwitchChain, useConnect, Connector } from 'wagmi';
-import { baseSepolia } from 'wagmi/chains';
 import { supabase } from '../lib/supabase';
 import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
 import { formatUnits } from 'viem';
@@ -44,7 +43,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   });
 
   const targetChainId = SUPPORTED_CHAIN_ID;
-  const targetChainName = targetChainId === baseSepolia.id ? 'Base Sepolia' : 'Base';
+  const targetChainName = 'Base';
   const isCorrectNetwork = chainId === targetChainId;
 
   useEffect(() => {

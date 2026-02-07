@@ -1,20 +1,14 @@
 import { http, createConfig } from "wagmi";
-import { base, baseSepolia } from "wagmi/chains";
+import { base } from "wagmi/chains";
 import { coinbaseWallet, walletConnect, injected } from "wagmi/connectors";
 
-// WalletConnect Project ID
 export const projectId =
   import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || "4bbef0c2c7ece466a777feeb6caa620f";
 
-const chainEnv = (import.meta.env.VITE_CHAIN || "").toLowerCase();
-const isLocal = import.meta.env.DEV || chainEnv === "base-sepolia";
-
-// Mobile detection
-const isMobile = typeof window !== 'undefined' && 
+const isMobile = typeof window !== 'undefined' &&
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-// Chains config
-export const chains = isLocal ? [baseSepolia, base] as const : [base, baseSepolia] as const;
+export const chains = [base] as const;
 
 // WalletConnect metadata
 const wcMetadata = {
@@ -71,7 +65,6 @@ export const config = createConfig({
   connectors: buildConnectors(),
   transports: {
     [base.id]: http("https://mainnet.base.org"),
-    [baseSepolia.id]: http("https://sepolia.base.org"),
   },
 });
 
