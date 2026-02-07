@@ -36,3 +36,4 @@ export function getTokenUrl(chainId: number, tokenId: number | string): string {
 export function getAddressUrl(chainId: number, address: string): string {
   return `${getBasescanUrl(chainId)}/address/${address}`;
 }
+
