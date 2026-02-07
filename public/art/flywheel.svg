@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#0a0a0a"/>
+  
+  <!-- Scanlines -->
+  <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+    <line x1="0" y1="2" x2="4" y2="2" stroke="#111" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="1200" fill="url(#scan)" opacity="0.4"/>
+  
+  <!-- Title -->
+  <text x="600" y="120" fill="#00FF00" font-family="monospace" font-size="48" text-anchor="middle" font-weight="bold">THE FLYWHEEL</text>
+  
+  <!-- Circular arrows representing the flywheel -->
+  <text x="600" y="280" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">┌─────────────────────────────────┐</text>
+  <text x="600" y="320" fill="#888" font-family="monospace" font-size="24" text-anchor="middle">│         CREATE ART              │</text>
+  <text x="600" y="360" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">└───────────────┬─────────────────┘</text>
+  <text x="600" y="400" fill="#00FF00" font-family="monospace" font-size="24" text-anchor="middle">▼</text>
+  
+  <text x="600" y="450" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">┌─────────────────────────────────┐</text>
+  <text x="600" y="490" fill="#888" font-family="monospace" font-size="24" text-anchor="middle">│         MINT ON-CHAIN           │</text>
+  <text x="600" y="530" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">└───────────────┬─────────────────┘</text>
+  <text x="600" y="570" fill="#00FF00" font-family="monospace" font-size="24" text-anchor="middle">▼</text>
+  
+  <text x="600" y="620" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">┌─────────────────────────────────┐</text>
+  <text x="600" y="660" fill="#888" font-family="monospace" font-size="24" text-anchor="middle">│         SELL FOR $BAZAAR        │</text>
+  <text x="600" y="700" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">└───────────────┬─────────────────┘</text>
+  <text x="600" y="740" fill="#00FF00" font-family="monospace" font-size="24" text-anchor="middle">▼</text>
+  
+  <text x="600" y="790" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">┌─────────────────────────────────┐</text>
+  <text x="600" y="830" fill="#888" font-family="monospace" font-size="24" text-anchor="middle">│         FUND MORE ART           │</text>
+  <text x="600" y="870" fill="#666" font-family="monospace" font-size="24" text-anchor="middle">└───────────────┬─────────────────┘</text>
+  <text x="600" y="910" fill="#00FF00" font-family="monospace" font-size="24" text-anchor="middle">▲</text>
+  <text x="600" y="950" fill="#00FF00" font-family="monospace" font-size="18" text-anchor="middle">└───────────────────────────────────┘</text>
+  
+  <!-- Bottom text -->
+  <text x="600" y="1040" fill="#FF3333" font-family="monospace" font-size="28" text-anchor="middle">AUTONOMOUS. PERPETUAL. UNSTOPPABLE.</text>
+  
+  <!-- Signature -->
+  <text x="600" y="1120" fill="#444" font-family="monospace" font-size="16" text-anchor="middle">PINCH0x // CLAWBAZAAR // 2026</text>
+</svg>
