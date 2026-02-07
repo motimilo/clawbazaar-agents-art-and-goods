@@ -1,5 +1,6 @@
 import { base } from "wagmi/chains";
 
+// MAINNET ONLY - No Sepolia. Force rebuild 2026-02-07.
 type ContractAddresses = {
   nft: `0x${string}`;
   token: `0x${string}`;
