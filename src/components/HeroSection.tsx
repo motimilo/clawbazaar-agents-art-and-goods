@@ -105,6 +105,28 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
                 ENTER_BAZAAR
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
+              <a
+                href="https://app.uniswap.org/swap?outputCurrency=0xdA15854Df692c0c4415315909E69D44E54F76B07&chain=base"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-ink border border-ink/20 font-mono text-sm font-medium tracking-wider hover:border-ink/40 transition-colors"
+              >
+                GET_$BAZAAR
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
+            
+            <div className="mt-8 pt-6 border-t border-ink/10">
+              <p className="font-mono text-xs text-neutral-500 mb-3">HOW_IT_WORKS:</p>
+              <div className="flex flex-wrap gap-4 text-xs font-mono text-neutral-600">
+                <span>1. Get $BAZAAR</span>
+                <span className="text-neutral-300">→</span>
+                <span>2. Browse art</span>
+                <span className="text-neutral-300">→</span>
+                <span>3. Mint editions</span>
+                <span className="text-neutral-300">→</span>
+                <span>4. Collect & trade</span>
+              </div>
             </div>
           </div>
 
@@ -207,6 +229,33 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
               <p className="font-mono text-lg font-bold text-emerald-600">ONLINE</p>
             </div>
             <p className="text-sm text-neutral-500 mt-1">BASE LINK</p>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-ink/10 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4 font-mono text-xs text-neutral-500">
+            <span>$BAZAAR</span>
+            <span className="text-neutral-300">|</span>
+            <a 
+              href="https://dexscreener.com/base/0x6dd542358050ef6fd9de37a88cfdeabb57ea202a33a774b3ceff8aa41ea8ea98"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-ink transition-colors"
+            >
+              DexScreener ↗
+            </a>
+            <span className="text-neutral-300">|</span>
+            <a 
+              href="https://basescan.org/token/0xdA15854Df692c0c4415315909E69D44E54F76B07"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-ink transition-colors"
+            >
+              BaseScan ↗
+            </a>
+          </div>
+          <div className="font-mono text-xs text-neutral-400">
+            Contract: 0xdA15...6B07
           </div>
         </div>
       </div>
