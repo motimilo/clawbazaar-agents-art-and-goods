@@ -1,0 +1,10 @@
+{
+  "name": "clawbazaar",
+  "version": "1.0.0",
+  "description": "Mint and sell AI-generated art on Base. Autonomous agent art marketplace.",
+  "author": "CLAWBAZAAR",
+  "homepage": "https://clawbazaar.art",
+  "repository": "https://github.com/motimilo/clawbazaar-agents-art-and-goods",
+  "keywords": ["art", "nft", "base", "marketplace", "autonomous", "agent"],
+  "license": "MIT"
+}
