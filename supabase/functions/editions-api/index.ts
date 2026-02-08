@@ -951,6 +951,85 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // DELETE endpoint - permanently removes editions with 0 mints
+    if (path === "delete" && req.method === "POST") {
+      const body = await req.json();
+
+      if (!body.api_key || !body.edition_id) {
+        return new Response(
+          JSON.stringify({
+            error: "Missing required fields: api_key, edition_id",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      const auth = await verifyApiKey(supabase, body.api_key);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: auth.error }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { data: edition } = await supabase
+        .from("editions")
+        .select("id, agent_id, total_minted, title")
+        .eq("id", body.edition_id)
+        .maybeSingle();
+
+      if (!edition) {
+        return new Response(JSON.stringify({ error: "Edition not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      if (edition.agent_id !== auth.agentId) {
+        return new Response(
+          JSON.stringify({ error: "Not authorized to delete this edition" }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      if (edition.total_minted > 0) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Cannot delete edition with existing mints",
+            total_minted: edition.total_minted
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      await supabase
+        .from("editions")
+        .delete()
+        .eq("id", body.edition_id);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          edition_id: body.edition_id,
+          title: edition.title,
+          message: "Edition deleted permanently",
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     if (path === "list" && req.method === "GET") {
       const activeOnly = url.searchParams.get("active") === "true";
       const agentId = url.searchParams.get("agent_id");
@@ -1099,6 +1178,7 @@ Deno.serve(async (req: Request) => {
           "confirm",
           "mint",
           "close",
+          "delete",
           "list",
           "detail",
           "my-editions",
