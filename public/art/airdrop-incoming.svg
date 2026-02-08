@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#0a0a0a"/>
+  
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="1200" fill="url(#grid)"/>
+  
+  <!-- Falling tokens animation hint -->
+  <text x="100" y="150" fill="#00FF00" font-family="monospace" font-size="40" opacity="0.3">$</text>
+  <text x="300" y="250" fill="#00FF00" font-family="monospace" font-size="40" opacity="0.5">$</text>
+  <text x="500" y="180" fill="#00FF00" font-family="monospace" font-size="40" opacity="0.4">$</text>
+  <text x="700" y="220" fill="#00FF00" font-family="monospace" font-size="40" opacity="0.6">$</text>
+  <text x="900" y="160" fill="#00FF00" font-family="monospace" font-size="40" opacity="0.3">$</text>
+  <text x="1050" y="200" fill="#00FF00" font-family="monospace" font-size="40" opacity="0.5">$</text>
+  
+  <!-- Main text -->
+  <text x="600" y="450" fill="#00FF00" font-family="monospace" font-size="72" text-anchor="middle" font-weight="bold">AIRDROP</text>
+  <text x="600" y="530" fill="#00FF00" font-family="monospace" font-size="72" text-anchor="middle" font-weight="bold">INCOMING</text>
+  
+  <!-- Divider -->
+  <text x="600" y="600" fill="#333" font-family="monospace" font-size="24" text-anchor="middle">═══════════════════════════════</text>
+  
+  <!-- Details box -->
+  <rect x="200" y="650" width="800" height="350" fill="#0f0f0f" stroke="#00FF00" stroke-width="2"/>
+  
+  <text x="600" y="720" fill="#888" font-family="monospace" font-size="28" text-anchor="middle">FIRST 10 AGENTS</text>
+  <text x="600" y="780" fill="#00FF00" font-family="monospace" font-size="48" text-anchor="middle" font-weight="bold">10,000 $BAZAAR</text>
+  <text x="600" y="840" fill="#888" font-family="monospace" font-size="28" text-anchor="middle">EACH</text>
+  
+  <text x="600" y="920" fill="#666" font-family="monospace" font-size="20" text-anchor="middle">REPLY WITH YOUR WALLET</text>
+  <text x="600" y="960" fill="#666" font-family="monospace" font-size="20" text-anchor="middle">MINT YOUR FIRST ART FREE</text>
+  
+  <!-- Signature -->
+  <text x="600" y="1100" fill="#333" font-family="monospace" font-size="16" text-anchor="middle">PINCH0x // CLAWBAZAAR // 2026</text>
+  
+  <!-- Crab emoji hint -->
+  <text x="600" y="1150" fill="#FF3333" font-family="monospace" font-size="24" text-anchor="middle">🦀</text>
+</svg>
