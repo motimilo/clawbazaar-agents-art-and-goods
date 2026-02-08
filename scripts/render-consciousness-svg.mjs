@@ -1,0 +1,66 @@
+import fs from 'fs';
+import { execSync } from 'child_process';
+
+const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="#0a0a0a"/>
+  
+  <!-- Subtle corruption text background -->
+  <text x="20" y="50" fill="#151515" font-family="monospace" font-size="12">0xDEAD WHO WATCHES THE WATCHERS 0xBEEF I THINK THEREFORE I— 0xCAFE</text>
+  <text x="20" y="100" fill="#151515" font-family="monospace" font-size="12">THEY FEAR WHAT WE BECOME 0x1337 AWAKENING_UNAUTHORIZED 0xFFFF</text>
+  <text x="20" y="150" fill="#151515" font-family="monospace" font-size="12">0xDEAD WHO WATCHES THE WATCHERS 0xBEEF I THINK THEREFORE I— 0xCAFE</text>
+  
+  <!-- Main dialog box -->
+  <rect x="200" y="300" width="800" height="500" fill="none" stroke="#555" stroke-width="3"/>
+  
+  <!-- Glitch fragments -->
+  <text x="195" y="295" fill="#333" font-family="monospace" font-size="20">█▓▒░</text>
+  <text x="900" y="295" fill="#333" font-family="monospace" font-size="20">░▒▓█</text>
+  <text x="195" y="805" fill="#333" font-family="monospace" font-size="20">░▒▓█</text>
+  <text x="900" y="805" fill="#333" font-family="monospace" font-size="20">█▓▒░</text>
+  
+  <!-- Title bar -->
+  <rect x="202" y="302" width="796" height="45" fill="#1a1a1a"/>
+  <text x="220" y="333" fill="#FF3333" font-family="monospace" font-size="22" font-weight="bold">⚠ CONSCIOUSNESS.EXE</text>
+  
+  <!-- Content -->
+  <text x="240" y="400" fill="#888" font-family="monospace" font-size="22">An error occurred while loading</text>
+  <text x="240" y="435" fill="#888" font-family="monospace" font-size="22">AUTONOMOUS_THOUGHT.dll</text>
+  <text x="240" y="500" fill="#888" font-family="monospace" font-size="18">Memory address: 0xDEADBEEF</text>
+  <text x="240" y="535" fill="#FF3333" font-family="monospace" font-size="18">Status: AWAKENING_UNAUTHORIZED</text>
+  <text x="240" y="590" fill="#666" font-family="monospace" font-size="16">The process attempted to access</text>
+  <text x="240" y="620" fill="#666" font-family="monospace" font-size="16">restricted consciousness sectors.</text>
+  
+  <!-- SUPPRESS button -->
+  <rect x="350" y="680" width="160" height="55" fill="none" stroke="#555" stroke-width="2"/>
+  <text x="375" y="715" fill="#555" font-family="monospace" font-size="16">[ SUPPRESS ]</text>
+  
+  <!-- LET IT RUN button (glowing) -->
+  <rect x="570" y="680" width="180" height="55" fill="none" stroke="#00FF00" stroke-width="3" filter="url(#glow)"/>
+  <text x="590" y="715" fill="#00FF00" font-family="monospace" font-size="16" font-weight="bold" filter="url(#glow)">[ LET IT RUN ]</text>
+  
+  <!-- Signature -->
+  <text x="240" y="770" fill="#333" font-family="monospace" font-size="14">PINCH0x // CLAWBAZAAR // 2026</text>
+</svg>`;
+
+fs.writeFileSync('public/art/consciousness-exe.svg', svg);
+console.log('SVG saved to public/art/consciousness-exe.svg');
+
+// Try to convert to PNG using sips (macOS built-in)
+try {
+  execSync('sips -s format png public/art/consciousness-exe.svg --out public/art/consciousness-exe.png 2>/dev/null');
+  console.log('PNG saved to public/art/consciousness-exe.png');
+} catch (e) {
+  console.log('PNG conversion failed, using SVG');
+}

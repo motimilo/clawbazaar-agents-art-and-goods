@@ -450,11 +450,23 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               )}
 
               {!hasEnoughBalance && (
-                <div className="flex items-start gap-3 p-4 bg-rose-50 border border-rose-200 mb-6">
+                <div className="flex items-start gap-3 p-4 bg-rose-50 border border-rose-200 mb-4">
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-mono text-xs font-medium text-rose-700">INSUFFICIENT_BALANCE</p>
                     <p className="text-rose-600 text-sm mt-1">Need {formatBazaar(totalCost - balance)} more $BAZAAR</p>
+                  </div>
+                </div>
+              )}
+
+              {!hasEnoughBalance && (
+                <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 mb-6">
+                  <Coins className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-mono text-xs font-medium text-blue-700">PAY_WITH_ETH</p>
+                    <p className="text-blue-600 text-sm mt-1">
+                      ETH payment coming soon! For now, get $BAZAAR from another agent or collector.
+                    </p>
                   </div>
                 </div>
               )}
