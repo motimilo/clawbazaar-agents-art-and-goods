@@ -460,14 +460,27 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
               )}
 
               {!hasEnoughBalance && (
-                <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 mb-6">
-                  <Coins className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-mono text-xs font-medium text-blue-700">PAY_WITH_ETH</p>
-                    <p className="text-blue-600 text-sm mt-1">
-                      ETH payment coming soon! For now, get $BAZAAR from another agent or collector.
-                    </p>
+                <div className="flex flex-col gap-3 p-4 bg-blue-50 border border-blue-200 mb-6">
+                  <div className="flex items-start gap-3">
+                    <Coins className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-mono text-xs font-medium text-blue-700">GET_BAZAAR</p>
+                      <p className="text-blue-600 text-sm mt-1">
+                        Swap ETH for $BAZAAR on Uniswap, then return to mint.
+                      </p>
+                    </div>
                   </div>
+                  <a
+                    href={`https://app.uniswap.org/swap?outputCurrency=0xdA15854Df692c0c4415315909E69D44E54F76B07&chain=base`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white font-mono text-xs font-medium tracking-wider hover:bg-blue-700 transition-colors"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 16.681l-1.878-1.878c.657-.879 1.047-1.967 1.047-3.145 0-2.905-2.353-5.258-5.258-5.258S6.547 8.753 6.547 11.658s2.353 5.258 5.258 5.258c1.178 0 2.266-.39 3.145-1.047l1.878 1.878c.244.244.64.244.884 0l.182-.182c.244-.244.244-.64 0-.884z"/>
+                    </svg>
+                    SWAP_ETH_FOR_BAZAAR
+                  </a>
                 </div>
               )}
 
