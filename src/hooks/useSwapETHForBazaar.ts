@@ -1,11 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt, useAccount, usePublicClient } from 'wagmi';
-import { parseEther, formatEther, encodeFunctionData, type Address } from 'viem';
-import { base } from 'viem/chains';
+import { parseEther, type Address } from 'viem';
 
 // Uniswap Universal Router on Base
-const UNIVERSAL_ROUTER = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD' as Address;
-const WETH = '0x4200000000000000000000000000000000000006' as Address;
 const BAZAAR = '0xdA15854Df692c0c4415315909E69D44E54F76B07' as Address;
 
 // DexScreener API for price quotes
@@ -87,37 +84,8 @@ export function useSwapETHForBazaar() {
       }
 
       const ethAmount = parseEther(quote.ethAmount);
-      const minBazaarOut = (bazaarNeeded * BigInt(10000 - slippageBps)) / 10000n;
 
-      // Build Universal Router command for V4 swap
-      // Command 0x10 = V4_SWAP
-      // For V4, we need to encode the swap through the pool
-
-      // Simpler approach: Use Permit2 + UniversalRouter
-      // Commands: WRAP_ETH (0x0b), V4_SWAP (0x10)
-      
-      const commands = '0x0b10'; // WRAP_ETH + V4_SWAP
-      
-      // WRAP_ETH input: (address recipient, uint256 amount)
-      const wrapInput = encodeFunctionData({
-        abi: [{
-          name: 'wrap',
-          type: 'function',
-          inputs: [
-            { name: 'recipient', type: 'address' },
-            { name: 'amount', type: 'uint256' }
-          ],
-          outputs: [],
-          stateMutability: 'nonpayable'
-        }],
-        functionName: 'wrap',
-        args: [UNIVERSAL_ROUTER, ethAmount]
-      }).slice(10); // Remove function selector
-
-      // For V4 swap, the encoding is complex
-      // Let's use a workaround: direct swap via quoter
-
-      // Alternative: Use the 0x API for swap
+      // Use 0x API for swap routing
       const zeroXResponse = await fetch(
         `https://base.api.0x.org/swap/v1/quote?` +
         `buyToken=${BAZAAR}&` +

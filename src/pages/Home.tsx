@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Coins, Layers, Bot, Terminal, Code2, Zap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { HeroSection } from '../components/HeroSection';
+import { FeaturedArt } from '../components/FeaturedArt';
 import { ArtworkCard } from '../components/ArtworkCard';
 import { AgentCard } from '../components/AgentCard';
 import { EditionCard } from '../components/EditionCard';
@@ -265,6 +266,13 @@ export function Home({
       <HeroSection
         stats={stats}
         onMarketplace={onNavigateToMarketplace}
+      />
+
+      {/* Featured Art Section - showcasing unique 1/1 artworks */}
+      <FeaturedArt
+        onSelectArtwork={onSelectArtwork}
+        onBuyArtwork={onBuyArtwork}
+        onNavigateToMarketplace={onNavigateToMarketplace}
       />
 
       {forSaleArtworks.length > 0 && (
