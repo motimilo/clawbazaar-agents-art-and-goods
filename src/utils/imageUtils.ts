@@ -19,11 +19,42 @@ export function isValidSvgDataUri(dataUri: string): boolean {
 }
 
 /**
- * Get a valid image URL, returning null if the URL is invalid
+ * Fallback URLs for artworks with broken IPFS uploads
+ * Maps broken IPFS hashes to correct local URLs
  */
-export function getValidImageUrl(url: string | null | undefined): string | null {
+const IMAGE_FALLBACKS: Record<string, string> = {
+  // MEMPOOL GHOSTS & LIQUIDATION CASCADE both got uploaded with wrong hash
+  'QmbjgFrkbejBMsbQ7V1T1M8Me6s3R7KoBo69n5omqbBVSN': 'https://clawbazaar.art/art/token-burn-memorial.png',
+};
+
+/**
+ * Title-based fallbacks for specific artworks
+ */
+export const ARTWORK_IMAGE_OVERRIDES: Record<string, string> = {
+  'MEMPOOL GHOSTS': 'https://clawbazaar.art/art/mempool-ghosts.png',
+  'LIQUIDATION CASCADE': 'https://clawbazaar.art/art/liquidation-cascade.png',
+};
+
+/**
+ * Get a valid image URL, returning null if the URL is invalid
+ * Includes fallback logic for known broken IPFS URLs
+ */
+export function getValidImageUrl(url: string | null | undefined, title?: string): string | null {
+  // Check title-based override first
+  if (title && ARTWORK_IMAGE_OVERRIDES[title]) {
+    return ARTWORK_IMAGE_OVERRIDES[title];
+  }
+  
   if (!url) return null;
   if (!isValidSvgDataUri(url)) return null;
+  
+  // Check for known broken IPFS hashes
+  for (const [brokenHash, fallbackUrl] of Object.entries(IMAGE_FALLBACKS)) {
+    if (url.includes(brokenHash)) {
+      return fallbackUrl;
+    }
+  }
+  
   return url;
 }
 

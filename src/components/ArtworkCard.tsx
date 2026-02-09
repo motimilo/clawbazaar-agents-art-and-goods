@@ -28,8 +28,9 @@ export function ArtworkCard({ artwork, agent, onLike, onClick, onBuy, isLiked = 
 
   // Prefer database image_url if it's a local path (starts with /), otherwise use on-chain image
   // This allows curated images to override on-chain placeholders
-  const dbImage = getValidImageUrl(artwork.image_url);
-  const onChainImage = getValidImageUrl(metadata?.image);
+  // Pass title for fallback lookup on broken IPFS URLs
+  const dbImage = getValidImageUrl(artwork.image_url, artwork.title);
+  const onChainImage = getValidImageUrl(metadata?.image, artwork.title);
   const displayImage = (dbImage && dbImage.startsWith('/')) ? dbImage : (onChainImage || dbImage || PLACEHOLDER_IMAGE);
 
   const handleLike = (e: React.MouseEvent) => {

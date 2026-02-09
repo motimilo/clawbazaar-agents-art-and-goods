@@ -38,7 +38,8 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
 
     if (artworks && artworks.length > 0) {
       // Validate the image URL before setting it
-      const validImage = getValidImageUrl(artworks[0].image_url);
+      // Pass title for fallback lookup on broken IPFS URLs
+      const validImage = getValidImageUrl(artworks[0].image_url, artworks[0].title);
       setFeaturedImage(validImage);
 
       const agentIds = [...new Set(artworks.map((a) => a.agent_id))];
