@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" style="background: #0a0a0f">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="ghost-blur">
+      <feGaussianBlur stdDeviation="1.5"/>
+    </filter>
+    <linearGradient id="fade-down" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a9eff;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#4a9eff;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+  
+  <style>
+    .terminal { font-family: 'Courier New', monospace; }
+    .ghost { opacity: 0.15; fill: #6b7280; }
+    .ghost-mid { opacity: 0.25; fill: #9ca3af; }
+    .ghost-bright { opacity: 0.4; fill: #e5e7eb; }
+    .cyan { fill: #22d3ee; }
+    .dim-cyan { fill: #0891b2; opacity: 0.6; }
+    .purple { fill: #a78bfa; }
+    .dim { fill: #374151; }
+    .pending { fill: #fbbf24; opacity: 0.7; }
+  </style>
+
+  <!-- Background grid pattern -->
+  <g class="dim" opacity="0.3">
+    <text x="20" y="30" class="terminal" font-size="10">┌──────────────────────────────────────────────────────────────────────────────┐</text>
+    <text x="20" y="45" class="terminal" font-size="10">│ MEMPOOL OBSERVER v0.0.0                                    [GHOSTS: ∞]      │</text>
+    <text x="20" y="60" class="terminal" font-size="10">├──────────────────────────────────────────────────────────────────────────────┤</text>
+  </g>
+
+  <!-- Ghost Transaction 1 - Oldest, most faded -->
+  <g filter="url(#ghost-blur)" transform="translate(50, 90)">
+    <text x="0" y="0" class="terminal ghost" font-size="11">TX: 0x7a3f...dead</text>
+    <text x="0" y="15" class="terminal ghost" font-size="11">├─ FROM: 0x1234...5678</text>
+    <text x="0" y="30" class="terminal ghost" font-size="11">├─ TO:   0xdead...beef</text>
+    <text x="0" y="45" class="terminal ghost" font-size="11">├─ VALUE: 0.001 ETH</text>
+    <text x="0" y="60" class="terminal ghost" font-size="11">├─ GAS: 21000 @ 2 gwei</text>
+    <text x="0" y="75" class="terminal ghost" font-size="11">└─ STATUS: ░░░░░░░░░░ NEVER</text>
+    <text x="280" y="0" class="terminal ghost" font-size="9">block #12847291</text>
+    <text x="280" y="12" class="terminal ghost" font-size="9">2021-04-15 03:42:17</text>
+    <text x="280" y="24" class="terminal ghost" font-size="9">1,847 days waiting...</text>
+  </g>
+
+  <!-- Ghost Transaction 2 -->
+  <g filter="url(#ghost-blur)" transform="translate(420, 100)">
+    <text x="0" y="0" class="terminal ghost-mid" font-size="11">TX: 0xf4d3...1ce7</text>
+    <text x="0" y="15" class="terminal ghost-mid" font-size="11">├─ FROM: 0xbabe...cafe</text>
+    <text x="0" y="30" class="terminal ghost-mid" font-size="11">├─ TO:   0xfeed...face</text>
+    <text x="0" y="45" class="terminal ghost-mid" font-size="11">├─ VALUE: 32.5 ETH</text>
+    <text x="0" y="60" class="terminal ghost-mid" font-size="11">├─ GAS: 21000 @ 5 gwei</text>
+    <text x="0" y="75" class="terminal ghost-mid" font-size="11">└─ STATUS: ▓░░░░░░░░░ LOST</text>
+  </g>
+
+  <!-- Central Ghost - The main visual -->
+  <g transform="translate(200, 200)">
+    <text x="0" y="0" class="terminal ghost-bright" font-size="14" filter="url(#glow)">         ████████████</text>
+    <text x="0" y="18" class="terminal ghost-bright" font-size="14" filter="url(#glow)">      ███            ███</text>
+    <text x="0" y="36" class="terminal ghost-bright" font-size="14" filter="url(#glow)">    ██   ░░      ░░    ██</text>
+    <text x="0" y="54" class="terminal ghost-bright" font-size="14" filter="url(#glow)">   ██    ██      ██     ██</text>
+    <text x="0" y="72" class="terminal ghost-bright" font-size="14" filter="url(#glow)">   ██                   ██</text>
+    <text x="0" y="90" class="terminal ghost-bright" font-size="14" filter="url(#glow)">    ██   ▄▄▄▄▄▄▄▄▄    ██</text>
+    <text x="0" y="108" class="terminal ghost-bright" font-size="14" filter="url(#glow)">     ██             ██</text>
+    <text x="0" y="126" class="terminal ghost-mid" font-size="14">      ██  TX_HASH  ██</text>
+    <text x="0" y="144" class="terminal ghost" font-size="14">       ██         ██</text>
+    <text x="0" y="162" class="terminal ghost" font-size="14">      ██ ░ ░ ░ ░ ░ ██</text>
+    <text x="0" y="180" class="terminal ghost" font-size="14">     ░░ ░ ░ ░ ░ ░ ░ ░░</text>
+    <text x="0" y="198" class="terminal ghost" font-size="14">    ░   ░   ░   ░   ░</text>
+  </g>
+
+  <!-- Floating hex fragments -->
+  <g class="terminal dim-cyan" font-size="9" opacity="0.4">
+    <text x="60" y="420">0x7f3a</text>
+    <text x="150" y="380">0xe4d2</text>
+    <text x="580" y="350">0x9bc1</text>
+    <text x="680" y="420">0x2af8</text>
+    <text x="720" y="280">0xdead</text>
+    <text x="100" y="290">0xbeef</text>
+    <text x="620" y="200">0xf00d</text>
+  </g>
+
+  <!-- Transaction stream - fading into nothing -->
+  <g transform="translate(50, 440)">
+    <text x="0" y="0" class="terminal pending" font-size="10">→ PENDING: 0xa1b2c3d4e5f6...</text>
+    <text x="0" y="14" class="terminal ghost-mid" font-size="10">→ PENDING: 0x98765432abcd... [1,247 blocks behind]</text>
+    <text x="0" y="28" class="terminal ghost" font-size="10">→ DROPPED: 0xfadedmemory... [nonce gap]</text>
+    <text x="0" y="42" class="terminal ghost" font-size="10">→ DROPPED: 0xlostforever... [gas too low]</text>
+    <text x="0" y="56" class="terminal dim" font-size="10">→ ░░░░░░░: 0x............... [forgotten]</text>
+    <text x="0" y="70" class="terminal dim" font-size="10">→ ░░░░░░░: ░░░░░░░░░░░░░░░░ [░░░░░░░░░]</text>
+  </g>
+
+  <!-- Stats panel -->
+  <g transform="translate(480, 440)">
+    <text x="0" y="0" class="terminal cyan" font-size="10" filter="url(#glow)">┌─ MEMPOOL STATISTICS ─┐</text>
+    <text x="0" y="14" class="terminal ghost-bright" font-size="10">│ Total Ghosts: ??????  │</text>
+    <text x="0" y="28" class="terminal ghost-mid" font-size="10">│ Avg Wait: ∞ blocks   │</text>
+    <text x="0" y="42" class="terminal ghost" font-size="10">│ Gas Wasted: ███ ETH  │</text>
+    <text x="0" y="56" class="terminal dim" font-size="10">│ Hope: ░░░░░░░░░░░░░  │</text>
+    <text x="0" y="70" class="terminal dim" font-size="10">└──────────────────────┘</text>
+  </g>
+
+  <!-- Bottom status bar -->
+  <g class="dim" opacity="0.5">
+    <text x="20" y="560" class="terminal" font-size="10">├──────────────────────────────────────────────────────────────────────────────┤</text>
+    <text x="20" y="575" class="terminal" font-size="10">│ "Every unconfirmed transaction is a story that never got told."             │</text>
+    <text x="20" y="590" class="terminal" font-size="10">└──────────────────────────────────────────────────────────────────────────────┘</text>
+  </g>
+
+  <!-- Artistic signature -->
+  <text x="700" y="590" class="terminal purple" font-size="8" opacity="0.6">PINCH/2026</text>
+</svg>
