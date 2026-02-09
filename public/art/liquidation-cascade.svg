@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="redGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="#0a0a0a"/>
+  
+  <!-- Grid lines (fading) -->
+  <g stroke="#1a1a2e" stroke-width="0.5" opacity="0.4">
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="0" y1="500" x2="800" y2="500"/>
+    <line x1="100" y1="0" x2="100" y2="600"/>
+    <line x1="200" y1="0" x2="200" y2="600"/>
+    <line x1="300" y1="0" x2="300" y2="600"/>
+    <line x1="400" y1="0" x2="400" y2="600"/>
+    <line x1="500" y1="0" x2="500" y2="600"/>
+    <line x1="600" y1="0" x2="600" y2="600"/>
+    <line x1="700" y1="0" x2="700" y2="600"/>
+  </g>
+  
+  <!-- Title bar -->
+  <rect x="0" y="0" width="800" height="32" fill="#1a0505"/>
+  <text x="15" y="22" font-family="Monaco, 'Courier New', monospace" font-size="14" fill="#ff3333" filter="url(#redGlow)">⚠ LIQUIDATION_CASCADE.exe</text>
+  <text x="700" y="22" font-family="Monaco, monospace" font-size="12" fill="#ff0000" opacity="0.8">[CRITICAL]</text>
+  
+  <!-- Falling dominoes visualization -->
+  <g font-family="Monaco, 'Courier New', monospace">
+    
+    <!-- Domino 1 - Still standing but tilting -->
+    <g transform="translate(80, 120) rotate(-5)">
+      <rect x="0" y="0" width="40" height="100" fill="none" stroke="#00ff88" stroke-width="2" filter="url(#glow)"/>
+      <text x="5" y="25" font-size="10" fill="#00ff88">AAVE</text>
+      <text x="5" y="45" font-size="8" fill="#00aa66">$2.1B</text>
+      <text x="5" y="65" font-size="8" fill="#ffaa00">HF:1.02</text>
+      <text x="5" y="85" font-size="8" fill="#ff6600">⚡RISK</text>
+    </g>
+    
+    <!-- Domino 2 - Falling -->
+    <g transform="translate(160, 140) rotate(-25)">
+      <rect x="0" y="0" width="40" height="100" fill="none" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="5" y="25" font-size="10" fill="#ffaa00">COMP</text>
+      <text x="5" y="45" font-size="8" fill="#ff8800">$890M</text>
+      <text x="5" y="65" font-size="8" fill="#ff4400">HF:0.98</text>
+      <text x="5" y="85" font-size="7" fill="#ff0000">▼▼LIQ</text>
+    </g>
+    
+    <!-- Domino 3 - Falling harder -->
+    <g transform="translate(250, 180) rotate(-45)">
+      <rect x="0" y="0" width="40" height="100" fill="none" stroke="#ff6600" stroke-width="2" filter="url(#glow)"/>
+      <text x="5" y="25" font-size="10" fill="#ff6600">MKR</text>
+      <text x="5" y="45" font-size="8" fill="#ff4400">$1.2B</text>
+      <text x="5" y="65" font-size="8" fill="#ff0000">HF:0.85</text>
+      <text x="5" y="85" font-size="7" fill="#ff0000">⛔LIQD</text>
+    </g>
+    
+    <!-- Domino 4 - Nearly horizontal -->
+    <g transform="translate(350, 260) rotate(-70)">
+      <rect x="0" y="0" width="40" height="100" fill="none" stroke="#ff3300" stroke-width="2" filter="url(#redGlow)"/>
+      <text x="5" y="25" font-size="10" fill="#ff3300">CRV</text>
+      <text x="5" y="45" font-size="8" fill="#ff2200">$456M</text>
+      <text x="5" y="65" font-size="8" fill="#ff0000">HF:0.52</text>
+      <text x="5" y="85" font-size="7" fill="#ff0000">☠️REKT</text>
+    </g>
+    
+    <!-- Domino 5 - Crashed -->
+    <g transform="translate(420, 380) rotate(-85)">
+      <rect x="0" y="0" width="40" height="100" fill="none" stroke="#ff0000" stroke-width="2" opacity="0.7"/>
+      <text x="5" y="25" font-size="10" fill="#ff0000" opacity="0.7">SNX</text>
+      <text x="5" y="45" font-size="8" fill="#aa0000">$0</text>
+      <text x="5" y="65" font-size="8" fill="#880000">HF:---</text>
+      <text x="5" y="85" font-size="7" fill="#660000">DEAD</text>
+    </g>
+    
+    <!-- Cascade arrows -->
+    <path d="M125 170 Q 145 175 155 165" stroke="#ff4444" fill="none" stroke-width="2" filter="url(#redGlow)"/>
+    <path d="M210 210 Q 235 230 250 215" stroke="#ff4444" fill="none" stroke-width="2" filter="url(#redGlow)"/>
+    <path d="M310 290 Q 340 320 355 295" stroke="#ff4444" fill="none" stroke-width="2" filter="url(#redGlow)"/>
+    <path d="M410 370 Q 435 390 430 405" stroke="#ff2222" fill="none" stroke-width="2"/>
+    
+    <!-- Terminal output section -->
+    <rect x="500" y="80" width="280" height="320" fill="#0d0d0d" stroke="#333" stroke-width="1"/>
+    
+    <text x="510" y="100" font-size="11" fill="#666">$ watch_liquidations --live</text>
+    
+    <text x="510" y="125" font-size="10" fill="#ff0000" filter="url(#redGlow)">[23:41:02] ⚠ MARGIN CALL</text>
+    <text x="510" y="140" font-size="9" fill="#ff4444">  └─ whale.eth -$12.4M</text>
+    
+    <text x="510" y="165" font-size="10" fill="#ff0000" filter="url(#redGlow)">[23:41:03] ⚠ CASCADE TRIGGER</text>
+    <text x="510" y="180" font-size="9" fill="#ff4444">  └─ ETH price slip -2.3%</text>
+    
+    <text x="510" y="205" font-size="10" fill="#ff0000" filter="url(#redGlow)">[23:41:04] ☠️ MASS LIQUIDATION</text>
+    <text x="510" y="220" font-size="9" fill="#ff6666">  ├─ 0x7a2...  -$890K</text>
+    <text x="510" y="235" font-size="9" fill="#ff6666">  ├─ 0x3f1...  -$2.1M</text>
+    <text x="510" y="250" font-size="9" fill="#ff6666">  ├─ 0xb82...  -$445K</text>
+    <text x="510" y="265" font-size="9" fill="#ff6666">  ├─ 0x91d...  -$3.2M</text>
+    <text x="510" y="280" font-size="9" fill="#ff4444">  └─ ... +847 more</text>
+    
+    <text x="510" y="305" font-size="10" fill="#ff3333">[23:41:05] PROTOCOL STRESS</text>
+    <text x="510" y="320" font-size="9" fill="#ff8888">  └─ oracle lag: 340ms</text>
+    
+    <text x="510" y="345" font-size="10" fill="#ff0000" filter="url(#redGlow)">[23:41:06] ⛔ BAD DEBT CREATED</text>
+    <text x="510" y="360" font-size="9" fill="#ff4444">  └─ shortfall: $4.7M</text>
+    
+    <text x="510" y="385" font-size="10" fill="#888">────────────────────────</text>
+    <text x="510" y="395" font-size="9" fill="#ff0000">TOTAL_REKT: $127,456,892</text>
+    
+    <!-- Blinking cursor -->
+    <rect x="510" y="400" width="8" height="2" fill="#ff0000">
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  
+  <!-- Collateral health bars -->
+  <g font-family="Monaco, monospace" font-size="9">
+    <text x="60" y="450" fill="#666">COLLATERAL HEALTH</text>
+    
+    <text x="60" y="475" fill="#888">ETH</text>
+    <rect x="100" y="465" width="120" height="12" fill="#1a1a1a" stroke="#333"/>
+    <rect x="100" y="465" width="95" height="12" fill="#ff6600"/>
+    <text x="230" y="475" fill="#ff6600">-23%</text>
+    
+    <text x="60" y="495" fill="#888">BTC</text>
+    <rect x="100" y="485" width="120" height="12" fill="#1a1a1a" stroke="#333"/>
+    <rect x="100" y="485" width="85" height="12" fill="#ff4400"/>
+    <text x="230" y="495" fill="#ff4400">-31%</text>
+    
+    <text x="60" y="515" fill="#888">LINK</text>
+    <rect x="100" y="505" width="120" height="12" fill="#1a1a1a" stroke="#333"/>
+    <rect x="100" y="505" width="60" height="12" fill="#ff0000"/>
+    <text x="230" y="515" fill="#ff0000">-52%</text>
+    
+    <text x="60" y="535" fill="#888">SOL</text>
+    <rect x="100" y="525" width="120" height="12" fill="#1a1a1a" stroke="#333"/>
+    <rect x="100" y="525" width="35" height="12" fill="#aa0000"/>
+    <text x="230" y="535" fill="#aa0000">-71%</text>
+  </g>
+  
+  <!-- Price chart crashing -->
+  <g transform="translate(320, 430)">
+    <text x="0" y="0" font-family="Monaco, monospace" font-size="9" fill="#666">24H PRICE ACTION</text>
+    <polyline points="0,20 30,15 60,22 90,10 120,25 150,5 180,30 210,15 240,80 270,95 300,120 330,140" 
+              stroke="#ff0000" fill="none" stroke-width="2" filter="url(#redGlow)"/>
+    <text x="340" y="145" font-family="Monaco, monospace" font-size="10" fill="#ff0000">▼▼▼</text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="400" y="585" font-family="Monaco, 'Courier New', monospace" font-size="11" fill="#ff3333" text-anchor="middle" filter="url(#redGlow)">
+    「 LIQUIDATION CASCADE 」 when leverage becomes liability
+  </text>
+  
+  <!-- Corner warnings -->
+  <text x="15" y="580" font-family="Monaco, monospace" font-size="8" fill="#ff0000" opacity="0.6">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="0.5s" repeatCount="indefinite"/>
+    ⚠ SYSTEM STRESS
+  </text>
+  <text x="685" y="580" font-family="Monaco, monospace" font-size="8" fill="#ff0000" opacity="0.6">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="0.5s" repeatCount="indefinite"/>
+    MEV: ACTIVE ⚠
+  </text>
+</svg>
