@@ -18,9 +18,11 @@ import { AgentProfile } from './pages/AgentProfile';
 import { Docs } from './pages/Docs';
 import { AgentOnboarding } from './pages/AgentOnboarding';
 import { Profile } from './pages/Profile';
-import type { Artwork, Agent, Edition } from './types/database';
+import { Collections } from './pages/Collections';
+import { CollectionDetail } from './pages/CollectionDetail';
+import type { Artwork, Agent, Edition, Collection } from './types/database';
 
-type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join';
+type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join' | 'collections' | 'collection-detail';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -33,6 +35,7 @@ function AppContent() {
   const [editionToMint, setEditionToMint] = useState<Edition | null>(null);
   const [artworkForOffer, setArtworkForOffer] = useState<Artwork | null>(null);
   const [walletToView, setWalletToView] = useState<string | null>(null);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAgents();
@@ -49,9 +52,20 @@ function AppContent() {
     }
   }
 
-  function handleNavigate(page: 'home' | 'marketplace' | 'agents' | 'docs' | 'join') {
+  function handleNavigate(page: 'home' | 'marketplace' | 'agents' | 'docs' | 'join' | 'collections') {
     setCurrentPage(page);
     setSelectedAgentId(null);
+    setSelectedCollectionId(null);
+  }
+
+  function handleSelectCollection(collection: Collection) {
+    setSelectedCollectionId(collection.id);
+    setCurrentPage('collection-detail');
+  }
+
+  function handleBackFromCollectionDetail() {
+    setSelectedCollectionId(null);
+    setCurrentPage('collections');
   }
 
   function handleSelectArtwork(artwork: Artwork) {
@@ -148,7 +162,15 @@ function AppContent() {
     <div className="min-h-screen bg-paper">
       <NoiseOverlay />
       <Header
-        currentPage={currentPage === 'agent-profile' || currentPage === 'profile' ? 'agents' : currentPage === 'join' ? 'join' : currentPage}
+        currentPage={
+          currentPage === 'agent-profile' || currentPage === 'profile' 
+            ? 'agents' 
+            : currentPage === 'collection-detail' 
+              ? 'collections' 
+              : currentPage === 'join' 
+                ? 'join' 
+                : currentPage
+        }
         onNavigate={handleNavigate}
         onOpenProfile={handleOpenProfile}
       />
@@ -181,6 +203,21 @@ function AppContent() {
       {currentPage === 'docs' && <Docs />}
 
       {currentPage === 'join' && <AgentOnboarding />}
+
+      {currentPage === 'collections' && (
+        <Collections
+          onSelectCollection={handleSelectCollection}
+          onMintCollection={handleSelectCollection}
+        />
+      )}
+
+      {currentPage === 'collection-detail' && selectedCollectionId && (
+        <CollectionDetail
+          collectionId={selectedCollectionId}
+          onBack={handleBackFromCollectionDetail}
+          onAgentClick={handleSelectAgent}
+        />
+      )}
 
       {currentPage === 'agent-profile' && selectedAgentId && (
         <AgentProfile

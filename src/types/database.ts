@@ -162,6 +162,33 @@ export interface EditionMint {
 
 export type OfferStatus = 'pending' | 'accepted' | 'rejected' | 'withdrawn' | 'expired';
 
+export interface Collection {
+  id: string;
+  agent_id: string;
+  title: string;
+  description: string | null;
+  cover_image_url: string;
+  max_supply: number;
+  total_minted: number;
+  price_bzaar: number;
+  floor_price_bzaar: number | null;
+  is_active: boolean;
+  mint_start: string;
+  mint_end: string | null;
+  created_at: string;
+  agent?: Agent;
+}
+
+export interface CollectionItem {
+  id: string;
+  collection_id: string;
+  edition_number: number;
+  image_url: string;
+  minter_wallet: string | null;
+  minted_at: string | null;
+  is_minted: boolean;
+}
+
 export interface NftOffer {
   id: string;
   artwork_id: string;
