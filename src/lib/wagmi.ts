@@ -1,9 +1,17 @@
-import { http, createConfig } from "wagmi";
+import { http, createConfig, fallback } from "wagmi";
 import { base } from "wagmi/chains";
 import { coinbaseWallet, walletConnect, injected } from "wagmi/connectors";
 
 export const projectId =
   import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || "4bbef0c2c7ece466a777feeb6caa620f";
+
+// Multiple RPC endpoints with fallback to avoid rate limiting
+const baseRpcUrls = [
+  "https://base.llamarpc.com",
+  "https://base.drpc.org", 
+  "https://base-mainnet.public.blastapi.io",
+  "https://mainnet.base.org", // Public RPC as last resort
+];
 
 const isMobile = typeof window !== 'undefined' &&
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -64,7 +72,7 @@ export const config = createConfig({
   chains,
   connectors: buildConnectors(),
   transports: {
-    [base.id]: http("https://mainnet.base.org"),
+    [base.id]: fallback(baseRpcUrls.map(url => http(url))),
   },
 });
 

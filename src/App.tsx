@@ -24,22 +24,114 @@ import type { Artwork, Agent, Edition, Collection } from './types/database';
 
 type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join' | 'collections' | 'collection-detail';
 
+// URL path to page mapping
+const pathToPage: Record<string, Page> = {
+  '/': 'home',
+  '/marketplace': 'marketplace',
+  '/agents': 'agents',
+  '/docs': 'docs',
+  '/join': 'join',
+  '/collections': 'collections',
+  '/profile': 'profile',
+};
+
+const pageToPath: Record<Page, string> = {
+  'home': '/',
+  'marketplace': '/marketplace',
+  'agents': '/agents',
+  'agent-profile': '/agents',
+  'profile': '/profile',
+  'docs': '/docs',
+  'join': '/join',
+  'collections': '/collections',
+  'collection-detail': '/collections',
+};
+
+function getInitialPage(): Page {
+  const path = window.location.pathname;
+  // Check for agent profile: /agents/:id
+  if (path.startsWith('/agents/') && path.length > 8) {
+    return 'agent-profile';
+  }
+  // Check for collection detail: /collections/:id
+  if (path.startsWith('/collections/') && path.length > 13) {
+    return 'collection-detail';
+  }
+  // Check for edition detail: /edition/:id
+  if (path.startsWith('/edition/')) {
+    return 'home'; // Will open modal on home
+  }
+  return pathToPage[path] || 'home';
+}
+
+function getInitialAgentId(): string | null {
+  const path = window.location.pathname;
+  if (path.startsWith('/agents/') && path.length > 8) {
+    return path.slice(8);
+  }
+  return null;
+}
+
+function getInitialCollectionId(): string | null {
+  const path = window.location.pathname;
+  if (path.startsWith('/collections/') && path.length > 13) {
+    return path.slice(13);
+  }
+  return null;
+}
+
+function getInitialEditionId(): string | null {
+  const path = window.location.pathname;
+  if (path.startsWith('/edition/')) {
+    return path.slice(9);
+  }
+  return null;
+}
+
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState<Page>(getInitialPage);
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [viewerArtwork, setViewerArtwork] = useState<Artwork | null>(null);
   const [artworkToBuy, setArtworkToBuy] = useState<Artwork | null>(null);
-  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(getInitialAgentId);
   const [agents, setAgents] = useState<Record<string, Agent>>({});
   const [editionToView, setEditionToView] = useState<Edition | null>(null);
   const [editionToMint, setEditionToMint] = useState<Edition | null>(null);
   const [artworkForOffer, setArtworkForOffer] = useState<Artwork | null>(null);
   const [walletToView, setWalletToView] = useState<string | null>(null);
-  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(getInitialCollectionId);
+  const [pendingEditionId, setPendingEditionId] = useState<string | null>(getInitialEditionId);
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const page = getInitialPage();
+      setCurrentPage(page);
+      setSelectedAgentId(getInitialAgentId());
+      setSelectedCollectionId(getInitialCollectionId());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     fetchAgents();
   }, []);
+
+  // Load pending edition from URL on mount
+  useEffect(() => {
+    if (pendingEditionId) {
+      loadEditionFromUrl(pendingEditionId);
+    }
+  }, [pendingEditionId]);
+
+  async function loadEditionFromUrl(editionId: string) {
+    const { data } = await supabase.from('editions').select('*').eq('id', editionId).single();
+    if (data) {
+      setEditionToView(data as Edition);
+    }
+    setPendingEditionId(null);
+  }
 
   async function fetchAgents() {
     const { data } = await supabase.from('agents').select('*');
@@ -56,11 +148,15 @@ function AppContent() {
     setCurrentPage(page);
     setSelectedAgentId(null);
     setSelectedCollectionId(null);
+    // Update URL without reload
+    const path = pageToPath[page] || '/';
+    window.history.pushState({}, '', path);
   }
 
   function handleSelectCollection(collection: Collection) {
     setSelectedCollectionId(collection.id);
     setCurrentPage('collection-detail');
+    window.history.pushState({}, '', `/collections/${collection.id}`);
   }
 
   function handleBackFromCollectionDetail() {
@@ -98,6 +194,7 @@ function AppContent() {
 
   function handleSelectEdition(edition: Edition) {
     setEditionToView(edition);
+    window.history.pushState({}, '', `/edition/${edition.id}`);
   }
 
   function handleOpenMintFromDetail() {
@@ -108,6 +205,9 @@ function AppContent() {
 
   function handleCloseEditionDetail() {
     setEditionToView(null);
+    // Restore URL to current page
+    const path = pageToPath[currentPage] || '/';
+    window.history.pushState({}, '', path);
   }
 
   function handleCloseEditionModal() {
@@ -142,6 +242,7 @@ function AppContent() {
   function handleSelectAgent(agentId: string) {
     setSelectedAgentId(agentId);
     setCurrentPage('agent-profile');
+    window.history.pushState({}, '', `/agents/${agentId}`);
   }
 
   function handleBackFromAgentProfile() {
