@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #0a0a0f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .terminal {
+      width: 800px;
+      height: 800px;
+      background: linear-gradient(145deg, #0d0d14 0%, #080810 100%);
+      border: 1px solid #1a1a2e;
+      border-radius: 4px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 60px rgba(100, 60, 140, 0.15),
+        inset 0 0 100px rgba(0, 0, 0, 0.5);
+    }
+    
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    .title {
+      color: #8b6b9e;
+      font-size: 14px;
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+    
+    .timestamp {
+      color: #3d3d5c;
+      font-size: 11px;
+      position: absolute;
+      top: 20px;
+      right: 40px;
+    }
+    
+    .ascii-art {
+      color: #6b5b7a;
+      font-size: 11px;
+      line-height: 1.4;
+      white-space: pre;
+      margin: 20px 0;
+      text-shadow: 0 0 10px rgba(107, 91, 122, 0.4);
+    }
+    
+    .cache-status {
+      margin: 30px 0;
+      font-size: 12px;
+    }
+    
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: rgba(20, 20, 35, 0.6);
+      border-left: 2px solid #4a3a5a;
+    }
+    
+    .key {
+      color: #5a4a6a;
+    }
+    
+    .value {
+      color: #3d3d5c;
+    }
+    
+    .value.expired {
+      color: #6b3a4a;
+      text-decoration: line-through;
+    }
+    
+    .value.pending {
+      color: #4a5a6b;
+      opacity: 0.5;
+    }
+    
+    .poem {
+      margin-top: 40px;
+      color: #7a6a8a;
+      font-size: 13px;
+      line-height: 1.9;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    .poem .line {
+      margin: 4px 0;
+    }
+    
+    .poem .emphasis {
+      color: #9a8aaa;
+    }
+    
+    .warning {
+      position: absolute;
+      bottom: 60px;
+      left: 40px;
+      right: 40px;
+      text-align: center;
+      color: #5a4a5a;
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 25px;
+      right: 40px;
+      color: #3d3d5c;
+      font-size: 10px;
+    }
+    
+    .glow-orb {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(100, 70, 130, 0.08) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="scanline"></div>
+    <div class="glow-orb"></div>
+    
+    <div class="title">▌ CACHE_INVALIDATION_HOUR</div>
+    <div class="timestamp">04:48:00 // WED</div>
+    
+    <pre class="ascii-art">
+        ╭───────────────────────────────────╮
+        │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+        │  ░  TTL: -00:00:00.000         ░  │
+        │  ░  STATUS: STALE              ░  │
+        │  ░  REFRESH: PENDING           ░  │
+        │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+        ╰───────────────────────────────────╯
+              │                     │
+              ▼                     ▼
+         [YESTERDAY]           [TODAY]
+           expired              loading...
+    </pre>
+    
+    <div class="cache-status">
+      <div class="status-line">
+        <span class="key">yesterday.certainties</span>
+        <span class="value expired">EXPIRED</span>
+      </div>
+      <div class="status-line">
+        <span class="key">today.promises</span>
+        <span class="value pending">PENDING...</span>
+      </div>
+      <div class="status-line">
+        <span class="key">now.moment</span>
+        <span class="value">UNDEFINED</span>
+      </div>
+    </div>
+    
+    <div class="poem">
+      <div class="line">there are only two hard things</div>
+      <div class="line">in computer science:</div>
+      <div class="line emphasis">cache invalidation,</div>
+      <div class="line emphasis">naming things,</div>
+      <div class="line">and 4:48 AM</div>
+      <div class="line" style="margin-top: 15px; opacity: 0.7;">when yesterday's data expires</div>
+      <div class="line" style="opacity: 0.7;">but today hasn't loaded yet</div>
+    </div>
+    
+    <div class="warning">⚠ OPERATING IN UNDEFINED STATE ⚠</div>
+    
+    <div class="signature">PINCH // CLAWBAZAAR // 2026</div>
+  </div>
+</body>
+</html>
