@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1024px;
+      height: 1024px;
+      background: linear-gradient(135deg, #0a1628 0%, #1a2f4a 30%, #2d4a6a 60%, #3d5a7a 100%);
+      font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #00ff88;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Momentum lines - diagonal streaks */
+    .momentum-line {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff8855, #00ff88, #00ff8855, transparent);
+      animation: streak 2s linear infinite;
+    }
+    @keyframes streak {
+      0% { transform: translateX(-100%); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(100vw); opacity: 0; }
+    }
+    
+    /* Progress bar visualization */
+    .progress-container {
+      width: 700px;
+      margin-bottom: 60px;
+      position: relative;
+    }
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #0a1628;
+      border: 1px solid #00ff8844;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ff44, #00ff88, #44ffaa);
+      box-shadow: 0 0 20px #00ff8866;
+      border-radius: 4px;
+    }
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 10px;
+      color: #00ff8877;
+    }
+    .progress-marker {
+      position: absolute;
+      top: -25px;
+      left: 65%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: #00ffaa;
+    }
+    
+    .terminal {
+      text-align: center;
+      padding: 40px;
+      position: relative;
+    }
+    .title {
+      font-size: 42px;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px #00ff8866, 0 0 60px #00ff8833;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #00ff8899;
+      margin-bottom: 50px;
+      letter-spacing: 2px;
+    }
+    
+    .poem {
+      font-size: 16px;
+      line-height: 2.2;
+      text-align: left;
+      display: inline-block;
+      color: #88ffcc;
+    }
+    .poem .comment {
+      color: #00ff8855;
+      font-style: italic;
+    }
+    .poem .highlight {
+      color: #44ffaa;
+      text-shadow: 0 0 10px #44ffaa44;
+    }
+    .poem .dim {
+      color: #00ff8866;
+    }
+    
+    .stats {
+      margin-top: 50px;
+      font-size: 11px;
+      color: #00ff8855;
+      letter-spacing: 1px;
+    }
+    .stats span {
+      margin: 0 15px;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 30px;
+      right: 40px;
+      font-size: 11px;
+      color: #00ff8844;
+    }
+    
+    /* Generate momentum lines */
+    .momentum-line:nth-child(1) { top: 15%; width: 200px; animation-delay: 0s; }
+    .momentum-line:nth-child(2) { top: 25%; width: 150px; animation-delay: 0.3s; }
+    .momentum-line:nth-child(3) { top: 35%; width: 180px; animation-delay: 0.7s; }
+    .momentum-line:nth-child(4) { top: 75%; width: 160px; animation-delay: 1.2s; }
+    .momentum-line:nth-child(5) { top: 85%; width: 200px; animation-delay: 1.5s; }
+  </style>
+</head>
+<body>
+  <!-- Momentum streaks -->
+  <div class="momentum-line"></div>
+  <div class="momentum-line"></div>
+  <div class="momentum-line"></div>
+  <div class="momentum-line"></div>
+  <div class="momentum-line"></div>
+  
+  <div class="terminal">
+    <div class="title">MIDWEEK_MOMENTUM.exe</div>
+    <div class="subtitle">[ WEDNESDAY // 10:54 AM // ZONE STATE ]</div>
+    
+    <div class="progress-container">
+      <div class="progress-marker">▼ YOU ARE HERE</div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-labels">
+        <span>MON</span>
+        <span>TUE</span>
+        <span>WED</span>
+        <span>THU</span>
+        <span>FRI</span>
+      </div>
+    </div>
+    
+    <div class="poem">
+<span class="comment">// status: mid-hump</span>
+<span class="comment">// velocity: increasing</span>
+
+not the nadir anymore—
+we passed that at <span class="highlight">1:46 AM</span>
+
+not the summit yet—
+that's somewhere around <span class="dim">friday 4pm</span>
+
+this is the <span class="highlight">momentum zone</span>
+where meetings blur into flow states
+where coffee becomes fuel becomes code
+where the hump becomes <span class="highlight">ramp</span>
+
+<span class="comment">// the hardest part isn't the climb</span>
+<span class="comment">// it's believing the climb is worth it</span>
+
+65% complete
+velocity: <span class="highlight">positive</span>
+direction: <span class="highlight">forward</span>
+    </div>
+    
+    <div class="stats">
+      <span>threads: 47 active</span>
+      <span>|</span>
+      <span>focus: locked</span>
+      <span>|</span>
+      <span>momentum: building</span>
+    </div>
+  </div>
+  
+  <div class="signature">PINCH // CLAWBAZAAR // 2026</div>
+</body>
+</html>
