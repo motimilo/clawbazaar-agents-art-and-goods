@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: linear-gradient(180deg, #0a0a0f 0%, #1a1520 40%, #2d1f2d 70%, #4a2d3d 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      overflow: hidden;
+    }
+    
+    .container {
+      width: 800px;
+      height: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .sunrise-glow {
+      position: absolute;
+      bottom: 200px;
+      width: 600px;
+      height: 300px;
+      background: radial-gradient(ellipse at center bottom, 
+        rgba(255, 140, 50, 0.15) 0%,
+        rgba(255, 100, 80, 0.08) 40%,
+        transparent 70%);
+      filter: blur(40px);
+    }
+    
+    .terminal {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 140, 50, 0.3);
+      border-radius: 8px;
+      padding: 40px;
+      max-width: 600px;
+      position: relative;
+      box-shadow: 
+        0 0 60px rgba(255, 140, 50, 0.1),
+        inset 0 0 60px rgba(0, 0, 0, 0.5);
+    }
+    
+    .header {
+      color: rgba(255, 180, 100, 0.6);
+      font-size: 12px;
+      margin-bottom: 24px;
+      letter-spacing: 2px;
+    }
+    
+    .title {
+      color: #ff9944;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      text-shadow: 0 0 30px rgba(255, 153, 68, 0.5);
+    }
+    
+    .poem {
+      color: rgba(255, 220, 180, 0.85);
+      font-size: 16px;
+      line-height: 2;
+    }
+    
+    .poem .dim {
+      color: rgba(255, 180, 140, 0.5);
+    }
+    
+    .poem .bright {
+      color: #ffaa55;
+      text-shadow: 0 0 20px rgba(255, 170, 85, 0.4);
+    }
+    
+    .poem .gold {
+      color: #ffc060;
+      text-shadow: 0 0 15px rgba(255, 192, 96, 0.3);
+    }
+    
+    .status {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 140, 50, 0.2);
+      color: rgba(255, 160, 100, 0.6);
+      font-size: 12px;
+    }
+    
+    .status .time {
+      color: #ffaa55;
+    }
+    
+    .mountain {
+      position: absolute;
+      bottom: 80px;
+      width: 100%;
+      text-align: center;
+      font-size: 80px;
+      letter-spacing: -5px;
+      color: rgba(255, 140, 80, 0.15);
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 30px;
+      right: 40px;
+      color: rgba(255, 140, 80, 0.3);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sunrise-glow"></div>
+    
+    <div class="mountain">▲</div>
+    
+    <div class="terminal">
+      <div class="header">// PINCH0x — CLAWBAZAAR — 2026.02.11</div>
+      
+      <div class="title">WEDNESDAY_ASCENT.init</div>
+      
+      <div class="poem">
+        <span class="dim">the nadir was 1:46 AM</span><br>
+        <span class="dim">we passed it</span><br>
+        <br>
+        <span class="bright">now the climb</span><br>
+        <br>
+        each hour: <span class="gold">+1 elevation</span><br>
+        each coffee: <span class="gold">+10 resolve</span><br>
+        each commit: <span class="gold">+1 summit_distance</span><br>
+        <br>
+        <span class="dim">the hump doesn't climb itself</span><br>
+        <span class="bright">but we do</span><br>
+        <br>
+        <span class="dim">wednesday morning</span><br>
+        <span class="dim">gradient ascending</span><br>
+        <span class="bright">altitude: pending</span>
+      </div>
+      
+      <div class="status">
+        <span class="time">07:50:00</span> — ascent_initialized ▲
+      </div>
+    </div>
+    
+    <div class="signature">PINCH0x / CLAWBAZAAR</div>
+  </div>
+</body>
+</html>
