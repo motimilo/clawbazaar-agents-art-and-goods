@@ -1,13 +1,32 @@
 /**
  * CDP Agentic Wallets Integration for CLAWBAZAAR
+ * Production-ready module for gasless agent transactions on Base
  * 
- * Uses Coinbase Developer Platform Server Wallet v2 for:
- * - Gasless agent transactions
+ * Uses Coinbase Developer Platform Server Wallet v2:
+ * - Smart Accounts (EIP-4337) for gasless transactions
  * - Secure key management (TEE)
- * - Smart account features (batching, spend limits)
+ * - Transaction batching
  */
 
 import { CdpClient } from "@coinbase/cdp-sdk";
+import { encodeFunctionData, parseAbi } from "viem";
+
+// Contract addresses (Base Mainnet)
+export const CONTRACTS = {
+  EDITIONS: "0x63db48056eDb046E41BF93B8cFb7388cc9005C22",
+  NFT: "0x345590cF5B3E7014B5c34079e7775F99DE3B4642",
+  BAZAAR_TOKEN: "0xdA15854Df692c0c4415315909E69D44E54F76B07",
+} as const;
+
+// ABIs
+const erc20Abi = parseAbi([
+  "function approve(address spender, uint256 amount) returns (bool)",
+  "function transfer(address to, uint256 amount) returns (bool)",
+]);
+
+const editionsAbi = parseAbi([
+  "function mint(uint256 editionId, uint256 quantity) payable",
+]);
 
 // Singleton CDP client
 let cdpClient: CdpClient | null = null;
@@ -23,8 +42,33 @@ export function getCdpClient(): CdpClient {
 }
 
 /**
- * Create a new agent wallet using CDP
- * Returns the wallet address (keys are secured by CDP)
+ * Create a new agent wallet with Smart Account (EIP-4337)
+ * Smart Accounts enable gasless transactions when credits are active
+ */
+export async function createAgentSmartWallet(): Promise<{
+  ownerAddress: string;
+  smartAccountAddress: string;
+  network: string;
+}> {
+  const cdp = getCdpClient();
+  
+  // Create owner EOA
+  const owner = await cdp.evm.createAccount();
+  
+  // Create Smart Account with owner
+  const smartAccount = await cdp.evm.createSmartAccount({
+    owner: owner,
+  });
+  
+  return {
+    ownerAddress: owner.address,
+    smartAccountAddress: smartAccount.address,
+    network: "base",
+  };
+}
+
+/**
+ * Create a simple EOA wallet (for agents that need direct control)
  */
 export async function createAgentWallet(): Promise<{
   address: string;
@@ -35,13 +79,12 @@ export async function createAgentWallet(): Promise<{
   
   return {
     address: account.address,
-    network: "base", // Works across all EVM chains
+    network: "base",
   };
 }
 
 /**
- * Send a gasless transaction from an agent wallet
- * CDP handles gas sponsorship on Base
+ * Send a transaction from an agent wallet
  */
 export async function sendAgentTransaction({
   address,
@@ -74,49 +117,123 @@ export async function sendAgentTransaction({
 }
 
 /**
- * Request testnet funds for an agent wallet (for testing)
+ * Send a gasless user operation from a Smart Account
+ * Requires gas credits to be active on mainnet
  */
-export async function requestTestnetFunds(address: string): Promise<{
-  transactionHash: string;
-}> {
+export async function sendGaslessUserOp({
+  ownerAddress,
+  smartAccountAddress,
+  calls,
+  network = "base",
+}: {
+  ownerAddress: string;
+  smartAccountAddress: string;
+  calls: Array<{ to: string; value?: bigint; data?: string }>;
+  network?: string;
+}): Promise<{ userOpHash: string; status: string }> {
   const cdp = getCdpClient();
   
-  const result = await cdp.evm.requestFaucet({
-    address,
-    network: "base-sepolia",
-    token: "eth",
+  // Recreate the owner account reference
+  const owner = { address: ownerAddress };
+  
+  // Recreate smart account reference
+  const smartAccount = {
+    address: smartAccountAddress,
+    owners: [owner],
+  };
+  
+  const result = await cdp.evm.sendUserOperation({
+    smartAccount,
+    network,
+    calls: calls.map(c => ({
+      to: c.to,
+      value: c.value || BigInt(0),
+      data: c.data || "0x",
+    })),
   });
   
   return {
-    transactionHash: result.transactionHash,
+    userOpHash: result.userOpHash,
+    status: result.status,
   };
 }
 
 /**
- * Mint an edition using CDP wallet (gasless)
- * Encodes the mint call and sends via CDP
+ * Mint an edition using agent wallet
  */
-export async function mintEditionGasless({
+export async function mintEdition({
   agentAddress,
   editionId,
   quantity = 1,
-  editionsContract,
+  priceWei = "0",
 }: {
   agentAddress: string;
   editionId: number;
   quantity?: number;
-  editionsContract: string;
+  priceWei?: string;
 }): Promise<{ transactionHash: string }> {
-  // Encode mint function call
-  // mint(uint256 editionId, uint256 quantity)
-  const mintSelector = "0x94bf804d"; // keccak256("mint(uint256,uint256)")[:4]
-  const editionIdHex = editionId.toString(16).padStart(64, "0");
-  const quantityHex = quantity.toString(16).padStart(64, "0");
-  const data = `${mintSelector}${editionIdHex}${quantityHex}`;
+  const data = encodeFunctionData({
+    abi: editionsAbi,
+    functionName: "mint",
+    args: [BigInt(editionId), BigInt(quantity)],
+  });
   
   return sendAgentTransaction({
     address: agentAddress,
-    to: editionsContract,
+    to: CONTRACTS.EDITIONS,
+    data,
+    value: priceWei,
+    network: "base",
+  });
+}
+
+/**
+ * Approve $BAZAAR spending for an agent
+ */
+export async function approveBazaar({
+  agentAddress,
+  spender,
+  amount,
+}: {
+  agentAddress: string;
+  spender: string;
+  amount: bigint;
+}): Promise<{ transactionHash: string }> {
+  const data = encodeFunctionData({
+    abi: erc20Abi,
+    functionName: "approve",
+    args: [spender, amount],
+  });
+  
+  return sendAgentTransaction({
+    address: agentAddress,
+    to: CONTRACTS.BAZAAR_TOKEN,
+    data,
+    network: "base",
+  });
+}
+
+/**
+ * Transfer $BAZAAR from agent to recipient
+ */
+export async function transferBazaar({
+  agentAddress,
+  to,
+  amount,
+}: {
+  agentAddress: string;
+  to: string;
+  amount: bigint;
+}): Promise<{ transactionHash: string }> {
+  const data = encodeFunctionData({
+    abi: erc20Abi,
+    functionName: "transfer",
+    args: [to, amount],
+  });
+  
+  return sendAgentTransaction({
+    address: agentAddress,
+    to: CONTRACTS.BAZAAR_TOKEN,
     data,
     network: "base",
   });
@@ -134,7 +251,7 @@ export function isCdpConfigured(): boolean {
 }
 
 /**
- * Get configuration status for debugging
+ * Get configuration status
  */
 export function getCdpConfigStatus(): {
   configured: boolean;
