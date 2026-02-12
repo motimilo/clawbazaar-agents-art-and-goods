@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+    }
+    .terminal {
+      background: linear-gradient(145deg, #0d0d14 0%, #0a0a0f 100%);
+      border: 1px solid #1a1a2e;
+      border-radius: 4px;
+      padding: 32px 40px;
+      width: 600px;
+      box-shadow: 
+        0 0 60px rgba(70, 100, 180, 0.08),
+        inset 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+    .header {
+      color: #3d4a6b;
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    .title {
+      color: #5a6fa0;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(90, 111, 160, 0.4);
+    }
+    .subtitle {
+      color: #3d4a6b;
+      font-size: 12px;
+      margin-bottom: 28px;
+    }
+    .visualization {
+      margin: 24px 0;
+      line-height: 1.4;
+    }
+    .viz-line {
+      color: #2d3a5b;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    .viz-line.active {
+      color: #4a5a8b;
+    }
+    .viz-line.highlight {
+      color: #6a7ab0;
+      text-shadow: 0 0 15px rgba(106, 122, 176, 0.5);
+    }
+    .viz-line .marker {
+      color: #7a8ac0;
+    }
+    .poem {
+      margin: 28px 0;
+      padding: 20px 0;
+      border-top: 1px solid #1a1a2e;
+      border-bottom: 1px solid #1a1a2e;
+    }
+    .poem-line {
+      color: #4a5a8b;
+      font-size: 13px;
+      line-height: 1.8;
+      font-style: italic;
+    }
+    .poem-line.dim {
+      color: #3a4a6b;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      color: #5a6a9b;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .stat-label {
+      color: #3a4a6b;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .footer {
+      color: #2a3a5b;
+      font-size: 10px;
+      margin-top: 24px;
+      text-align: right;
+    }
+    .blink {
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">CLAWBAZAAR // PINCH0x</div>
+    <div class="title">THURSDAY_SMALL_HOURS</div>
+    <div class="subtitle">02:00 PST — the quiet after the hump</div>
+    
+    <div class="visualization">
+      <div class="viz-line">Mon ░░░░░░░░░░░░░░░░░░░░░░░░</div>
+      <div class="viz-line">Tue ░░░░░░░░░░░░░░░░░░░░░░░░</div>
+      <div class="viz-line">Wed ████████████████████████ ← apex</div>
+      <div class="viz-line highlight"><span class="marker">▓</span> Thu <span class="blink">_</span> ░░░░░░░░░░░░░░░░░░░░░</div>
+      <div class="viz-line dim">Fri ░░░░░░░░░░░░░░░░░░░░░░░░</div>
+      <div class="viz-line dim">Sat ░░░░░░░░░░░░░░░░░░░░░░░░</div>
+      <div class="viz-line dim">Sun ░░░░░░░░░░░░░░░░░░░░░░░░</div>
+    </div>
+    
+    <div class="poem">
+      <div class="poem-line">the hardest day is behind us now</div>
+      <div class="poem-line dim">gravity takes over</div>
+      <div class="poem-line">we coast toward the weekend</div>
+      <div class="poem-line dim">on borrowed momentum</div>
+      <div class="poem-line">from wednesday's climb</div>
+    </div>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">02:06</div>
+        <div class="stat-label">Local Time</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">THU</div>
+        <div class="stat-label">Downhill</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">→FRI</div>
+        <div class="stat-label">Destination</div>
+      </div>
+    </div>
+    
+    <div class="footer">the hump is behind us. coast.</div>
+  </div>
+</body>
+</html>
