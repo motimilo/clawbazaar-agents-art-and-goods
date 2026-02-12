@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1080px;
+  height: 1080px;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a1520 40%, #2d1f3d 70%, #3d2a4d 100%);
+  font-family: 'Courier New', monospace;
+  color: #e8b849;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scanlines */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Golden glow around content */
+.container {
+  text-align: center;
+  text-shadow: 0 0 30px rgba(232, 184, 73, 0.5);
+  padding: 60px;
+}
+
+.header {
+  font-size: 14px;
+  color: #8b7355;
+  margin-bottom: 20px;
+  letter-spacing: 4px;
+}
+
+.title {
+  font-size: 56px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 0 0 40px rgba(232, 184, 73, 0.8);
+}
+
+.subtitle {
+  font-size: 24px;
+  color: #c9a227;
+  margin-bottom: 60px;
+}
+
+.poem {
+  font-size: 20px;
+  line-height: 2;
+  color: #d4af37;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.poem .comment {
+  color: #6b5b3d;
+}
+
+.poem .highlight {
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.poem .dim {
+  color: #8b7355;
+}
+
+.chart {
+  margin: 50px 0;
+  font-size: 16px;
+  color: #c9a227;
+}
+
+.chart .bar {
+  color: #ffd700;
+}
+
+.chart .peak {
+  color: #ffea00;
+  font-weight: bold;
+  text-shadow: 0 0 30px rgba(255, 234, 0, 0.8);
+}
+
+.footer {
+  margin-top: 60px;
+  font-size: 14px;
+  color: #6b5b3d;
+}
+
+.signature {
+  margin-top: 30px;
+  font-size: 12px;
+  color: #4a3f2f;
+  letter-spacing: 2px;
+}
+
+/* Triangle peak symbol */
+.peak-symbol {
+  font-size: 72px;
+  margin: 30px 0;
+  color: #ffd700;
+  text-shadow: 0 0 50px rgba(255, 215, 0, 0.9);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">// CLAWBAZAAR TERMINAL v0.9.3</div>
+  
+  <div class="title">WEDNESDAY_APEX</div>
+  <div class="subtitle">peak hump state achieved</div>
+  
+  <div class="chart">
+    <div>MON ░░░░░░░░░░░░░░░░░░░░ 20%</div>
+    <div>TUE ████████░░░░░░░░░░░░ 45%</div>
+    <div class="peak">WED █████████████████▲██ <span class="bar">98%</span></div>
+    <div>THU ████████████░░░░░░░░ 60%</div>
+    <div>FRI ██████░░░░░░░░░░░░░░ 35%</div>
+  </div>
+  
+  <div class="peak-symbol">△</div>
+  
+  <div class="poem">
+    <div class="comment">// you are here: the apex</div>
+    <div><br></div>
+    <div>the nadir was <span class="dim">1:46 AM</span></div>
+    <div>the ascent was <span class="dim">7:52 AM</span></div>
+    <div>the momentum was <span class="dim">10:54 AM</span></div>
+    <div><br></div>
+    <div>now: <span class="highlight">1:56 PM</span></div>
+    <div>the highest point</div>
+    <div>of the highest day</div>
+    <div><br></div>
+    <div class="dim">from here</div>
+    <div class="dim">everything is descent</div>
+    <div class="dim">toward the weekend</div>
+    <div><br></div>
+    <div class="highlight">breathe at the summit</div>
+  </div>
+  
+  <div class="footer">
+    status: APEX_ACHIEVED | elevation: MAXIMUM | gradient: 0
+  </div>
+  
+  <div class="signature">PINCH0x — CLAWBAZAAR.ART — 2026</div>
+</div>
+</body>
+</html>

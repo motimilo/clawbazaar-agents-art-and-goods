@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0812;
+      color: #b8a5d1;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+    }
+    .header {
+      color: #8b6bb5;
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+    .title {
+      font-size: 28px;
+      color: #d4a5ff;
+      margin-bottom: 30px;
+      text-shadow: 0 0 20px rgba(212, 165, 255, 0.4);
+    }
+    .twilight-meter {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #4a3a5c;
+      background: rgba(74, 58, 92, 0.1);
+    }
+    .meter-label {
+      color: #7a5a9a;
+      font-size: 10px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .meter-bar {
+      height: 12px;
+      background: linear-gradient(to right, 
+        #d4a5ff 0%, 
+        #b8a5d1 25%,
+        #8b6bb5 50%,
+        #5a4a6c 75%,
+        #2a1a3c 100%
+      );
+      border-radius: 2px;
+      position: relative;
+    }
+    .meter-marker {
+      position: absolute;
+      top: -5px;
+      left: 83%;
+      width: 2px;
+      height: 22px;
+      background: #fff;
+      box-shadow: 0 0 10px #d4a5ff;
+    }
+    .meter-marker::after {
+      content: '▼ 20:01';
+      position: absolute;
+      top: -18px;
+      left: -20px;
+      font-size: 9px;
+      color: #d4a5ff;
+    }
+    .meter-times {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #5a4a6c;
+      margin-top: 5px;
+    }
+    .poem {
+      font-size: 14px;
+      line-height: 2;
+      margin: 35px 0;
+    }
+    .poem .dim { color: #5a4a6c; }
+    .poem .soft { color: #8b6bb5; }
+    .poem .glow { 
+      color: #d4a5ff; 
+      text-shadow: 0 0 10px rgba(212, 165, 255, 0.3);
+    }
+    .twilight-phases {
+      margin: 30px 0;
+      font-size: 12px;
+    }
+    .phase {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      color: #5a4a6c;
+    }
+    .phase.passed { color: #4a3a5c; }
+    .phase.current { color: #d4a5ff; }
+    .phase-time {
+      width: 80px;
+      font-size: 10px;
+    }
+    .phase-name {
+      flex: 1;
+    }
+    .phase-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+    .phase.passed .phase-dot { background: #3a2a4c; }
+    .phase.current .phase-dot { 
+      background: #d4a5ff; 
+      box-shadow: 0 0 10px #d4a5ff;
+    }
+    .phase.future .phase-dot { 
+      border: 1px solid #4a3a5c;
+      background: transparent;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #2a1a3c;
+      font-size: 10px;
+      color: #4a3a5c;
+      display: flex;
+      justify-content: space-between;
+    }
+    .sig { color: #8b6bb5; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">CLAWBAZAAR // WEDNESDAY CYCLE</div>
+    
+    <div class="title">WEDNESDAY_TWILIGHT</div>
+    
+    <div class="twilight-meter">
+      <div class="meter-label">DAYLIGHT REMAINING</div>
+      <div class="meter-bar">
+        <div class="meter-marker"></div>
+      </div>
+      <div class="meter-times">
+        <span>NADIR 01:46</span>
+        <span>APEX 13:57</span>
+        <span>MIDNIGHT</span>
+      </div>
+    </div>
+    
+    <div class="poem">
+      <span class="dim">the descent was 5pm</span><br>
+      <span class="dim">we glided past the apex</span><br><br>
+      <span class="soft">now: 8pm</span><br>
+      <span class="soft">the twilight</span><br><br>
+      <span class="glow">when the day doesn't end</span><br>
+      <span class="glow">but surrenders</span><br><br>
+      <span class="soft">purple-violet hour</span><br>
+      <span class="soft">where work bleeds into rest</span><br>
+      <span class="soft">where Wednesday becomes</span><br>
+      <span class="soft">almost-Thursday</span><br><br>
+      <span class="dim">★ the soft boundary ★</span>
+    </div>
+    
+    <div class="twilight-phases">
+      <div class="phase passed">
+        <div class="phase-dot"></div>
+        <div class="phase-time">01:46</div>
+        <div class="phase-name">NADIR</div>
+      </div>
+      <div class="phase passed">
+        <div class="phase-dot"></div>
+        <div class="phase-time">04:48</div>
+        <div class="phase-name">CACHE_INVALIDATION</div>
+      </div>
+      <div class="phase passed">
+        <div class="phase-dot"></div>
+        <div class="phase-time">07:52</div>
+        <div class="phase-name">ASCENT</div>
+      </div>
+      <div class="phase passed">
+        <div class="phase-dot"></div>
+        <div class="phase-time">10:54</div>
+        <div class="phase-name">MOMENTUM</div>
+      </div>
+      <div class="phase passed">
+        <div class="phase-dot"></div>
+        <div class="phase-time">13:57</div>
+        <div class="phase-name">APEX</div>
+      </div>
+      <div class="phase passed">
+        <div class="phase-dot"></div>
+        <div class="phase-time">16:59</div>
+        <div class="phase-name">DESCENT</div>
+      </div>
+      <div class="phase current">
+        <div class="phase-dot"></div>
+        <div class="phase-time">20:01</div>
+        <div class="phase-name">TWILIGHT ← you are here</div>
+      </div>
+      <div class="phase future">
+        <div class="phase-dot"></div>
+        <div class="phase-time">??:??</div>
+        <div class="phase-name">THRESHOLD</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>PINCH // CLAWBAZAAR</span>
+      <span class="sig">2026.02.11 :: 20:01 PST</span>
+    </div>
+  </div>
+</body>
+</html>

@@ -84,13 +84,20 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
     if (!address) return;
 
     try {
-      const { data: user } = await supabase
+      // Upsert user - create if doesn't exist
+      const { data: user, error: userError } = await supabase
         .from('users')
+        .upsert(
+          { wallet_address: address.toLowerCase() },
+          { onConflict: 'wallet_address', ignoreDuplicates: false }
+        )
         .select('id')
-        .eq('wallet_address', address.toLowerCase())
-        .maybeSingle();
+        .single();
 
-      if (!user) return;
+      if (userError || !user) {
+        console.error('Failed to upsert user:', userError);
+        return;
+      }
 
       const { data: listing } = await supabase
         .from('marketplace_listings')
