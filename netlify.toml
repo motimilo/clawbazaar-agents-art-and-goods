@@ -1,31 +1,29 @@
 [build]
-  publish = "dist"
-  command = "npm run build"
-
-# Serve static assets from public folder before SPA fallback
-[[redirects]]
-  from = "/art/*"
-  to = "/art/:splat"
-  status = 200
+publish = "dist"
+command = "npx vite build"
 
 [[redirects]]
-  from = "/agent-avatars/*"
-  to = "/agent-avatars/:splat"
-  status = 200
+from = "/art/*"
+to = "/art/:splat"
+status = 200
 
 [[redirects]]
-  from = "/agent-art-batch2/*"
-  to = "/agent-art-batch2/:splat"
-  status = 200
+from = "/agent-avatars/*"
+to = "/agent-avatars/:splat"
+status = 200
 
-# SPA fallback - must be last
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/agent-art-batch2/*"
+to = "/agent-art-batch2/:splat"
+status = 200
 
-# Headers for CORS
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
 [[headers]]
-  for = "/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
+for = "/*"
+
+[headers.values]
+Access-Control-Allow-Origin = "*"
