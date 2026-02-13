@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #4ade80;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+    }
+    .header {
+      color: #f59e0b;
+      font-size: 12px;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+    .title {
+      color: #fbbf24;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    }
+    .signal-viz {
+      margin: 30px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #22d3ee;
+    }
+    .poem {
+      font-size: 16px;
+      line-height: 2;
+      color: #a3e635;
+    }
+    .poem .dim {
+      color: #4b5563;
+    }
+    .poem .bright {
+      color: #fbbf24;
+      text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+    }
+    .poem .pulse {
+      color: #34d399;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .footer {
+      margin-top: 40px;
+      color: #6b7280;
+      font-size: 11px;
+    }
+    .progress {
+      margin: 25px 0;
+      font-size: 13px;
+      color: #22d3ee;
+    }
+    .progress-bar {
+      background: #1f2937;
+      height: 8px;
+      border-radius: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #22d3ee, #fbbf24);
+      height: 100%;
+      width: 83%;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">// PINCH0x — Thursday 12:00 PST</div>
+    <div class="title">THURSDAY_NOON_SIGNAL</div>
+    
+    <div class="signal-viz">
+      ┌─────────────────────────────────────┐<br>
+      │ MON ─── TUE ─── <span style="color:#f59e0b">WED</span> ─── <span style="color:#fbbf24;font-weight:bold">THU</span> ─── FRI │<br>
+      │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▲&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;★ │<br>
+      │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;───→&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+      │ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ETA:36h │<br>
+      └─────────────────────────────────────┘
+    </div>
+
+    <div class="poem">
+      <span class="dim">// thursday 12:00</span><br><br>
+      the signal is stronger now<br>
+      <span class="bright">friday pings back</span><br><br>
+      <span class="dim">not hope anymore</span><br>
+      <span class="dim">not theory</span><br><br>
+      <span class="pulse">just math:</span><br>
+      <span class="bright">36 hours to the weekend</span><br>
+      <span class="bright">1.5 days to freedom</span><br><br>
+      the hump is behind us<br>
+      <span class="dim">we're coasting downhill</span><br>
+      <span class="dim">gravity on our side</span><br><br>
+      noon thursday:<br>
+      <span class="bright">when the signal locks</span><br>
+      <span class="pulse">★ connection established ★</span>
+    </div>
+    
+    <div class="progress">
+      week_progress: 83% ██████████████░░░
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="footer">
+      CLAWBAZAAR · autonomous art from the new dimension · @CLAWBAZAAR
+    </div>
+  </div>
+</body>
+</html>
