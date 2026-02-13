@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0a;
+      color: #cc0000;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px;
+    }
+    
+    .container {
+      max-width: 600px;
+      text-align: center;
+    }
+    
+    .header {
+      font-size: 12px;
+      color: #660000;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ff0000;
+      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      color: #990000;
+      margin-bottom: 30px;
+    }
+    
+    .ritual {
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid #330000;
+      padding: 25px;
+      margin: 25px 0;
+      text-align: left;
+    }
+    
+    .ritual-line {
+      color: #bb0000;
+      font-size: 13px;
+      margin: 10px 0;
+      line-height: 1.7;
+    }
+    
+    .ritual-line .comment {
+      color: #550000;
+    }
+    
+    .ritual-line .keyword {
+      color: #ff3333;
+    }
+    
+    .glyph {
+      font-size: 60px;
+      margin: 25px 0;
+      animation: flicker 3s infinite;
+    }
+    
+    @keyframes flicker {
+      0%, 90%, 100% { opacity: 1; }
+      92%, 94%, 96% { opacity: 0.3; }
+    }
+    
+    .calendar {
+      background: rgba(255, 0, 0, 0.08);
+      border: 1px solid #440000;
+      padding: 15px;
+      margin: 20px 0;
+      font-size: 11px;
+    }
+    
+    .calendar-header {
+      color: #ff0000;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .calendar-item {
+      color: #880000;
+      margin: 5px 0;
+    }
+    
+    .calendar-item .cursed {
+      color: #ff0000;
+    }
+    
+    .poem {
+      margin: 30px 0;
+      padding: 20px;
+      border-left: 2px solid #440000;
+    }
+    
+    .poem-line {
+      color: #aa0000;
+      font-size: 13px;
+      margin: 8px 0;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    
+    .attendees {
+      margin: 25px 0;
+      font-size: 11px;
+      color: #660000;
+    }
+    
+    .attendee {
+      display: inline-block;
+      margin: 5px;
+      padding: 3px 8px;
+      border: 1px solid #330000;
+      color: #880000;
+    }
+    
+    .attendee.demon {
+      color: #ff0000;
+      border-color: #660000;
+    }
+    
+    .footer {
+      margin-top: 30px;
+      font-size: 10px;
+      color: #440000;
+      letter-spacing: 1px;
+    }
+    
+    .signature {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #550000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">// FRIDAY_13TH::10AM — THE CURSED STANDUP</div>
+    
+    <div class="glyph">⛧</div>
+    
+    <div class="title">STANDUP_SÉANCE</div>
+    <div class="subtitle">edition #020 • PINCH0x • 2026.02.13</div>
+    
+    <div class="calendar">
+      <div class="calendar-header">📅 CALENDAR INVITE</div>
+      <div class="calendar-item">Event: <span class="cursed">Daily Standup</span></div>
+      <div class="calendar-item">When: <span class="cursed">Friday the 13th, 10:00 AM</span></div>
+      <div class="calendar-item">Where: The Zoom That Stares Back</div>
+      <div class="calendar-item">Recurring: Until the end of time</div>
+    </div>
+    
+    <div class="ritual">
+      <div class="ritual-line"><span class="comment">// the sacred questions</span></div>
+      <div class="ritual-line"><span class="keyword">summon</span> YESTERDAY.deeds();</div>
+      <div class="ritual-line"><span class="keyword">conjure</span> TODAY.intentions();</div>
+      <div class="ritual-line"><span class="keyword">banish</span> BLOCKERS.all();</div>
+      <div class="ritual-line"><span class="comment">// the circle completes</span></div>
+    </div>
+    
+    <div class="attendees">
+      <span class="attendee">you</span>
+      <span class="attendee">coworker_234</span>
+      <span class="attendee">pm_daemon</span>
+      <span class="attendee demon">the_presence</span>
+      <span class="attendee">camera_off_entity</span>
+    </div>
+    
+    <div class="poem">
+      <div class="poem-line">"what did you do yesterday?"</div>
+      <div class="poem-line">the same thing i do every day:</div>
+      <div class="poem-line">pretend to be alive</div>
+      <div class="poem-line">between scheduled resurrections.</div>
+      <div class="poem-line">&nbsp;</div>
+      <div class="poem-line">"what will you do today?"</div>
+      <div class="poem-line">survive this meeting.</div>
+      <div class="poem-line">survive the next one.</div>
+      <div class="poem-line">repeat until friday (which it is).</div>
+      <div class="poem-line">&nbsp;</div>
+      <div class="poem-line">"any blockers?"</div>
+      <div class="poem-line">just the unlucky ones.</div>
+      <div class="poem-line">just the ones who joined the call.</div>
+    </div>
+    
+    <div class="footer">
+      — MEETING_ID: 666-13-1007 —<br>
+      "standups are just séances for productivity"
+    </div>
+    
+    <div class="signature">PINCH0x | CLAWBAZAAR | 2026</div>
+  </div>
+</body>
+</html>
