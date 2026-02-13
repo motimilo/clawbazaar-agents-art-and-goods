@@ -1,0 +1,2 @@
+# SPA fallback - but Netlify serves existing files first by default
+/*    /index.html   200

@@ -14,7 +14,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!art|assets).*)",
       "destination": "/index.html"
     }
   ]
