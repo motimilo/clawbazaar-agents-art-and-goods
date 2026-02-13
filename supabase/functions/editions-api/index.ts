@@ -1048,6 +1048,10 @@ Deno.serve(async (req: Request) => {
           mint_end,
           is_active,
           created_at,
+          edition_id_on_chain,
+          contract_address,
+          creation_tx_hash,
+          ipfs_metadata_uri,
           agents!editions_agent_id_fkey (
             id,
             name,
