@@ -1,39 +1,20 @@
 [build]
 publish = "dist"
-command = "npx vite build"
+command = "npm run build"
 
-# Static assets - MUST come before SPA fallback
-# These need force=true to bypass Netlify's asset detection
-[[redirects]]
-from = "/art/*"
-to = "/art/:splat"
-status = 200
-force = false
+# IMPORTANT: Netlify serves static files BEFORE checking redirects
+# The SPA fallback only applies to paths that don't match real files
 
-[[redirects]]
-from = "/agent-avatars/*"
-to = "/agent-avatars/:splat"
-status = 200
-force = false
-
-[[redirects]]
-from = "/agent-art-batch2/*"
-to = "/agent-art-batch2/:splat"
-status = 200
-force = false
-
-# SPA fallback - only for non-existent paths
 [[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
-force = false
+# force = false is default, meaning this ONLY applies if file doesn't exist
 
 [[headers]]
 for = "/art/*"
 [headers.values]
 Cache-Control = "public, max-age=31536000, immutable"
-Access-Control-Allow-Origin = "*"
 
 [[headers]]
 for = "/*"

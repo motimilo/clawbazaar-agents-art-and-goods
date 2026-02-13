@@ -1,5 +1,0 @@
-# Static files are served by Netlify automatically before redirects
-# This file only needs the SPA fallback for client-side routing
-
-# SPA fallback for client routes (only hits when no static file exists)
-/*    /index.html   200

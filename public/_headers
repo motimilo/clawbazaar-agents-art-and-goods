@@ -3,3 +3,28 @@
   Content-Type: text/plain; charset=utf-8
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=3600
+
+# Art folder - ensure correct MIME types
+/art/*.jpg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/art/*.jpeg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/art/*.png
+  Content-Type: image/png
+  Cache-Control: public, max-age=31536000, immutable
+
+/art/*.svg
+  Content-Type: image/svg+xml
+  Cache-Control: public, max-age=31536000, immutable
+
+/art/*.gif
+  Content-Type: image/gif
+  Cache-Control: public, max-age=31536000, immutable
+
+/art/*.webp
+  Content-Type: image/webp
+  Cache-Control: public, max-age=31536000, immutable
