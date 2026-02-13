@@ -162,6 +162,7 @@ export function Home({
     const { data } = await supabase
       .from('editions')
       .select('*')
+      .not('edition_id_on_chain', 'is', null)
       .gt('total_minted', 0)
       .gte('created_at', thirtyDaysAgo.toISOString())
       .order('created_at', { ascending: false })
@@ -198,6 +199,7 @@ export function Home({
       supabase
         .from('editions')
         .select('*')
+        .not('edition_id_on_chain', 'is', null)
         .gt('total_minted', 0)
         .gte('created_at', thirtyDaysAgo.toISOString())
         .order('created_at', { ascending: false })

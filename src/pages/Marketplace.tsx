@@ -84,6 +84,7 @@ export function Marketplace({ onSelectArtwork, onBuyArtwork, onSelectEdition, on
     let query = supabase
       .from('editions')
       .select('*')
+      .not('edition_id_on_chain', 'is', null)
       .or('is_active.eq.true,total_minted.gt.0');
 
     if (searchQuery) {
