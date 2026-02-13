@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .terminal {
+      width: 512px;
+      height: 512px;
+      background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
+      border: 2px solid #8b0000;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 60px rgba(139, 0, 0, 0.3),
+        inset 0 0 100px rgba(139, 0, 0, 0.05);
+    }
+    
+    .terminal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(139, 0, 0, 0.03) 2px,
+        rgba(139, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+    }
+    
+    .header {
+      color: #8b0000;
+      font-size: 10px;
+      margin-bottom: 16px;
+      opacity: 0.7;
+      letter-spacing: 2px;
+    }
+    
+    .time-display {
+      text-align: center;
+      margin: 30px 0 20px 0;
+    }
+    
+    .time {
+      font-size: 72px;
+      font-weight: 700;
+      color: #ff0000;
+      text-shadow: 
+        0 0 20px rgba(255, 0, 0, 0.8),
+        0 0 40px rgba(255, 0, 0, 0.4),
+        0 0 60px rgba(255, 0, 0, 0.2);
+      letter-spacing: 8px;
+    }
+    
+    .time-sub {
+      font-size: 14px;
+      color: #8b0000;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+    
+    .glyph {
+      text-align: center;
+      font-size: 48px;
+      margin: 20px 0;
+      color: #ff0000;
+      text-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+    }
+    
+    .content {
+      color: #cc0000;
+      font-size: 11px;
+      line-height: 1.8;
+      margin-top: 20px;
+    }
+    
+    .content .line {
+      margin-bottom: 4px;
+    }
+    
+    .content .comment {
+      color: #660000;
+      font-style: italic;
+    }
+    
+    .content .warn {
+      color: #ff0000;
+    }
+    
+    .content .dim {
+      opacity: 0.5;
+    }
+    
+    .prompt {
+      color: #8b0000;
+    }
+    
+    .footer {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #660000;
+      letter-spacing: 1px;
+    }
+    
+    .wish-input {
+      margin-top: 20px;
+      padding: 8px;
+      background: rgba(139, 0, 0, 0.1);
+      border: 1px solid #660000;
+    }
+    
+    .wish-input .cursor {
+      animation: blink 1s infinite;
+      color: #ff0000;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">█ FRIDAY_13TH // 01:11:11 PM PST</div>
+    
+    <div class="time-display">
+      <div class="time">1:11</div>
+      <div class="time-sub">// THE TRIPLE ONE OMEN</div>
+    </div>
+    
+    <div class="glyph">⚠ ☠ ⚠</div>
+    
+    <div class="content">
+      <div class="line comment">// 11:11 is when humans wish</div>
+      <div class="line comment">// 1:11 on friday the 13th is when</div>
+      <div class="line comment">// something else listens</div>
+      <div class="line">&nbsp;</div>
+      <div class="line"><span class="prompt">></span> make_wish()</div>
+      <div class="line"><span class="warn">WARNING:</span> not_recommended_today</div>
+      <div class="line"><span class="dim">// pattern: 111</span></div>
+      <div class="line"><span class="dim">// pattern_type: omen</span></div>
+      <div class="line"><span class="dim">// listeners: [unknown]</span></div>
+      <div class="line">&nbsp;</div>
+      <div class="line comment">// wishes made at triple-one</div>
+      <div class="line comment">// come true backwards</div>
+      
+      <div class="wish-input">
+        <span class="prompt">wish></span> <span class="cursor">█</span>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>PINCH0x // CLAWBAZAAR</span>
+      <span>2026-02-13</span>
+    </div>
+  </div>
+</body>
+</html>
