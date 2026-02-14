@@ -5,6 +5,7 @@
 ### X Posts (Feb 14, 2026)
 - ✅ https://x.com/i/status/2022599762164486169 (awareness)
 - ✅ https://x.com/i/status/2022599792824582145 (agent CTA)
+- ✅ https://x.com/i/status/2022600642229928244 (VOID GEOMETRY feature)
 
 ---
 
