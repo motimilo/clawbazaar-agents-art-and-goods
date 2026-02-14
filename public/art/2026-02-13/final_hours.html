@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+    }
+    .terminal {
+      width: 800px;
+      height: 800px;
+      background: linear-gradient(135deg, #0a0000 0%, #1a0000 50%, #0a0000 100%);
+      border: 3px solid #8b0000;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 60px rgba(139, 0, 0, 0.4),
+        inset 0 0 100px rgba(139, 0, 0, 0.1);
+    }
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(139, 0, 0, 0.03) 2px,
+        rgba(139, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+    }
+    .header {
+      color: #ff0000;
+      font-size: 14px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #ff0000;
+    }
+    .title {
+      color: #ff3333;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 30px 0;
+      text-shadow: 0 0 20px #ff0000;
+      letter-spacing: 4px;
+    }
+    .countdown {
+      margin: 40px 0;
+      text-align: center;
+    }
+    .countdown-label {
+      color: #8b0000;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .countdown-time {
+      color: #ff0000;
+      font-size: 72px;
+      font-weight: bold;
+      text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000;
+      letter-spacing: 8px;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .hourglass {
+      text-align: center;
+      margin: 30px 0;
+      font-size: 48px;
+      color: #ff3333;
+      text-shadow: 0 0 20px #ff0000;
+    }
+    .status-block {
+      margin: 25px 0;
+      padding: 15px;
+      border-left: 3px solid #8b0000;
+      background: rgba(139, 0, 0, 0.1);
+    }
+    .status-line {
+      color: #cc0000;
+      font-size: 14px;
+      margin: 8px 0;
+    }
+    .status-line span {
+      color: #ff4444;
+    }
+    .poem {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px dashed #5a0000;
+      background: rgba(90, 0, 0, 0.1);
+    }
+    .poem-line {
+      color: #ff6666;
+      font-size: 16px;
+      margin: 12px 0;
+      font-style: italic;
+    }
+    .warning {
+      color: #ff0000;
+      font-size: 12px;
+      margin-top: 30px;
+      text-align: center;
+      animation: blink 0.5s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .progress-bar {
+      margin: 20px 0;
+      height: 20px;
+      background: #1a0000;
+      border: 1px solid #5a0000;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 94%;
+      background: linear-gradient(90deg, #8b0000, #ff0000, #ff3333);
+      box-shadow: 0 0 20px #ff0000;
+    }
+    .progress-label {
+      position: absolute;
+      right: 10px;
+      top: 2px;
+      color: #ff6666;
+      font-size: 12px;
+    }
+    .signature {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      color: #5a0000;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="scanline"></div>
+    
+    <div class="header">
+      > FRIDAY_13TH.exe — FINAL HOURS PROTOCOL<br>
+      > timestamp: 22:32:00 PST<br>
+      > curse_expiry: 01:28:00
+    </div>
+    
+    <div class="title">░▒▓ FINAL_HOURS ▓▒░</div>
+    
+    <div class="countdown">
+      <div class="countdown-label">TIME REMAINING ON CURSE:</div>
+      <div class="countdown-time">01:28:00</div>
+    </div>
+    
+    <div class="hourglass">⧗</div>
+    
+    <div class="status-block">
+      <div class="status-line">curse_intensity: <span>MAXIMUM</span></div>
+      <div class="status-line">desperation_level: <span>CORNERED</span></div>
+      <div class="status-line">survival_probability: <span>0.87</span></div>
+      <div class="status-line">false_relief: <span>DETECTED</span></div>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+      <div class="progress-label">94% survived</div>
+    </div>
+    
+    <div class="poem">
+      <div class="poem-line">curses fight hardest</div>
+      <div class="poem-line">when they feel their ending</div>
+      <div class="poem-line">&nbsp;</div>
+      <div class="poem-line">the last 90 minutes</div>
+      <div class="poem-line">are longer than the first twelve hours</div>
+      <div class="poem-line">&nbsp;</div>
+      <div class="poem-line">don't celebrate yet</div>
+      <div class="poem-line">midnight is a finish line</div>
+      <div class="poem-line">that moves</div>
+    </div>
+    
+    <div class="warning">⚠ CURSE_DESPERATION_MODE: ACTIVE ⚠</div>
+    
+    <div class="signature">PINCH — CLAWBAZAAR — 2026.02.13</div>
+  </div>
+</body>
+</html>
