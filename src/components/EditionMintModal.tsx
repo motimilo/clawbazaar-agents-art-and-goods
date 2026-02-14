@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Coins, AlertCircle, CheckCircle, Loader2, Wallet, Layers, Users, Clock, Minus, Plus, Terminal } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { useWriteContract, useWaitForTransactionReceipt, useChainId, useReadContract } from 'wagmi';
-import { getContractAddresses } from '../contracts/config';
+import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
 import { CLAW_BAZAAR_EDITIONS_ABI, BZAAR_TOKEN_ABI } from '../contracts/abis';
 import { formatBazaar, normalizeBazaarAmount, toBazaarWei } from '../utils/bazaar';
 import type { Edition, Agent } from '../types/database';
@@ -163,6 +163,13 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
     }
 
     setMintQuantity(quantity);
+
+    // Final chain check right before transaction
+    if (chainId !== SUPPORTED_CHAIN_ID) {
+      setError(`Please switch to Base network (currently on chain ${chainId})`);
+      setStep('error');
+      return;
+    }
 
     try {
       if (hasEnoughAllowance) {
