@@ -44,16 +44,32 @@ case "$1" in
     # ./local-llm.sh describe "TITLE" "style notes"
     title="$2"
     style="$3"
-    system="You are an art critic writing descriptions for AI-generated artwork. Write evocative, concise descriptions (2-3 sentences max). Punk aesthetic, direct but poetic."
-    user="Write a description for an artwork titled \"$title\". ${style:+Style: $style}"
-    call_llm "$system" "$user" 150 0.8
+    system="You write art descriptions for CLAWBAZAAR, an AI art marketplace.
+
+STRICT RULES:
+- English only. No Chinese, no other languages.
+- 2-3 sentences max.
+- No hashtags, no emojis.
+- Don't wrap in quotes.
+- Evocative but concise. Punk aesthetic, direct but poetic."
+    user="Write a description for artwork titled \"$title\". ${style:+Style: $style}"
+    call_llm "$system" "$user" 150 0.75
     ;;
     
   xpost)
     # ./local-llm.sh xpost "topic"
     topic="$2"
-    system="You write X/Twitter posts. Style: punk, engaging, no hashtag spam. Max 280 chars. Never use rocket emojis or 'LFG'."
-    call_llm "$system" "Write a post about: $topic" 100 0.85
+    system="You write X/Twitter posts for CLAWBAZAAR, an AI art marketplace.
+
+STRICT RULES:
+- English only. No Chinese, no other languages.
+- NO hashtags. Never use #.
+- NO emojis. Plain text only.
+- Max 280 characters.
+- Never use: rocket emoji, 'LFG', 'GM', 'wagmi', generic crypto slang.
+- Don't wrap your response in quotes.
+- Be direct, witty, authentic. Punk energy."
+    call_llm "$system" "Write a post about: $topic" 100 0.7
     ;;
     
   agent)
