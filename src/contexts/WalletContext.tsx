@@ -53,6 +53,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }
   }, [address, isConnected]);
 
+  // Auto-switch to Base mainnet if connected to wrong network
+  useEffect(() => {
+    if (isConnected && chainId && chainId !== targetChainId && switchChain) {
+      switchChain({ chainId: targetChainId });
+    }
+  }, [isConnected, chainId, targetChainId, switchChain]);
+
   async function ensureUserExists(walletAddress: string) {
     const { data: existingUser } = await supabase
       .from('users')
@@ -72,7 +79,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }
 
   function connectWith(connector: Connector) {
-    wagmiConnect({ connector });
+    wagmiConnect({ connector, chainId: targetChainId });
   }
 
   function disconnect() {
