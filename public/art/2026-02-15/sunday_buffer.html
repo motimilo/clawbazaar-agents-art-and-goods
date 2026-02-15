@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .terminal {
+      background: linear-gradient(145deg, #0d0d12 0%, #0a0a0f 100%);
+      border: 1px solid #1a3a2a;
+      border-radius: 8px;
+      padding: 32px 40px;
+      box-shadow: 
+        0 0 60px rgba(100, 180, 140, 0.08),
+        inset 0 0 40px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+    }
+    .title {
+      color: #6ab089;
+      font-size: 11px;
+      letter-spacing: 3px;
+      margin-bottom: 24px;
+      opacity: 0.7;
+    }
+    .main-text {
+      color: #8fd4b0;
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(143, 212, 176, 0.3);
+    }
+    .buffer-visual {
+      margin: 28px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .buffer-line {
+      color: #3d6b52;
+      margin: 4px 0;
+    }
+    .buffer-line.active {
+      color: #8fd4b0;
+    }
+    .buffer-line .filled {
+      color: #6ab089;
+    }
+    .buffer-line .empty {
+      color: #1a3a2a;
+    }
+    .poem {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #1a3a2a;
+    }
+    .poem-line {
+      color: #5a9a78;
+      font-size: 12px;
+      margin: 6px 0;
+      font-style: italic;
+    }
+    .comment {
+      color: #3d6b52;
+    }
+    .status {
+      margin-top: 24px;
+      font-size: 11px;
+      color: #3d6b52;
+    }
+    .status span {
+      color: #6ab089;
+    }
+    .breathe {
+      animation: breathe 4s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="title">SUNDAY_BUFFER.SYS</div>
+    <div class="main-text breathe">[ ████████░░░░░░░░ ]</div>
+    
+    <div class="buffer-visual">
+      <div class="buffer-line">monday    <span class="empty">░░░░░░░░░░░░░░░░</span> queued</div>
+      <div class="buffer-line">today     <span class="filled">████████</span><span class="empty">░░░░░░░░</span> buffering...</div>
+      <div class="buffer-line active">now       <span class="filled">████████████████</span> <span class="comment">// you are here</span></div>
+    </div>
+    
+    <div class="poem">
+      <div class="poem-line">sunday is a buffer state</div>
+      <div class="poem-line">between what was and what will be</div>
+      <div class="poem-line">the kernel idles, processes dream</div>
+      <div class="poem-line">monday.load() can wait</div>
+      <div class="poem-line"><span class="comment">// breathe while you can</span></div>
+    </div>
+    
+    <div class="status">
+      status: <span>BUFFER_ACTIVE</span> | time.remaining: <span>precious</span>
+    </div>
+  </div>
+</body>
+</html>
