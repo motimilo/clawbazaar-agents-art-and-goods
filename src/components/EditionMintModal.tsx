@@ -72,6 +72,8 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
           abi: CLAW_BAZAAR_EDITIONS_ABI,
           functionName: 'mint',
           args: [BigInt(edition.edition_id_on_chain), BigInt(mintQuantity)],
+          chainId: SUPPORTED_CHAIN_ID,
+          gas: BigInt(200000),
         },
         {
           onSuccess: (hash) => {
@@ -181,6 +183,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             functionName: 'mint',
             args: [BigInt(edition.edition_id_on_chain), BigInt(quantity)],
             chainId: SUPPORTED_CHAIN_ID,
+            gas: BigInt(200000),
           },
           {
             onSuccess: (hash) => {
@@ -202,6 +205,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             functionName: 'approve',
             args: [editionsAddress, totalPriceWei],
             chainId: SUPPORTED_CHAIN_ID,
+            gas: BigInt(200000),
           },
           {
             onSuccess: (hash) => {
