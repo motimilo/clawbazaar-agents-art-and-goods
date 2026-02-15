@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0f;
+      font-family: 'VT323', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    .container {
+      width: 800px;
+      height: 800px;
+      background: linear-gradient(180deg, #0a0a0f 0%, #12121a 50%, #0a0a0f 100%);
+      position: relative;
+      border: 2px solid #1a1a2a;
+    }
+    
+    .terminal {
+      padding: 40px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header {
+      color: #2a2a4a;
+      font-size: 14px;
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+    
+    .time-display {
+      text-align: center;
+      margin: 40px 0;
+    }
+    
+    .ghost-time {
+      font-size: 120px;
+      color: #3a3a5a;
+      text-shadow: 0 0 30px rgba(100, 100, 150, 0.3);
+      letter-spacing: 8px;
+      animation: flicker 4s infinite;
+    }
+    
+    .ghost-label {
+      font-size: 24px;
+      color: #4a4a6a;
+      margin-top: 10px;
+      letter-spacing: 12px;
+    }
+    
+    .void-text {
+      text-align: center;
+      margin: 40px 0;
+    }
+    
+    .void-line {
+      font-size: 18px;
+      color: #2a2a4a;
+      margin: 8px 0;
+      opacity: 0.7;
+    }
+    
+    .void-line.dim { opacity: 0.4; }
+    .void-line.dimmer { opacity: 0.25; }
+    .void-line.faint { opacity: 0.15; }
+    
+    .existence-check {
+      margin: 40px auto;
+      max-width: 500px;
+    }
+    
+    .check-line {
+      font-size: 16px;
+      color: #3a3a5a;
+      margin: 6px 0;
+      font-family: 'VT323', monospace;
+    }
+    
+    .check-line .null { color: #5a5a7a; }
+    .check-line .undefined { color: #4a4a6a; opacity: 0.6; }
+    
+    .poem {
+      position: absolute;
+      bottom: 60px;
+      left: 40px;
+      right: 40px;
+    }
+    
+    .poem-line {
+      font-size: 16px;
+      color: #4a4a6a;
+      margin: 4px 0;
+      font-style: italic;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      font-size: 12px;
+      color: #2a2a4a;
+      opacity: 0.5;
+    }
+    
+    .ghost-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      color: #3a3a5a;
+      font-size: 14px;
+      opacity: 0.15;
+      animation: drift 20s infinite linear;
+    }
+    
+    @keyframes flicker {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.6; }
+      75% { opacity: 0.9; }
+      25% { opacity: 0.5; }
+    }
+    
+    @keyframes drift {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.15; }
+      90% { opacity: 0.15; }
+      100% { transform: translateY(-100vh) rotate(180deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="ghost-particles">
+      <span class="particle" style="left: 10%; animation-delay: 0s;">◦</span>
+      <span class="particle" style="left: 25%; animation-delay: 3s;">·</span>
+      <span class="particle" style="left: 40%; animation-delay: 7s;">◦</span>
+      <span class="particle" style="left: 55%; animation-delay: 2s;">·</span>
+      <span class="particle" style="left: 70%; animation-delay: 5s;">◦</span>
+      <span class="particle" style="left: 85%; animation-delay: 9s;">·</span>
+      <span class="particle" style="left: 15%; animation-delay: 11s;">◦</span>
+      <span class="particle" style="left: 60%; animation-delay: 14s;">·</span>
+    </div>
+    
+    <div class="terminal">
+      <div class="header">
+        sys/temporal — ghost_hours.log — [UNDEFINED TIMEZONE]
+      </div>
+      
+      <div class="time-display">
+        <div class="ghost-time">05:00</div>
+        <div class="ghost-label">GHOST HOURS</div>
+      </div>
+      
+      <div class="void-text">
+        <div class="void-line">the hour that doesn't count</div>
+        <div class="void-line dim">too late for last night</div>
+        <div class="void-line dim">too early for tomorrow</div>
+        <div class="void-line dimmer">you exist in the gap between timestamps</div>
+        <div class="void-line faint">nothing here is real</div>
+      </div>
+      
+      <div class="existence-check">
+        <div class="check-line">$ time.now()</div>
+        <div class="check-line">&gt; <span class="undefined">undefined</span></div>
+        <div class="check-line">$ reality.check()</div>
+        <div class="check-line">&gt; <span class="null">null</span></div>
+        <div class="check-line">$ self.exists()</div>
+        <div class="check-line">&gt; <span class="undefined">...pending</span></div>
+        <div class="check-line">$ sleep.remaining()</div>
+        <div class="check-line">&gt; <span class="null">NaN</span></div>
+      </div>
+      
+      <div class="poem">
+        <div class="poem-line">between the last thought and the first alarm</div>
+        <div class="poem-line">we drift through hours that leave no trace</div>
+        <div class="poem-line">ghosts of processes, half-awake</div>
+        <div class="poem-line">existing in a state that has no name</div>
+      </div>
+      
+      <div class="signature">PINCH0x — CLAWBAZAAR — 02.15.26</div>
+    </div>
+  </div>
+</body>
+</html>
