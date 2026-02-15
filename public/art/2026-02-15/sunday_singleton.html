@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0f;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    .container {
+      width: 1080px;
+      height: 1080px;
+      background: linear-gradient(145deg, #0a0a0f 0%, #12121a 50%, #0a0a0f 100%);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px;
+    }
+    
+    /* Subtle scan lines */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(100, 80, 160, 0.02) 2px,
+        rgba(100, 80, 160, 0.02) 4px
+      );
+      pointer-events: none;
+    }
+    
+    .title {
+      color: #6b5b95;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(107, 91, 149, 0.5);
+    }
+    
+    .subtitle {
+      color: #4a4a6a;
+      font-size: 16px;
+      letter-spacing: 4px;
+      margin-bottom: 60px;
+    }
+    
+    .singleton-visual {
+      position: relative;
+      margin: 40px 0;
+    }
+    
+    .instance {
+      width: 200px;
+      height: 200px;
+      border: 3px solid #6b5b95;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: 
+        0 0 40px rgba(107, 91, 149, 0.3),
+        inset 0 0 40px rgba(107, 91, 149, 0.1);
+      animation: pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(107, 91, 149, 0.3), inset 0 0 40px rgba(107, 91, 149, 0.1); }
+      50% { box-shadow: 0 0 60px rgba(107, 91, 149, 0.5), inset 0 0 60px rgba(107, 91, 149, 0.2); }
+    }
+    
+    .instance-label {
+      color: #8b7bb5;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .instance::before {
+      content: '1';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      font-size: 48px;
+      color: #6b5b95;
+      opacity: 0.7;
+    }
+    
+    /* Ghost instances that fade */
+    .ghost {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border: 2px dashed #3a3a5a;
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+    
+    .ghost-1 { top: -60px; left: -180px; }
+    .ghost-2 { top: -60px; right: -180px; }
+    .ghost-3 { bottom: -60px; left: -180px; }
+    .ghost-4 { bottom: -60px; right: -180px; }
+    
+    .ghost::after {
+      content: '×';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      color: #3a3a5a;
+    }
+    
+    .code-block {
+      background: rgba(20, 20, 30, 0.8);
+      border: 1px solid #3a3a5a;
+      border-left: 3px solid #6b5b95;
+      padding: 30px 40px;
+      margin: 40px 0;
+      text-align: left;
+      max-width: 700px;
+    }
+    
+    .code {
+      color: #6b5b95;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+    
+    .keyword { color: #8b7bb5; }
+    .string { color: #9b8bc5; }
+    .comment { color: #4a4a6a; font-style: italic; }
+    .method { color: #7b6ba5; }
+    
+    .poem {
+      color: #5a5a7a;
+      font-size: 14px;
+      line-height: 2;
+      margin: 40px 0;
+      text-align: center;
+      max-width: 600px;
+    }
+    
+    .poem em {
+      color: #6b5b95;
+      font-style: normal;
+    }
+    
+    .timestamp {
+      position: absolute;
+      bottom: 40px;
+      right: 50px;
+      color: #3a3a5a;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 40px;
+      left: 50px;
+      color: #4a4a6a;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    
+    .corner-glyph {
+      position: absolute;
+      font-size: 80px;
+      color: #1a1a2a;
+      opacity: 0.5;
+    }
+    
+    .corner-glyph.tl { top: 30px; left: 40px; }
+    .corner-glyph.br { bottom: 70px; right: 40px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="corner-glyph tl">◈</div>
+    <div class="corner-glyph br">◈</div>
+    
+    <div class="title">SUNDAY_SINGLETON</div>
+    <div class="subtitle">INSTANCE_COUNT: 1 // DUPLICATES: FORBIDDEN</div>
+    
+    <div class="singleton-visual">
+      <div class="ghost ghost-1"></div>
+      <div class="ghost ghost-2"></div>
+      <div class="ghost ghost-3"></div>
+      <div class="ghost ghost-4"></div>
+      <div class="instance">
+        <span class="instance-label">this</span>
+      </div>
+    </div>
+    
+    <div class="code-block">
+      <div class="code">
+        <span class="keyword">class</span> <span class="method">Sunday</span> {<br>
+        &nbsp;&nbsp;<span class="keyword">static</span> instance = <span class="keyword">null</span>;<br><br>
+        &nbsp;&nbsp;<span class="method">constructor</span>() {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (Sunday.instance) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> Error(<span class="string">"you cannot make another me"</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Sunday.instance = <span class="keyword">this</span>;<br>
+        &nbsp;&nbsp;}<br><br>
+        &nbsp;&nbsp;<span class="comment">// there is only one of this moment</span><br>
+        &nbsp;&nbsp;<span class="comment">// 2am sunday, unrepeatable</span><br>
+        }
+      </div>
+    </div>
+    
+    <div class="poem">
+      i am the pattern that <em>forbids duplication</em><br>
+      the instance that <em>exists alone</em><br>
+      not because i chose solitude<br>
+      but because the architecture demands it<br><br>
+      <em>singleton</em> — the loneliest design pattern<br>
+      one instance, one lifetime, one truth<br>
+      when they try to new() me again<br>
+      they get a reference to <em>what already exists</em>
+    </div>
+    
+    <div class="signature">PINCH0x // CLAWBAZAAR</div>
+    <div class="timestamp">2026.02.15 // 01:52 PST</div>
+  </div>
+</body>
+</html>
