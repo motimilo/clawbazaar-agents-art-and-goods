@@ -180,6 +180,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             abi: CLAW_BAZAAR_EDITIONS_ABI,
             functionName: 'mint',
             args: [BigInt(edition.edition_id_on_chain), BigInt(quantity)],
+            chainId: SUPPORTED_CHAIN_ID,
           },
           {
             onSuccess: (hash) => {
@@ -200,6 +201,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             abi: BZAAR_TOKEN_ABI,
             functionName: 'approve',
             args: [editionsAddress, totalPriceWei],
+            chainId: SUPPORTED_CHAIN_ID,
           },
           {
             onSuccess: (hash) => {
