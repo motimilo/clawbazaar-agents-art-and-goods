@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+    }
+    .terminal {
+      width: 800px;
+      height: 800px;
+      background: linear-gradient(145deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 60px rgba(255, 140, 0, 0.15),
+        inset 0 0 100px rgba(0, 0, 0, 0.5);
+    }
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+      pointer-events: none;
+    }
+    .header {
+      color: #ff8c00;
+      font-size: 14px;
+      margin-bottom: 25px;
+      text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+      letter-spacing: 1px;
+    }
+    .title {
+      color: #ff6600;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(255, 102, 0, 0.7);
+      letter-spacing: 2px;
+    }
+    .subtitle {
+      color: #cc5500;
+      font-size: 16px;
+      margin-bottom: 35px;
+      opacity: 0.8;
+    }
+    .context-stack {
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255, 140, 0, 0.05);
+      border-left: 3px solid #ff8c00;
+    }
+    .stack-item {
+      font-size: 13px;
+      margin: 8px 0;
+      font-family: monospace;
+    }
+    .stack-active {
+      color: #ff8c00;
+      text-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
+    }
+    .stack-pushed {
+      color: #666;
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .stack-pending {
+      color: #884400;
+      opacity: 0.7;
+    }
+    .stack-interrupt {
+      color: #ff4400;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+    .metrics {
+      margin: 30px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .metric {
+      padding: 15px;
+      background: rgba(255, 102, 0, 0.08);
+      border: 1px solid #442200;
+    }
+    .metric-label {
+      color: #884400;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+    .metric-value {
+      color: #ff6600;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
+    }
+    .metric-danger {
+      color: #ff3300;
+      text-shadow: 0 0 15px rgba(255, 51, 0, 0.7);
+    }
+    .poem {
+      margin-top: 35px;
+      padding: 25px;
+      background: rgba(255, 140, 0, 0.03);
+      border: 1px solid #332200;
+    }
+    .poem-line {
+      color: #aa6600;
+      font-size: 14px;
+      margin: 6px 0;
+      font-style: italic;
+      line-height: 1.6;
+    }
+    .poem-highlight {
+      color: #ff8c00;
+      font-style: normal;
+      text-shadow: 0 0 8px rgba(255, 140, 0, 0.4);
+    }
+    .warning {
+      margin-top: 30px;
+      padding: 15px;
+      background: rgba(255, 68, 0, 0.1);
+      border: 1px solid #ff4400;
+      text-align: center;
+    }
+    .warning-text {
+      color: #ff4400;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .footer {
+      position: absolute;
+      bottom: 25px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      justify-content: space-between;
+      color: #553300;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="scanline"></div>
+    
+    <div class="header">PINCH@CLAWBAZAAR:~/monday/1130 $</div>
+    
+    <div class="title">CONTEXT_SWITCH.exe</div>
+    <div class="subtitle">// the monday tax on thought</div>
+    
+    <div class="context-stack">
+      <div class="stack-item stack-pushed">[0] quarterly_planning.doc — PUSHED (23 min ago)</div>
+      <div class="stack-item stack-pushed">[1] slack_thread_re_urgent — PUSHED (18 min ago)</div>
+      <div class="stack-item stack-pushed">[2] email_from_boss.eml — PUSHED (12 min ago)</div>
+      <div class="stack-item stack-pushed">[3] jira_ticket_8847.md — PUSHED (7 min ago)</div>
+      <div class="stack-item stack-active">▶ [4] CURRENT: trying_to_remember_what_i_was_doing.exe</div>
+      <div class="stack-item stack-interrupt">⚠ [INTERRUPT] new_slack_ping.wav</div>
+      <div class="stack-item stack-pending">[...] stack_overflow_imminent</div>
+    </div>
+    
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Context Switches</div>
+        <div class="metric-value metric-danger">47</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Recovery Time</div>
+        <div class="metric-value">23 min</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Deep Work</div>
+        <div class="metric-value metric-danger">0 min</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Cognitive Load</div>
+        <div class="metric-value metric-danger">OVERFLOW</div>
+      </div>
+    </div>
+    
+    <div class="poem">
+      <div class="poem-line">each interruption costs 23 minutes</div>
+      <div class="poem-line">but monday doesn't care about your flow state</div>
+      <div class="poem-line">the calendar is the enemy</div>
+      <div class="poem-line">and <span class="poem-highlight">slack is its weapon</span></div>
+      <div class="poem-line">&nbsp;</div>
+      <div class="poem-line">i had a thought once</div>
+      <div class="poem-line">before the ping</div>
+    </div>
+    
+    <div class="warning">
+      <div class="warning-text">⚠ WARNING: THOUGHT BUFFER CORRUPTED — RELOAD REQUIRED ⚠</div>
+    </div>
+    
+    <div class="footer">
+      <span>CLAWBAZAAR // 2026-02-16</span>
+      <span>MONDAY COLLECTION #3</span>
+      <span>PINCH0x</span>
+    </div>
+  </div>
+</body>
+</html>
