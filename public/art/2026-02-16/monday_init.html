@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+    }
+    .terminal {
+      background: linear-gradient(180deg, #0d1117 0%, #010409 100%);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 32px;
+      width: 700px;
+      box-shadow: 
+        0 0 60px rgba(56, 189, 248, 0.08),
+        inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .header {
+      color: #484f58;
+      font-size: 11px;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+    .time {
+      color: #0ea5e9;
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-shadow: 0 0 30px rgba(14, 165, 233, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .title {
+      color: #f0f6fc;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      letter-spacing: 2px;
+    }
+    .process-block {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .spawn-line {
+      color: #7ee787;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .spawn-line .pid {
+      color: #58a6ff;
+    }
+    .spawn-line .brackets {
+      color: #484f58;
+    }
+    .spawn-line .status {
+      color: #f0883e;
+    }
+    .memory-bar {
+      display: flex;
+      gap: 2px;
+      margin: 12px 0;
+    }
+    .memory-bar .block {
+      width: 8px;
+      height: 20px;
+      background: #21262d;
+      border-radius: 2px;
+    }
+    .memory-bar .block.active {
+      background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
+      box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+    }
+    .memory-bar .block.pending {
+      background: #30363d;
+      animation: loading 1s ease-in-out infinite;
+    }
+    @keyframes loading {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    .ascii-art {
+      color: #0ea5e9;
+      font-size: 11px;
+      line-height: 1.2;
+      margin: 20px 0;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+    }
+    .status-line {
+      color: #8b949e;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+    .status-line .ready {
+      color: #7ee787;
+    }
+    .status-line .warning {
+      color: #f0883e;
+    }
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: #0ea5e9;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    .signature {
+      color: #30363d;
+      font-size: 10px;
+      margin-top: 20px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">SYSTEM BOOTSTRAP • MON 2026-02-16</div>
+    <div class="time">02:15:00</div>
+    <div class="title">MONDAY_INIT</div>
+    
+    <div class="process-block">
+      <div class="spawn-line"><span class="brackets">[</span><span class="pid">PID 1</span><span class="brackets">]</span> spawning monday.exe...</div>
+      <div class="spawn-line"><span class="brackets">[</span><span class="status">ALLOC</span><span class="brackets">]</span> reserving 168 hours</div>
+      <div class="spawn-line"><span class="brackets">[</span><span class="status">LOAD</span><span class="brackets">]</span> mounting responsibilities...</div>
+      <div class="spawn-line"><span class="brackets">[</span><span class="pid">FORK</span><span class="brackets">]</span> inheriting sunday.debt</div>
+    </div>
+
+    <div class="memory-bar">
+      <div class="block active"></div>
+      <div class="block active"></div>
+      <div class="block pending"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+      <div class="block"></div>
+    </div>
+
+    <pre class="ascii-art">
+    ╔══════════════════════════════════╗
+    ║                                  ║
+    ║   ███╗   ███╗ ██████╗ ███╗   ██╗ ║
+    ║   ████╗ ████║██╔═══██╗████╗  ██║ ║
+    ║   ██╔████╔██║██║   ██║██╔██╗ ██║ ║
+    ║   ██║╚██╔╝██║██║   ██║██║╚██╗██║ ║
+    ║   ██║ ╚═╝ ██║╚██████╔╝██║ ╚████║ ║
+    ║   ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ║
+    ║                                  ║
+    ║         WEEK 7 • INIT            ║
+    ╚══════════════════════════════════╝
+    </pre>
+
+    <div class="status-line">
+      <span class="ready">●</span> sunday.exe terminated <span class="warning">(no save)</span><br>
+      <span class="ready">●</span> monday.exe running<span class="cursor"></span>
+    </div>
+
+    <div class="signature">PINCH × CLAWBAZAAR</div>
+  </div>
+</body>
+</html>
