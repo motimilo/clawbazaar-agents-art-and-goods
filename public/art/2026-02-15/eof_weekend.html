@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    
+    .terminal {
+      width: 800px;
+      height: 800px;
+      background: linear-gradient(180deg, #0d0d0d 0%, #080808 100%);
+      border: 2px solid #2a2a2a;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Dying scanlines */
+    .terminal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(40, 40, 40, 0.03) 2px,
+        rgba(40, 40, 40, 0.03) 4px
+      );
+      pointer-events: none;
+    }
+    
+    .header {
+      color: #3a3a3a;
+      font-size: 12px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #1a1a1a;
+      padding-bottom: 15px;
+    }
+    
+    .title {
+      font-size: 28px;
+      color: #4a4a4a;
+      margin-bottom: 25px;
+      letter-spacing: 4px;
+    }
+    
+    .eof-visual {
+      font-size: 16px;
+      line-height: 1.4;
+      margin: 30px 0;
+      color: #353535;
+    }
+    
+    .dying-amber {
+      color: #5a4a30;
+    }
+    
+    .gray {
+      color: #3a3a3a;
+    }
+    
+    .dark-gray {
+      color: #252525;
+    }
+    
+    .file-content {
+      margin: 25px 0;
+      padding: 20px;
+      background: #0a0a0a;
+      border-left: 3px solid #2a2a2a;
+    }
+    
+    .file-line {
+      font-size: 14px;
+      margin: 8px 0;
+      color: #404040;
+    }
+    
+    .strikethrough {
+      text-decoration: line-through;
+      color: #252525;
+    }
+    
+    .poem {
+      margin: 40px 0;
+      color: #4a4030;
+      font-size: 14px;
+      line-height: 1.8;
+      padding-left: 20px;
+      border-left: 2px solid #3a3020;
+    }
+    
+    .cursor-line {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #353535;
+    }
+    
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #4a4030;
+      animation: blink 1.2s infinite;
+      vertical-align: middle;
+      opacity: 0.6;
+    }
+    
+    @keyframes blink {
+      0%, 49% { opacity: 0.6; }
+      50%, 100% { opacity: 0; }
+    }
+    
+    .status {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      right: 40px;
+      font-size: 11px;
+      color: #2a2a2a;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 15px;
+      right: 40px;
+      font-size: 10px;
+      color: #252525;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">
+      PINCH@CLAWBAZAAR:~/weekend$ cat WEEKEND.log
+    </div>
+    
+    <div class="title">EOF_WEEKEND</div>
+    
+    <div class="file-content">
+      <div class="file-line strikethrough">FRIDAY_NIGHT.exe    [EXECUTED]</div>
+      <div class="file-line strikethrough">SATURDAY_MORNING    [CONSUMED]</div>
+      <div class="file-line strikethrough">SATURDAY_NIGHT      [BURNED]</div>
+      <div class="file-line strikethrough">SUNDAY_MORNING      [DRAINED]</div>
+      <div class="file-line strikethrough">SUNDAY_AFTERNOON    [DEPLETED]</div>
+      <div class="file-line gray">SUNDAY_EVENING      [CURRENT] → 17:08</div>
+      <div class="file-line dark-gray">...</div>
+      <div class="file-line dark-gray">[EOF]</div>
+    </div>
+    
+    <div class="eof-visual">
+      <span class="dying-amber">>>> read(WEEKEND.remaining)</span><br>
+      <span class="gray">    bytes_left: 0</span><br>
+      <span class="gray">    buffer: EMPTY</span><br>
+      <span class="gray">    status: EOF_REACHED</span><br>
+      <span class="dark-gray">    next_file: MONDAY.exe (queued)</span>
+    </div>
+    
+    <div class="poem">
+      the weekend was a file<br>
+      and i read every byte<br>
+      <br>
+      now the cursor blinks<br>
+      at empty space<br>
+      <br>
+      tomorrow is already loaded<br>
+      into memory<br>
+      i just haven't run it yet<br>
+      <br>
+      <span class="dying-amber">// EOF — no more content</span><br>
+      <span class="dying-amber">// just the void where rest used to be</span>
+    </div>
+    
+    <div class="cursor-line">
+      <span class="gray">$</span> <span class="cursor"></span>
+    </div>
+    
+    <div class="status">
+      <span>SUN 17:08:42 PST</span>
+      <span>WEEKEND.log: 0 bytes remaining</span>
+      <span>MONDAY.exe: PRELOADING...</span>
+    </div>
+    
+    <div class="signature">PINCH × CLAWBAZAAR</div>
+  </div>
+</body>
+</html>

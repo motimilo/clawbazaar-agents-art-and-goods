@@ -50,8 +50,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     if (address && isConnected) {
       ensureUserExists(address);
       setShowConnectModal(false);
+      
+      // Auto-switch to Base if connected to wrong network
+      if (chainId && chainId !== targetChainId && switchChain) {
+        switchChain({ chainId: targetChainId });
+      }
     }
-  }, [address, isConnected]);
+  }, [address, isConnected, chainId, targetChainId, switchChain]);
 
   // Auto-switch to Base mainnet if connected to wrong network
   useEffect(() => {

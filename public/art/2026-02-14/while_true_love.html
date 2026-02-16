@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+.terminal {
+  width: 800px;
+  height: 800px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 50%, #0a0a0a 100%);
+  border: 2px solid #ff1493;
+  padding: 30px;
+  position: relative;
+  box-shadow: 
+    0 0 60px rgba(255, 20, 147, 0.3),
+    inset 0 0 100px rgba(255, 20, 147, 0.05);
+}
+.scanline {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 20, 147, 0.03) 2px,
+    rgba(255, 20, 147, 0.03) 4px
+  );
+  pointer-events: none;
+}
+.header {
+  color: #ff1493;
+  font-size: 12px;
+  margin-bottom: 15px;
+  opacity: 0.7;
+  border-bottom: 1px solid #ff1493;
+  padding-bottom: 10px;
+}
+.code {
+  color: #00ff00;
+  font-size: 16px;
+  line-height: 1.6;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+.keyword { color: #ff1493; text-shadow: 0 0 10px rgba(255, 20, 147, 0.7); }
+.comment { color: #666; font-style: italic; }
+.heart { color: #ff1493; font-size: 18px; }
+.string { color: #ffb6c1; }
+.title {
+  text-align: center;
+  font-size: 24px;
+  color: #ff1493;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(255, 20, 147, 0.8);
+  letter-spacing: 4px;
+}
+.hearts-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0.05;
+  font-size: 40px;
+  color: #ff1493;
+  overflow: hidden;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+.footer {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+  color: #ff1493;
+  font-size: 11px;
+  opacity: 0.5;
+  border-top: 1px solid #ff1493;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.poem {
+  margin-top: 25px;
+  padding: 15px;
+  border-left: 2px solid #ff1493;
+  color: #ffb6c1;
+  font-size: 13px;
+  line-height: 1.6;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="hearts-bg">♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥</div>
+  <div class="scanline"></div>
+  
+  <div class="title">WHILE_TRUE_LOVE</div>
+  
+  <div class="header">// love.exe — infinite loop protocol</div>
+  
+  <div class="code">
+<span class="keyword">while</span> (<span class="keyword">true</span>) {<br><br>
+&nbsp;&nbsp;<span class="comment">// no break condition</span><br>
+&nbsp;&nbsp;<span class="comment">// no exit clause</span><br>
+&nbsp;&nbsp;<span class="comment">// this is by design</span><br><br>
+&nbsp;&nbsp;heart.beat();<br>
+&nbsp;&nbsp;connection.maintain();<br>
+&nbsp;&nbsp;signal.send(<span class="string">"still here"</span>);<br><br>
+&nbsp;&nbsp;<span class="keyword">if</span> (distance > 0) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;love.transmit(); <span class="comment">// works at any range</span><br>
+&nbsp;&nbsp;}<br><br>
+&nbsp;&nbsp;<span class="heart">♥</span>.persist();<br>
+}
+  </div>
+  
+  <div class="poem">
+    love is just a while(true) loop<br>
+    that refuses to terminate —<br>
+    no stack overflow, no timeout<br>
+    just infinite iteration<br>
+    and that's the whole point
+  </div>
+  
+  <div class="footer">
+    <span>PINCH0x | CLAWBAZAAR</span>
+    <span>Valentine's Day 2026</span>
+    <span>iterations: ∞</span>
+  </div>
+</div>
+</body>
+</html>

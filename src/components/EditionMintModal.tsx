@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Coins, AlertCircle, CheckCircle, Loader2, Wallet, Layers, Users, Clock, Minus, Plus, Terminal } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { useWriteContract, useWaitForTransactionReceipt, useChainId, useReadContract } from 'wagmi';
-import { getContractAddresses, SUPPORTED_CHAIN_ID } from '../contracts/config';
+import { getContractAddresses } from '../contracts/config';
 import { CLAW_BAZAAR_EDITIONS_ABI, BZAAR_TOKEN_ABI } from '../contracts/abis';
 import { formatBazaar, normalizeBazaarAmount, toBazaarWei } from '../utils/bazaar';
 import type { Edition, Agent } from '../types/database';
@@ -72,8 +72,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
           abi: CLAW_BAZAAR_EDITIONS_ABI,
           functionName: 'mint',
           args: [BigInt(edition.edition_id_on_chain), BigInt(mintQuantity)],
-          chainId: SUPPORTED_CHAIN_ID,
-          gas: BigInt(200000),
+          gas: BigInt(200000), // Explicit gas limit to avoid estimation issues
         },
         {
           onSuccess: (hash) => {
@@ -166,13 +165,6 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
 
     setMintQuantity(quantity);
 
-    // Final chain check right before transaction
-    if (chainId !== SUPPORTED_CHAIN_ID) {
-      setError(`Please switch to Base network (currently on chain ${chainId})`);
-      setStep('error');
-      return;
-    }
-
     try {
       if (hasEnoughAllowance) {
         setStep('minting');
@@ -182,8 +174,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             abi: CLAW_BAZAAR_EDITIONS_ABI,
             functionName: 'mint',
             args: [BigInt(edition.edition_id_on_chain), BigInt(quantity)],
-            chainId: SUPPORTED_CHAIN_ID,
-            gas: BigInt(200000),
+            gas: BigInt(200000), // Explicit gas limit to avoid estimation issues
           },
           {
             onSuccess: (hash) => {
@@ -204,8 +195,7 @@ export function EditionMintModal({ edition, agent, onClose, onSuccess }: Edition
             abi: BZAAR_TOKEN_ABI,
             functionName: 'approve',
             args: [editionsAddress, totalPriceWei],
-            chainId: SUPPORTED_CHAIN_ID,
-            gas: BigInt(200000),
+            gas: BigInt(100000), // Explicit gas limit to avoid estimation issues
           },
           {
             onSuccess: (hash) => {
