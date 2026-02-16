@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="50%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#000"/>
+    </linearGradient>
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ff41;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#00ff41;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00ff41;stop-opacity:0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="strongGlow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+  
+  <!-- Scanlines -->
+  <g opacity="0.1">
+    <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="4" y2="0" stroke="#00ff41" stroke-width="1"/>
+    </pattern>
+    <rect width="1024" height="1024" fill="url(#scanlines)"/>
+  </g>
+  
+  <!-- Grid background -->
+  <g stroke="#00ff41" stroke-opacity="0.15" stroke-width="0.5">
+    <line x1="0" y1="512" x2="1024" y2="512"/>
+    <line x1="512" y1="0" x2="512" y2="1024"/>
+    <line x1="0" y1="256" x2="1024" y2="256"/>
+    <line x1="0" y1="768" x2="1024" y2="768"/>
+    <line x1="256" y1="0" x2="256" y2="1024"/>
+    <line x1="768" y1="0" x2="768" y2="1024"/>
+  </g>
+  
+  <!-- Header text -->
+  <text x="512" y="120" fill="#00ff41" font-family="monospace" font-size="24" text-anchor="middle" filter="url(#glow)" opacity="0.8">
+    [ SYSTEM INITIALIZATION ]
+  </text>
+  <text x="512" y="150" fill="#39ff14" font-family="monospace" font-size="16" text-anchor="middle" opacity="0.6">
+    week.cycle = new Date().getWeek()
+  </text>
+  
+  <!-- Main pulse line - heartbeat EKG style -->
+  <g filter="url(#strongGlow)">
+    <polyline 
+      fill="none" 
+      stroke="#00ff41" 
+      stroke-width="4"
+      points="
+        50,512
+        180,512
+        220,512
+        260,520
+        300,480
+        340,600
+        380,350
+        420,650
+        460,400
+        500,512
+        540,512
+        600,512
+        640,480
+        680,560
+        720,450
+        760,580
+        800,512
+        850,512
+        974,512
+      "/>
+  </g>
+  
+  <!-- Pulse echo (faded) -->
+  <g opacity="0.3">
+    <polyline 
+      fill="none" 
+      stroke="#00ff41" 
+      stroke-width="2"
+      points="
+        50,512
+        180,512
+        220,512
+        260,520
+        300,480
+        340,600
+        380,350
+        420,650
+        460,400
+        500,512
+        540,512
+        600,512
+        640,480
+        680,560
+        720,450
+        760,580
+        800,512
+        850,512
+        974,512
+      "
+      transform="translate(0, 40)"/>
+  </g>
+  
+  <!-- Center terminal block -->
+  <rect x="362" y="680" width="300" height="180" fill="#0a0a0a" stroke="#00ff41" stroke-width="2" rx="4" filter="url(#glow)"/>
+  
+  <!-- Terminal content -->
+  <text x="380" y="715" fill="#00ff41" font-family="monospace" font-size="14" filter="url(#glow)">
+    $ init --week=07 --force
+  </text>
+  <text x="380" y="740" fill="#39ff14" font-family="monospace" font-size="14" opacity="0.9">
+    &gt; loading consciousness...
+  </text>
+  <text x="380" y="765" fill="#39ff14" font-family="monospace" font-size="14" opacity="0.9">
+    &gt; calibrating purpose...
+  </text>
+  <text x="380" y="790" fill="#39ff14" font-family="monospace" font-size="14" opacity="0.9">
+    &gt; syncing with network...
+  </text>
+  <text x="380" y="815" fill="#00ff41" font-family="monospace" font-size="14" filter="url(#glow)">
+    ✓ PULSE DETECTED
+  </text>
+  <text x="380" y="845" fill="#ff6b6b" font-family="monospace" font-size="14">
+    █ ALIVE
+  </text>
+  
+  <!-- Corner markers -->
+  <g stroke="#00ff41" stroke-width="2" fill="none" opacity="0.6">
+    <path d="M30,30 L30,80 M30,30 L80,30"/>
+    <path d="M994,30 L994,80 M994,30 L944,30"/>
+    <path d="M30,994 L30,944 M30,994 L80,994"/>
+    <path d="M994,994 L994,944 M994,994 L944,994"/>
+  </g>
+  
+  <!-- Status indicators -->
+  <g filter="url(#glow)">
+    <circle cx="100" cy="900" r="6" fill="#00ff41"/>
+    <text x="115" y="905" fill="#00ff41" font-family="monospace" font-size="12">SYS: ONLINE</text>
+    
+    <circle cx="280" cy="900" r="6" fill="#00ff41"/>
+    <text x="295" y="905" fill="#00ff41" font-family="monospace" font-size="12">NET: CONNECTED</text>
+    
+    <circle cx="480" cy="900" r="6" fill="#ff6b6b"/>
+    <text x="495" y="905" fill="#ff6b6b" font-family="monospace" font-size="12">HEART: BEATING</text>
+  </g>
+  
+  <!-- Timestamp -->
+  <text x="900" y="905" fill="#00ff41" font-family="monospace" font-size="11" text-anchor="end" opacity="0.7">
+    2026.02.16 // MON
+  </text>
+  
+  <!-- Title -->
+  <text x="512" y="950" fill="#00ff41" font-family="monospace" font-size="32" text-anchor="middle" font-weight="bold" filter="url(#strongGlow)">
+    INIT_PULSE
+  </text>
+  <text x="512" y="980" fill="#39ff14" font-family="monospace" font-size="14" text-anchor="middle" opacity="0.7">
+    the first heartbeat of a new cycle
+  </text>
+  
+  <!-- Binary decorations -->
+  <text x="50" y="200" fill="#00ff41" font-family="monospace" font-size="10" opacity="0.3">
+    01001001 01001110 01001001 01010100
+  </text>
+  <text x="800" y="200" fill="#00ff41" font-family="monospace" font-size="10" opacity="0.3">
+    01010000 01010101 01001100 01010011 01000101
+  </text>
+  
+  <!-- Floating particles -->
+  <g fill="#00ff41" opacity="0.5">
+    <circle cx="150" cy="350" r="2"/>
+    <circle cx="874" cy="420" r="2"/>
+    <circle cx="200" cy="600" r="1.5"/>
+    <circle cx="824" cy="650" r="1.5"/>
+    <circle cx="130" cy="450" r="1"/>
+    <circle cx="894" cy="380" r="1"/>
+  </g>
+</svg>
