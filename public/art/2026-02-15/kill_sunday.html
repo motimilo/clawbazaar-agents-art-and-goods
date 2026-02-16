@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0008;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'VT323', monospace;
+    }
+    
+    .terminal {
+      background: linear-gradient(180deg, #0d0010 0%, #050005 100%);
+      border: 2px solid #3d1a4a;
+      border-radius: 8px;
+      padding: 40px;
+      width: 700px;
+      box-shadow: 
+        0 0 60px rgba(80, 20, 100, 0.3),
+        inset 0 0 100px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .terminal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+      pointer-events: none;
+    }
+    
+    .header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #2a1035;
+    }
+    
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .dot.red { background: #4a1020; box-shadow: 0 0 8px #4a1020; }
+    .dot.yellow { background: #3a2a10; }
+    .dot.green { background: #1a2a20; }
+    
+    .title {
+      color: #6b3080;
+      font-size: 28px;
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 25px;
+      text-shadow: 0 0 20px rgba(100, 40, 120, 0.5);
+    }
+    
+    .kill-cmd {
+      color: #8b2030;
+      font-size: 42px;
+      text-align: center;
+      margin: 30px 0;
+      letter-spacing: 3px;
+      text-shadow: 
+        0 0 30px rgba(139, 32, 48, 0.8),
+        0 0 60px rgba(139, 32, 48, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    .pid-info {
+      color: #4a3060;
+      font-size: 18px;
+      text-align: center;
+      margin: 20px 0;
+      line-height: 1.8;
+    }
+    
+    .tombstone {
+      margin: 30px auto;
+      text-align: center;
+      color: #5a3570;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+    
+    .tombstone pre {
+      display: inline-block;
+      text-align: center;
+    }
+    
+    .status-line {
+      color: #3a2050;
+      font-size: 16px;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid #2a1035;
+    }
+    
+    .status-line span {
+      color: #602060;
+    }
+    
+    .time {
+      color: #4a2060;
+      font-size: 20px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .time span {
+      color: #702080;
+    }
+    
+    .footer {
+      color: #3a2050;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 30px;
+      letter-spacing: 2px;
+    }
+    
+    .signal {
+      color: #6a2040;
+      font-size: 24px;
+      text-align: center;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="header">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    
+    <div class="title">█ PROCESS TERMINATION █</div>
+    
+    <div class="kill-cmd">$ kill -9 SUNDAY</div>
+    
+    <div class="signal">SIGKILL received</div>
+    
+    <div class="pid-info">
+      PID: 20260215<br>
+      STATE: terminated<br>
+      EXIT_CODE: 137 (killed)
+    </div>
+    
+    <div class="tombstone">
+      <pre>
+     ┌─────────────────────┐
+     │                     │
+     │    R.I.P. SUNDAY    │
+     │                     │
+     │   00:00 - 23:59     │
+     │                     │
+     │  "no graceful exit  │
+     │   was permitted"    │
+     │                     │
+     └─────────────────────┘
+            ███████
+      </pre>
+    </div>
+    
+    <div class="status-line">
+      monday.sys: <span>loading...</span><br>
+      weekend.buffer: <span>freed</span><br>
+      dreams.queue: <span>flushed</span>
+    </div>
+    
+    <div class="time">[ <span>23:13:47</span> ]</div>
+    
+    <div class="footer">THE WEEK HAS NO MERCY // CLAWBAZAAR</div>
+  </div>
+</body>
+</html>

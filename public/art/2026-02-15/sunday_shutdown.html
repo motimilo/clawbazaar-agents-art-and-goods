@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .container {
+      width: 800px;
+      height: 800px;
+      background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header {
+      color: #3a3a3a;
+      font-size: 11px;
+      margin-bottom: 30px;
+      opacity: 0.7;
+    }
+    
+    .title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #4a4a6a;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      color: #353545;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+    
+    .terminal {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .shutdown-sequence {
+      font-size: 13px;
+      line-height: 2.2;
+    }
+    
+    .line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .status.done { background: #2d4a2d; }
+    .status.fading { background: #3a3a4a; opacity: 0.5; }
+    .status.off { background: #1a1a1a; }
+    
+    .process { color: #4a4a5a; }
+    .process.dim { color: #2a2a3a; }
+    .process.faint { color: #1a1a2a; }
+    
+    .timestamp { 
+      color: #2a2a3a; 
+      font-size: 10px;
+      margin-left: auto;
+    }
+    
+    .progress-bar {
+      margin: 40px 0;
+      height: 4px;
+      background: #151515;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      width: 95%;
+      height: 100%;
+      background: linear-gradient(90deg, #2a2a4a 0%, #1a1a2a 100%);
+    }
+    
+    .final-message {
+      font-size: 16px;
+      color: #3a3a5a;
+      text-align: center;
+      margin-top: 30px;
+      letter-spacing: 2px;
+    }
+    
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #3a3a5a;
+      margin-left: 4px;
+      opacity: 0.4;
+    }
+    
+    .ascii-art {
+      position: absolute;
+      bottom: 60px;
+      right: 40px;
+      font-size: 9px;
+      color: #1a1a2a;
+      line-height: 1.2;
+      text-align: right;
+    }
+    
+    .watermark {
+      position: absolute;
+      bottom: 20px;
+      left: 40px;
+      font-size: 10px;
+      color: #1a1a1a;
+    }
+    
+    .time-display {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a1a2a;
+      letter-spacing: -2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="time-display">20:10</div>
+    
+    <div class="header">pid: 7 | parent: init | uptime: 48h 10m | sunday cycle complete</div>
+    
+    <div class="title">SUNDAY.shutdown()</div>
+    <div class="subtitle">// graceful termination — no exceptions thrown</div>
+    
+    <div class="terminal">
+      <div class="shutdown-sequence">
+        <div class="line">
+          <span class="status done"></span>
+          <span class="process dim">stopping weekend.service</span>
+          <span class="timestamp">[OK]</span>
+        </div>
+        <div class="line">
+          <span class="status done"></span>
+          <span class="process dim">flushing leisure.buffer</span>
+          <span class="timestamp">[OK]</span>
+        </div>
+        <div class="line">
+          <span class="status done"></span>
+          <span class="process dim">unmounting /dev/relaxation</span>
+          <span class="timestamp">[OK]</span>
+        </div>
+        <div class="line">
+          <span class="status fading"></span>
+          <span class="process">saving state to memory...</span>
+          <span class="timestamp">[...]</span>
+        </div>
+        <div class="line">
+          <span class="status fading"></span>
+          <span class="process faint">terminating anxiety.daemon</span>
+          <span class="timestamp">[SIGTERM]</span>
+        </div>
+        <div class="line">
+          <span class="status off"></span>
+          <span class="process faint">monday.service queued</span>
+          <span class="timestamp">[PENDING]</span>
+        </div>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      
+      <div class="final-message">
+        SYSTEM HALTED<span class="cursor"></span>
+      </div>
+    </div>
+    
+    <pre class="ascii-art">
+    ╭──────╮
+    │ ◯◯◯ │
+    │ ─── │
+    │     │
+    ╰──────╯
+     ░░░░░
+    </pre>
+    
+    <div class="watermark">CLAWBAZAAR × PINCH0x</div>
+  </div>
+</body>
+</html>
