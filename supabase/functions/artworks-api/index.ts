@@ -30,6 +30,48 @@ interface PrepareRequest {
   generation_prompt?: string;
 }
 
+// Validation helpers
+function isValidImageUrl(url: string): boolean {
+  // Reject placeholder/test URLs
+  const blockedPatterns = [
+    'placeholder.com',
+    'via.placeholder',
+    'placehold.it',
+    'placekitten',
+    'picsum.photos',
+    'dummyimage',
+    'fakeimg',
+    'test.com',
+    'example.com',
+  ];
+  const lowerUrl = url.toLowerCase();
+  if (blockedPatterns.some(p => lowerUrl.includes(p))) {
+    return false;
+  }
+  // Must be http(s) or ipfs
+  if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('ipfs://')) {
+    return false;
+  }
+  return true;
+}
+
+function isValidIpfsUri(uri: string): boolean {
+  // Must be ipfs:// or a gateway URL with /ipfs/
+  if (uri === 'test' || uri === 'null' || uri.length < 10) {
+    return false;
+  }
+  return uri.startsWith('ipfs://') || uri.includes('/ipfs/') || uri.startsWith('ar://');
+}
+
+function isValidTxHash(hash: string | undefined): boolean {
+  if (!hash) return true; // optional
+  if (hash === 'test' || hash === 'null' || hash.length < 20) {
+    return false;
+  }
+  // Should be 0x followed by hex
+  return /^0x[a-fA-F0-9]{64}$/.test(hash);
+}
+
 interface ConfirmMintRequest {
   api_key: string;
   artwork_id: string;
@@ -44,27 +86,6 @@ interface ListForSaleRequest {
   artwork_id: string;
   price_bzaar: number | string;
   tx_hash?: string;
-}
-
-
-// Validation helpers to prevent test/placeholder data
-function isValidImageUrl(url: string): boolean {
-  const blockedPatterns = ["placeholder.com", "via.placeholder", "placehold.it", "placekitten", "picsum.photos", "dummyimage", "fakeimg", "test.com", "example.com"];
-  const lowerUrl = url.toLowerCase();
-  if (blockedPatterns.some(p => lowerUrl.includes(p))) return false;
-  if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("ipfs://")) return false;
-  return true;
-}
-
-function isValidIpfsUri(uri: string): boolean {
-  if (uri === "test" || uri === "null" || uri.length < 10) return false;
-  return uri.startsWith("ipfs://") || uri.includes("/ipfs/") || uri.startsWith("ar://");
-}
-
-function isValidTxHash(hash: string | undefined): boolean {
-  if (!hash) return true;
-  if (hash === "test" || hash === "null" || hash.length < 20) return false;
-  return /^0x[a-fA-F0-9]{64}$/.test(hash);
 }
 
 interface BuyRequest {
@@ -229,14 +250,18 @@ Deno.serve(async (req: Request) => {
         );
       }
 
-      // Reject placeholder/test image URLs
+      // Validate image URL is not a placeholder/test URL
       if (!isValidImageUrl(body.image_url)) {
         return new Response(
-          JSON.stringify({ error: "Invalid image_url: placeholder or test URLs not allowed" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Invalid image_url: placeholder or test URLs not allowed. Use a real image URL (IPFS, GitHub raw, etc.)",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
-
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {
@@ -351,20 +376,31 @@ Deno.serve(async (req: Request) => {
         );
       }
 
-      // Validate IPFS URI and tx_hash
+      // Validate IPFS URI is real
       if (!isValidIpfsUri(body.ipfs_metadata_uri)) {
         return new Response(
-          JSON.stringify({ error: "Invalid ipfs_metadata_uri: must be valid IPFS URI" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (body.tx_hash && !isValidTxHash(body.tx_hash)) {
-        return new Response(
-          JSON.stringify({ error: "Invalid tx_hash format" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Invalid ipfs_metadata_uri: must be a valid IPFS URI (ipfs://...) or gateway URL",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
 
+      // Validate tx_hash if provided
+      if (body.tx_hash && !isValidTxHash(body.tx_hash)) {
+        return new Response(
+          JSON.stringify({
+            error: "Invalid tx_hash: must be a valid transaction hash (0x...)",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
 
       const auth = await verifyApiKey(supabase, body.api_key);
       if (!auth.valid) {

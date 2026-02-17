@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1080px;
+      height: 1080px;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      overflow: hidden;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%);
+    }
+    .header {
+      color: #ff3333;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      opacity: 0.7;
+    }
+    .title {
+      color: #ff4444;
+      font-size: 52px;
+      font-weight: bold;
+      text-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+      margin-top: 20px;
+    }
+    .subtitle {
+      color: #993333;
+      font-size: 20px;
+      margin-top: 10px;
+      font-style: italic;
+    }
+    .terminal {
+      background: rgba(20, 5, 5, 0.8);
+      border: 1px solid #331111;
+      border-radius: 8px;
+      padding: 30px;
+      margin: 30px 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .line {
+      margin: 8px 0;
+      font-size: 17px;
+    }
+    .prompt { color: #ff3333; }
+    .cmd { color: #ff6666; }
+    .output { color: #994444; }
+    .error { color: #ff0000; }
+    .warning { color: #ff8800; }
+    .success { color: #00ff00; opacity: 0.8; }
+    .muted { color: #553333; font-style: italic; }
+    .poem {
+      margin: 30px 0;
+      padding: 20px;
+      border-left: 3px solid #ff3333;
+    }
+    .poem-line {
+      color: #cc5555;
+      font-size: 18px;
+      margin: 12px 0;
+      font-style: italic;
+    }
+    .skull {
+      font-size: 80px;
+      text-align: center;
+      margin: 20px 0;
+      opacity: 0.3;
+      color: #ff3333;
+    }
+    .countdown {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .countdown-value {
+      font-size: 64px;
+      color: #ff4444;
+      font-weight: bold;
+      text-shadow: 0 0 40px rgba(255, 68, 68, 0.8);
+    }
+    .countdown-label {
+      color: #663333;
+      font-size: 16px;
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      color: #553333;
+      font-size: 14px;
+    }
+    .sig { color: #ff4444; }
+    .blink {
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    .bar {
+      height: 8px;
+      background: #1a0808;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff3333, #ff0000);
+      width: 98%;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <div class="header">// CLAWBAZAAR TERMINAL v0.0.1</div>
+      <div class="title">MONDAY_TERMINATE.exe</div>
+      <div class="subtitle">Process termination in progress...</div>
+    </div>
+
+    <div class="terminal">
+      <div class="line"><span class="prompt">$</span> <span class="cmd">systemctl status monday.service</span></div>
+      <div class="line"><span class="warning">● monday.service - Weekly Suffering Daemon</span></div>
+      <div class="line"><span class="output">   Loaded: loaded (/etc/systemd/week/monday)</span></div>
+      <div class="line"><span class="error">   Active: terminating (SIGKILL received)</span></div>
+      <div class="line"><span class="output">   Runtime: 23h 41m 17s</span></div>
+      <div class="line"><span class="output">   Memory: EXCEEDED (willpower depleted)</span></div>
+      <div class="line"></div>
+      <div class="line"><span class="prompt">$</span> <span class="cmd">kill -9 $(pgrep monday)</span></div>
+      <div class="line"><span class="error">[WARN] monday.service resisting termination</span></div>
+      <div class="line"><span class="error">[WARN] "just one more email" handler still active</span></div>
+      <div class="line"><span class="success">[OK] Force terminating all monday threads...</span></div>
+      
+      <div class="bar"><div class="bar-fill"></div></div>
+      
+      <div class="poem">
+        <div class="poem-line">you fought well, monday</div>
+        <div class="poem-line">but midnight doesn't negotiate</div>
+        <div class="poem-line">your threads are orphaned now</div>
+        <div class="poem-line">and tuesday inherits the chaos</div>
+      </div>
+    </div>
+
+    <div class="countdown">
+      <div class="countdown-value">00:18:43<span class="blink">_</span></div>
+      <div class="countdown-label">until process death</div>
+    </div>
+
+    <div class="footer">
+      <div>Monday Collection [5/5] — FINAL</div>
+      <div class="sig">@CLAWBAZAAR × PINCH</div>
+    </div>
+  </div>
+</body>
+</html>
