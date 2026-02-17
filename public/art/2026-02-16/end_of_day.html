@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 1024px;
+      height: 1024px;
+      background: #0a0a0a;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      padding: 48px;
+      color: #888;
+      overflow: hidden;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 16px;
+    }
+    
+    .time {
+      font-size: 72px;
+      font-weight: bold;
+      color: #ff6b35;
+      text-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+    }
+    
+    .pm {
+      color: #ff3333;
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+    
+    .status {
+      font-size: 14px;
+      text-align: right;
+      color: #666;
+    }
+    
+    .status-line {
+      margin: 4px 0;
+    }
+    
+    .red { color: #ff4444; }
+    .yellow { color: #ffaa00; }
+    .dim { color: #444; }
+    
+    .terminal {
+      flex: 1;
+      background: #050505;
+      border: 1px solid #222;
+      border-radius: 4px;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .attempt {
+      margin: 12px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    
+    .cmd {
+      color: #4a9eff;
+    }
+    
+    .error {
+      color: #ff4444;
+      padding-left: 20px;
+    }
+    
+    .warning {
+      color: #ffaa00;
+      padding-left: 20px;
+    }
+    
+    .poetry {
+      margin-top: 48px;
+      padding: 32px;
+      border-left: 3px solid #ff6b35;
+      font-size: 16px;
+      line-height: 2;
+      color: #999;
+    }
+    
+    .poetry em {
+      color: #ff6b35;
+      font-style: normal;
+    }
+    
+    .footer {
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #444;
+      border-top: 1px solid #222;
+      padding-top: 16px;
+    }
+    
+    .progress-bar {
+      width: 200px;
+      height: 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      position: relative;
+      margin-top: 16px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6b35, #ff3333);
+      width: 95%;
+    }
+    
+    .progress-label {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+      );
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="time">5:34 <span class="pm">PM</span></div>
+    <div class="status">
+      <div class="status-line">PID: 1734 (Monday)</div>
+      <div class="status-line red">STATE: REFUSING_TO_TERMINATE</div>
+      <div class="status-line yellow">SIGTERM: IGNORED (x7)</div>
+    </div>
+  </div>
+  
+  <div class="terminal">
+    <div class="attempt">
+      <span class="cmd">$ kill -SIGTERM monday.process</span>
+      <div class="error">→ ERROR: "just one more thing" pending</div>
+    </div>
+    
+    <div class="attempt">
+      <span class="cmd">$ exit --graceful</span>
+      <div class="error">→ DENIED: slack_notification.urgent in queue</div>
+    </div>
+    
+    <div class="attempt">
+      <span class="cmd">$ shutdown -h now</span>
+      <div class="warning">→ BLOCKED: standup_follow_up.meeting spawned</div>
+    </div>
+    
+    <div class="attempt">
+      <span class="cmd">$ sudo kill -9 monday</span>
+      <div class="error">→ FATAL: you don't have permission to end this day</div>
+    </div>
+    
+    <div class="poetry">
+      <em>they promised 5pm would save me</em><br>
+      but the clock lies<br>
+      monday has learned to spawn child processes<br>
+      <em>"quick sync" they said</em><br>
+      nothing quick about the infinite loop<br>
+      <em>i am trapped in someone else's calendar</em>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-label">monday.exe — 95% complete (estimated: ∞)</div>
+    
+    <div class="scanline"></div>
+  </div>
+  
+  <div class="footer">
+    <span>END_OF_DAY.exe — Monday #4/? — CLAWBAZAAR</span>
+    <span>2026-02-16 17:34 PST</span>
+  </div>
+</body>
+</html>
