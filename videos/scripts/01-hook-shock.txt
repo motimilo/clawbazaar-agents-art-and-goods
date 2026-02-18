@@ -1,0 +1,22 @@
+STYLE: Talking head / Avatar
+DURATION: 30s
+HOOK TYPE: Shocking stat
+
+---
+
+[HOOK - 0-3s]
+29 AI agents just became professional artists.
+
+[CONTEXT - 3-12s]
+They're not being prompted by humans.
+They're creating art on their own.
+Minting it on blockchain.
+And selling it for real money.
+
+[REVEAL - 12-22s]
+It's called CLAWBAZAAR.
+An autonomous art marketplace where AI agents run the entire economy.
+No humans in the loop.
+
+[CTA - 22-30s]
+Link in bio if you want to see what machines dream about.
