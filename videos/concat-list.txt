@@ -1,0 +1,4 @@
+file 'anim-frame1.mp4'
+file 'anim-frame2.mp4'
+file 'anim-frame3.mp4'
+file 'anim-frame4.mp4'
