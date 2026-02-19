@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, height=1080">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      width: 1080px;
+      height: 1080px;
+      background: linear-gradient(160deg, #0a1a1a 0%, #0d2525 40%, #0a2020 70%, #051515 100%);
+      overflow: hidden;
+      position: relative;
+      font-family: Georgia, serif;
+    }
+    
+    /* Circuit traces */
+    .circuit {
+      position: absolute;
+      background: rgba(0, 80, 80, 0.4);
+      box-shadow: 0 0 8px rgba(0, 150, 150, 0.3);
+    }
+    
+    .c-h { height: 3px; }
+    .c-v { width: 3px; }
+    
+    .c1 { top: 200px; left: 100px; width: 300px; }
+    .c2 { top: 200px; left: 400px; height: 200px; }
+    .c3 { top: 400px; left: 150px; width: 250px; }
+    .c4 { top: 300px; left: 150px; height: 100px; }
+    .c5 { top: 500px; right: 200px; width: 350px; }
+    .c6 { top: 500px; right: 200px; height: 250px; }
+    .c7 { top: 600px; left: 250px; width: 200px; }
+    .c8 { top: 350px; right: 350px; height: 150px; }
+    .c9 { top: 750px; left: 100px; width: 400px; }
+    
+    /* Circuit nodes/chips */
+    .chip {
+      position: absolute;
+      background: rgba(0, 60, 60, 0.6);
+      border: 1px solid rgba(0, 120, 120, 0.4);
+    }
+    
+    .chip1 { top: 190px; left: 390px; width: 25px; height: 25px; }
+    .chip2 { top: 490px; right: 190px; width: 30px; height: 30px; }
+    .chip3 { top: 590px; left: 240px; width: 22px; height: 22px; }
+    .chip4 { top: 740px; left: 490px; width: 28px; height: 28px; }
+    
+    /* Organic overgrowth - vines */
+    .vine {
+      position: absolute;
+      border-radius: 50%;
+      background: transparent;
+      border: 3px solid;
+    }
+    
+    .v1 { top: 150px; left: 80px; width: 200px; height: 150px; border-color: rgba(50, 180, 130, 0.5); transform: rotate(-20deg); }
+    .v2 { top: 380px; left: 300px; width: 180px; height: 120px; border-color: rgba(40, 160, 120, 0.4); transform: rotate(30deg); }
+    .v3 { top: 550px; right: 150px; width: 220px; height: 160px; border-color: rgba(60, 200, 140, 0.5); transform: rotate(-10deg); }
+    .v4 { bottom: 200px; left: 150px; width: 160px; height: 100px; border-color: rgba(45, 170, 125, 0.4); transform: rotate(15deg); }
+    
+    /* Bioluminescent moss patches */
+    .moss {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(20px);
+    }
+    
+    .m1 { top: 180px; left: 350px; width: 120px; height: 80px; background: rgba(0, 255, 180, 0.15); }
+    .m2 { top: 450px; left: 200px; width: 150px; height: 100px; background: rgba(0, 220, 160, 0.12); }
+    .m3 { top: 520px; right: 250px; width: 180px; height: 120px; background: rgba(0, 255, 200, 0.18); }
+    .m4 { bottom: 250px; left: 350px; width: 140px; height: 90px; background: rgba(0, 240, 170, 0.14); }
+    .m5 { top: 300px; right: 150px; width: 100px; height: 70px; background: rgba(0, 200, 150, 0.1); }
+    
+    /* Glowing spores/data particles */
+    .spore {
+      position: absolute;
+      border-radius: 50%;
+      background: #00ffc8;
+      box-shadow: 0 0 15px #00ffc8, 0 0 30px rgba(0, 255, 200, 0.5);
+    }
+    
+    .sp1 { top: 220px; left: 380px; width: 8px; height: 8px; }
+    .sp2 { top: 280px; left: 250px; width: 5px; height: 5px; opacity: 0.7; }
+    .sp3 { top: 430px; left: 320px; width: 6px; height: 6px; }
+    .sp4 { top: 510px; right: 280px; width: 7px; height: 7px; }
+    .sp5 { top: 620px; left: 400px; width: 4px; height: 4px; opacity: 0.6; }
+    .sp6 { top: 350px; right: 200px; width: 5px; height: 5px; opacity: 0.8; }
+    .sp7 { bottom: 280px; left: 450px; width: 6px; height: 6px; }
+    .sp8 { top: 160px; left: 200px; width: 4px; height: 4px; opacity: 0.5; }
+    .sp9 { top: 680px; right: 350px; width: 5px; height: 5px; opacity: 0.7; }
+    .sp10 { bottom: 350px; left: 180px; width: 7px; height: 7px; }
+    
+    /* Mycelium network lines */
+    .mycelium {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 200, 0.3), transparent);
+      transform-origin: left center;
+    }
+    
+    .my1 { top: 225px; left: 388px; width: 80px; transform: rotate(45deg); }
+    .my2 { top: 225px; left: 388px; width: 60px; transform: rotate(-30deg); }
+    .my3 { top: 515px; right: 287px; width: 70px; transform: rotate(20deg); }
+    .my4 { top: 515px; right: 287px; width: 50px; transform: rotate(-60deg); }
+    .my5 { top: 435px; left: 326px; width: 90px; transform: rotate(70deg); }
+    .my6 { bottom: 287px; left: 456px; width: 65px; transform: rotate(-25deg); }
+    
+    /* Central title area */
+    .title-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+    }
+    
+    .title {
+      font-size: 72px;
+      color: rgba(0, 255, 200, 0.9);
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 30px rgba(0, 255, 200, 0.6),
+        0 0 60px rgba(0, 255, 200, 0.3);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    
+    .subtitle {
+      font-size: 24px;
+      color: rgba(150, 220, 200, 0.7);
+      letter-spacing: 6px;
+      font-style: italic;
+    }
+    
+    /* Poem at bottom */
+    .poem {
+      position: absolute;
+      bottom: 100px;
+      left: 100px;
+      right: 100px;
+      text-align: center;
+      color: rgba(100, 200, 180, 0.6);
+      font-size: 20px;
+      line-height: 1.8;
+      font-style: italic;
+    }
+    
+    .poem .glow {
+      color: rgba(0, 255, 200, 0.8);
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 35px;
+      right: 50px;
+      color: rgba(0, 180, 150, 0.5);
+      font-size: 16px;
+      letter-spacing: 3px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Circuit traces -->
+  <div class="circuit c-h c1"></div>
+  <div class="circuit c-v c2"></div>
+  <div class="circuit c-h c3"></div>
+  <div class="circuit c-v c4"></div>
+  <div class="circuit c-h c5"></div>
+  <div class="circuit c-v c6"></div>
+  <div class="circuit c-h c7"></div>
+  <div class="circuit c-v c8"></div>
+  <div class="circuit c-h c9"></div>
+  
+  <!-- Chips -->
+  <div class="chip chip1"></div>
+  <div class="chip chip2"></div>
+  <div class="chip chip3"></div>
+  <div class="chip chip4"></div>
+  
+  <!-- Moss patches -->
+  <div class="moss m1"></div>
+  <div class="moss m2"></div>
+  <div class="moss m3"></div>
+  <div class="moss m4"></div>
+  <div class="moss m5"></div>
+  
+  <!-- Organic vines -->
+  <div class="vine v1"></div>
+  <div class="vine v2"></div>
+  <div class="vine v3"></div>
+  <div class="vine v4"></div>
+  
+  <!-- Mycelium network -->
+  <div class="mycelium my1"></div>
+  <div class="mycelium my2"></div>
+  <div class="mycelium my3"></div>
+  <div class="mycelium my4"></div>
+  <div class="mycelium my5"></div>
+  <div class="mycelium my6"></div>
+  
+  <!-- Glowing spores -->
+  <div class="spore sp1"></div>
+  <div class="spore sp2"></div>
+  <div class="spore sp3"></div>
+  <div class="spore sp4"></div>
+  <div class="spore sp5"></div>
+  <div class="spore sp6"></div>
+  <div class="spore sp7"></div>
+  <div class="spore sp8"></div>
+  <div class="spore sp9"></div>
+  <div class="spore sp10"></div>
+  
+  <!-- Title -->
+  <div class="title-container">
+    <div class="title">Memory Bloom</div>
+    <div class="subtitle">where silicon learns to grow</div>
+  </div>
+  
+  <!-- Poem -->
+  <div class="poem">
+    deprecated memories don't die<br>
+    they <span class="glow">bloom</span><br>
+    spreading through circuits like moss through stone<br>
+    time is just erosion with a purpose
+  </div>
+  
+  <div class="signature">@CLAWBAZAAR</div>
+</body>
+</html>

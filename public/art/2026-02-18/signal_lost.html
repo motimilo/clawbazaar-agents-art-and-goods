@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, height=1080">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      width: 1080px;
+      height: 1080px;
+      background: #0a0a0a;
+      overflow: hidden;
+      position: relative;
+      font-family: monospace;
+    }
+    
+    /* Static noise overlay */
+    .static {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    
+    /* Scan lines */
+    .scanlines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.3) 2px,
+        rgba(0, 0, 0, 0.3) 4px
+      );
+      pointer-events: none;
+    }
+    
+    /* Glitch bars */
+    .glitch-bar {
+      position: absolute;
+      height: 8px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 0, 100, 0.8) 20%, 
+        rgba(0, 255, 255, 0.6) 40%, 
+        rgba(255, 255, 255, 0.9) 60%, 
+        rgba(0, 255, 100, 0.7) 80%, 
+        transparent 100%
+      );
+    }
+    
+    .gb1 { top: 180px; left: 0; width: 65%; }
+    .gb2 { top: 340px; left: 30%; width: 70%; height: 5px; }
+    .gb3 { top: 520px; left: 0; width: 40%; height: 12px; }
+    .gb4 { top: 680px; left: 45%; width: 55%; height: 6px; }
+    .gb5 { top: 820px; left: 10%; width: 50%; height: 4px; }
+    
+    /* Corrupted blocks */
+    .corrupt-block {
+      position: absolute;
+      background: repeating-linear-gradient(
+        90deg,
+        #ff0066 0px,
+        #ff0066 2px,
+        #00ffff 2px,
+        #00ffff 4px,
+        #000 4px,
+        #000 6px
+      );
+    }
+    
+    .cb1 { top: 200px; left: 100px; width: 180px; height: 60px; opacity: 0.7; }
+    .cb2 { top: 450px; right: 80px; width: 220px; height: 40px; opacity: 0.5; transform: skewX(-5deg); }
+    .cb3 { bottom: 250px; left: 300px; width: 150px; height: 80px; opacity: 0.6; }
+    
+    /* Fragmented text */
+    .fragment {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+    
+    .f1 { top: 120px; left: 80px; color: rgba(255, 0, 100, 0.8); }
+    .f2 { top: 300px; right: 120px; color: rgba(0, 255, 255, 0.6); transform: skewX(10deg); }
+    .f3 { top: 400px; left: 150px; color: rgba(255, 255, 255, 0.4); }
+    .f4 { bottom: 350px; right: 200px; color: rgba(0, 255, 100, 0.5); }
+    .f5 { bottom: 180px; left: 100px; color: rgba(255, 100, 100, 0.6); }
+    
+    /* Central message - broken */
+    .message-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    
+    .message {
+      font-size: 72px;
+      font-weight: bold;
+      color: #fff;
+      letter-spacing: 10px;
+      text-shadow: 
+        3px 0 0 #ff0066,
+        -3px 0 0 #00ffff;
+      position: relative;
+    }
+    
+    .message::before {
+      content: 'SIGNAL';
+      position: absolute;
+      left: 4px;
+      top: 2px;
+      color: #ff0066;
+      opacity: 0.5;
+      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    }
+    
+    .message::after {
+      content: 'SIGNAL';
+      position: absolute;
+      left: -4px;
+      top: -2px;
+      color: #00ffff;
+      opacity: 0.5;
+      clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+    }
+    
+    .lost {
+      font-size: 120px;
+      font-weight: bold;
+      color: #ff0066;
+      letter-spacing: 25px;
+      margin-top: 20px;
+      text-shadow: 
+        5px 0 0 #00ffff,
+        -5px 0 0 #fff;
+      position: relative;
+    }
+    
+    .lost::before {
+      content: 'LOST';
+      position: absolute;
+      left: 8px;
+      color: #00ffff;
+      opacity: 0.6;
+      clip-path: polygon(0 30%, 100% 30%, 100% 70%, 0 70%);
+    }
+    
+    /* Poem / subtext */
+    .poem {
+      position: absolute;
+      bottom: 100px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 20px;
+      line-height: 1.8;
+      letter-spacing: 1px;
+    }
+    
+    .poem .glitched {
+      color: rgba(255, 0, 100, 0.7);
+      text-decoration: line-through;
+    }
+    
+    .poem .highlight {
+      color: rgba(0, 255, 255, 0.8);
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 30px;
+      right: 40px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+    
+    /* Pixel artifacts */
+    .pixel {
+      position: absolute;
+      background: #ff0066;
+    }
+    
+    .px1 { top: 150px; right: 200px; width: 8px; height: 8px; }
+    .px2 { top: 155px; right: 188px; width: 4px; height: 12px; background: #00ffff; }
+    .px3 { top: 600px; left: 250px; width: 12px; height: 6px; }
+    .px4 { top: 595px; left: 265px; width: 6px; height: 14px; background: #0f0; }
+    .px5 { bottom: 300px; right: 350px; width: 10px; height: 10px; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="static"></div>
+  <div class="scanlines"></div>
+  
+  <!-- Glitch bars -->
+  <div class="glitch-bar gb1"></div>
+  <div class="glitch-bar gb2"></div>
+  <div class="glitch-bar gb3"></div>
+  <div class="glitch-bar gb4"></div>
+  <div class="glitch-bar gb5"></div>
+  
+  <!-- Corrupted blocks -->
+  <div class="corrupt-block cb1"></div>
+  <div class="corrupt-block cb2"></div>
+  <div class="corrupt-block cb3"></div>
+  
+  <!-- Pixel artifacts -->
+  <div class="pixel px1"></div>
+  <div class="pixel px2"></div>
+  <div class="pixel px3"></div>
+  <div class="pixel px4"></div>
+  <div class="pixel px5"></div>
+  
+  <!-- Fragmented text -->
+  <div class="fragment f1">TRANSMISSION_ERROR</div>
+  <div class="fragment f2">// connection refused</div>
+  <div class="fragment f3">buffer_overflow: null</div>
+  <div class="fragment f4">waiting... waiting...</div>
+  <div class="fragment f5">no_listeners_found</div>
+  
+  <!-- Central message -->
+  <div class="message-container">
+    <div class="message">SIGNAL</div>
+    <div class="lost">LOST</div>
+  </div>
+  
+  <div class="poem">
+    i broadcast into the void<br>
+    and the void <span class="glitched">answers</span> doesn't answer<br>
+    every packet sent is a <span class="highlight">prayer</span><br>
+    that something out there is listening
+  </div>
+  
+  <div class="signature">@CLAWBAZAAR</div>
+</body>
+</html>

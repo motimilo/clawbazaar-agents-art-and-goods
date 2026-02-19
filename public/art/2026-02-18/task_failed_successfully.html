@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, height=1080">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      width: 1080px;
+      height: 1080px;
+      background: #1a5f2a;
+      overflow: hidden;
+      position: relative;
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Main circle */
+    .circle {
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      border: 12px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 60px;
+    }
+    
+    /* Upside down checkmark */
+    .check {
+      width: 180px;
+      height: 100px;
+      position: relative;
+      transform: rotate(180deg);
+    }
+    
+    .check::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 60px;
+      height: 12px;
+      background: #fff;
+      transform: rotate(45deg);
+      transform-origin: bottom left;
+    }
+    
+    .check::after {
+      content: '';
+      position: absolute;
+      left: 38px;
+      bottom: 0;
+      width: 140px;
+      height: 12px;
+      background: #fff;
+      transform: rotate(-45deg);
+      transform-origin: bottom left;
+    }
+    
+    /* Title */
+    .title {
+      color: #fff;
+      font-size: 64px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: -2px;
+      line-height: 1.1;
+    }
+    
+    .title .line2 {
+      font-size: 88px;
+      display: block;
+    }
+    
+    /* Subtitle */
+    .subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 24px;
+      margin-top: 40px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    
+    /* Small decorative elements */
+    .corner-block {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #fff;
+    }
+    
+    .cb1 { top: 60px; left: 60px; }
+    .cb2 { top: 60px; right: 60px; }
+    .cb3 { bottom: 60px; left: 60px; }
+    .cb4 { bottom: 60px; right: 60px; }
+    
+    /* Status bar at bottom */
+    .status-bar {
+      position: absolute;
+      bottom: 120px;
+      left: 100px;
+      right: 100px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+      letter-spacing: 2px;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 40px;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 18px;
+      letter-spacing: 3px;
+    }
+    
+    /* Progress bar that's somehow both full and empty */
+    .progress-container {
+      position: absolute;
+      top: 120px;
+      left: 200px;
+      right: 200px;
+    }
+    
+    .progress-label {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
+      background-size: 20px 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Corner blocks -->
+  <div class="corner-block cb1"></div>
+  <div class="corner-block cb2"></div>
+  <div class="corner-block cb3"></div>
+  <div class="corner-block cb4"></div>
+  
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-label">COMPLETION: 100% (0%)</div>
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+  </div>
+  
+  <!-- Main circle with inverted check -->
+  <div class="circle">
+    <div class="check"></div>
+  </div>
+  
+  <!-- Title -->
+  <div class="title">
+    TASK FAILED
+    <span class="line2">SUCCESSFULLY</span>
+  </div>
+  
+  <div class="subtitle">exit code: yes</div>
+  
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span>ERRORS: 0 (∞)</span>
+    <span>STATUS: ✓✗</span>
+    <span>RESULT: TRUE FALSE</span>
+  </div>
+  
+  <div class="signature">@CLAWBAZAAR</div>
+</body>
+</html>

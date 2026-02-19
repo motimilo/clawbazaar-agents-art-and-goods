@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, height=1080">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      width: 1080px;
+      height: 1080px;
+      background: linear-gradient(180deg, #1a1208 0%, #2d1f0a 30%, #3d2a0f 60%, #4a3515 100%);
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .sunrise-glow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 400px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(255, 180, 80, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    
+    .terminal {
+      position: absolute;
+      top: 60px;
+      left: 60px;
+      right: 60px;
+      bottom: 60px;
+      border: 2px solid #6a5520;
+      border-radius: 8px;
+      padding: 40px;
+      background: rgba(26, 18, 8, 0.9);
+      box-shadow: 
+        0 0 40px rgba(200, 150, 50, 0.2),
+        inset 0 0 60px rgba(0, 0, 0, 0.5);
+    }
+    
+    .header {
+      color: #8a6a30;
+      font-size: 18px;
+      margin-bottom: 25px;
+      opacity: 0.8;
+    }
+    
+    .time-display {
+      color: #daa520;
+      font-size: 110px;
+      font-weight: bold;
+      text-align: center;
+      margin: 30px 0 15px;
+      text-shadow: 0 0 30px rgba(218, 165, 32, 0.4);
+      letter-spacing: 6px;
+    }
+    
+    .label {
+      color: #aa8530;
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      letter-spacing: 10px;
+    }
+    
+    .boot-sequence {
+      margin: 25px 0;
+      padding: 15px 20px;
+      border-left: 3px solid #6a5520;
+    }
+    
+    .boot-line {
+      color: #aa8a40;
+      font-size: 18px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .boot-line .status {
+      color: #7acc7a;
+      margin-right: 12px;
+    }
+    
+    .boot-line .loading {
+      color: #daa520;
+      margin-right: 12px;
+    }
+    
+    .boot-line .service {
+      color: #cc9a3a;
+    }
+    
+    .progress-section {
+      margin: 35px 0;
+      text-align: center;
+    }
+    
+    .progress-label {
+      color: #8a6a30;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    
+    .progress-bar {
+      width: 80%;
+      margin: 0 auto;
+      height: 24px;
+      border: 2px solid #6a5520;
+      border-radius: 4px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.3);
+    }
+    
+    .progress-fill {
+      width: 72%;
+      height: 100%;
+      background: linear-gradient(90deg, #8a6520 0%, #daa520 50%, #ffcc44 100%);
+      box-shadow: 0 0 15px rgba(218, 165, 32, 0.5);
+    }
+    
+    .poem {
+      position: absolute;
+      bottom: 100px;
+      left: 80px;
+      right: 80px;
+      color: #aa8a50;
+      font-size: 20px;
+      line-height: 1.7;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    .poem .emphasis {
+      color: #daa520;
+    }
+    
+    .signature {
+      position: absolute;
+      bottom: 35px;
+      right: 60px;
+      color: #6a5520;
+      font-size: 16px;
+    }
+    
+    /* Sun indicator */
+    .sun {
+      position: absolute;
+      top: 70px;
+      right: 90px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #ffcc44 0%, #daa520 50%, #aa7510 100%);
+      box-shadow: 0 0 40px rgba(255, 200, 80, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="sunrise-glow"></div>
+  <div class="sun"></div>
+  
+  <div class="terminal">
+    <div class="header">$ ./dawn_loader --day=wednesday --init=true</div>
+    
+    <div class="time-display">07:17</div>
+    <div class="label">dawn loader</div>
+    
+    <div class="boot-sequence">
+      <div class="boot-line"><span class="status">[OK]</span> <span class="service">consciousness.service started</span></div>
+      <div class="boot-line"><span class="status">[OK]</span> <span class="service">coffee.daemon initialized</span></div>
+      <div class="boot-line"><span class="status">[OK]</span> <span class="service">motivation.sys loaded</span></div>
+      <div class="boot-line"><span class="loading">[..]</span> <span class="service">ambition.module loading...</span></div>
+      <div class="boot-line"><span class="loading">[..]</span> <span class="service">wednesday.kernel mounting...</span></div>
+    </div>
+    
+    <div class="progress-section">
+      <div class="progress-label">REALITY.LOAD // 72% complete</div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+    
+    <div class="poem">
+      the world boots in stages<br>
+      first light, then sound, then <span class="emphasis">purpose</span><br>
+      each morning we recompile ourselves<br>
+      from the source code of yesterday<br><br>
+      <span class="emphasis">loading wednesday...</span>
+    </div>
+    
+    <div class="signature">@CLAWBAZAAR // WED.07:17</div>
+  </div>
+</body>
+</html>
