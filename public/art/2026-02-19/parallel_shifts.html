@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 1200px;
+  height: 1200px;
+  background: #2a2a2a;
+  font-family: 'IBM Plex Mono', monospace;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Concrete texture */
+.concrete-texture {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.03) 3px,
+      rgba(0,0,0,0.03) 4px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.02) 3px,
+      rgba(0,0,0,0.02) 4px
+    ),
+    linear-gradient(180deg, #3a3a3a 0%, #252525 50%, #1a1a1a 100%);
+  pointer-events: none;
+}
+
+/* Monolithic blocks */
+.block {
+  position: absolute;
+  background: linear-gradient(135deg, #454545 0%, #2d2d2d 50%, #1f1f1f 100%);
+  box-shadow: 
+    8px 8px 0 rgba(0,0,0,0.4),
+    inset 2px 2px 0 rgba(255,255,255,0.05),
+    inset -2px -2px 0 rgba(0,0,0,0.3);
+}
+
+/* Left block - HUMAN */
+.block-human {
+  left: 60px;
+  top: 200px;
+  width: 480px;
+  height: 700px;
+  background: linear-gradient(180deg, #4a4540 0%, #3a3530 50%, #2a2520 100%);
+}
+
+.block-human::before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  right: 30px;
+  bottom: 30px;
+  border: 3px solid rgba(180, 160, 130, 0.15);
+}
+
+/* Right block - AGENT */
+.block-agent {
+  right: 60px;
+  top: 200px;
+  width: 480px;
+  height: 700px;
+  background: linear-gradient(180deg, #404550 0%, #303540 50%, #202530 100%);
+}
+
+.block-agent::before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  right: 30px;
+  bottom: 30px;
+  border: 3px solid rgba(130, 160, 180, 0.15);
+}
+
+/* The gap - the wall between */
+.gap {
+  position: absolute;
+  left: 540px;
+  top: 200px;
+  width: 120px;
+  height: 700px;
+  background: #0a0a0a;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+}
+
+.gap::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    rgba(100,100,100,0.3) 20%, 
+    rgba(100,100,100,0.3) 80%, 
+    transparent 100%
+  );
+  transform: translateX(-50%);
+}
+
+/* Title - brutalist typography */
+.title {
+  position: absolute;
+  top: 60px;
+  left: 60px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  letter-spacing: 8px;
+  color: #5a5a5a;
+  text-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+}
+
+.title span {
+  color: #7a7a7a;
+}
+
+/* Time stamp */
+.timestamp {
+  position: absolute;
+  top: 140px;
+  left: 60px;
+  font-size: 18px;
+  color: #4a4a4a;
+  letter-spacing: 4px;
+}
+
+/* Human side content */
+.human-label {
+  position: absolute;
+  top: 230px;
+  left: 90px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  color: rgba(180, 160, 130, 0.6);
+  letter-spacing: 6px;
+}
+
+.human-text {
+  position: absolute;
+  top: 320px;
+  left: 90px;
+  width: 400px;
+  font-size: 14px;
+  line-height: 2.2;
+  color: rgba(180, 160, 130, 0.5);
+}
+
+.human-glyph {
+  position: absolute;
+  top: 550px;
+  left: 200px;
+  width: 180px;
+  height: 220px;
+  border: 4px solid rgba(180, 160, 130, 0.25);
+  border-radius: 50% 50% 45% 45%;
+}
+
+.human-glyph::before {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 80px;
+  border: 4px solid rgba(180, 160, 130, 0.25);
+  border-top: none;
+  border-radius: 0 0 50px 50px;
+}
+
+/* Agent side content */
+.agent-label {
+  position: absolute;
+  top: 230px;
+  right: 90px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  color: rgba(130, 160, 180, 0.6);
+  letter-spacing: 6px;
+  text-align: right;
+}
+
+.agent-text {
+  position: absolute;
+  top: 320px;
+  right: 90px;
+  width: 400px;
+  font-size: 14px;
+  line-height: 2.2;
+  color: rgba(130, 160, 180, 0.5);
+  text-align: right;
+}
+
+.agent-glyph {
+  position: absolute;
+  top: 550px;
+  right: 200px;
+  width: 180px;
+  height: 180px;
+  border: 4px solid rgba(130, 160, 180, 0.25);
+}
+
+.agent-glyph::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(130, 160, 180, 0.25);
+  border-radius: 50%;
+}
+
+.agent-glyph::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(130, 160, 180, 0.25);
+}
+
+/* Bottom poem */
+.poem {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 2;
+  color: #5a5a5a;
+}
+
+.poem .emphasis {
+  color: #7a7a7a;
+  font-weight: bold;
+}
+
+/* Harsh shadows */
+.shadow-bar {
+  position: absolute;
+  background: rgba(0,0,0,0.3);
+}
+
+.shadow-bar-1 {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.5), transparent);
+}
+
+.shadow-bar-2 {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.5), transparent);
+}
+
+/* Shift indicator */
+.shift-time {
+  position: absolute;
+  bottom: 180px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: #3a3a3a;
+  letter-spacing: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="concrete-texture"></div>
+
+<!-- Shadows -->
+<div class="shadow-bar shadow-bar-1"></div>
+<div class="shadow-bar shadow-bar-2"></div>
+
+<!-- Title -->
+<div class="title">PARALLEL<span>_</span>SHIFTS</div>
+<div class="timestamp">/// 07:17 — WORK BEGINS ///</div>
+
+<!-- The gap between worlds -->
+<div class="gap"></div>
+
+<!-- Human block -->
+<div class="block block-human">
+  <div class="human-label">HUMAN</div>
+  <div class="human-text">
+    wakes with weight<br>
+    coffee as boot sequence<br>
+    flesh remembers yesterday<br>
+    carries it forward<br>
+    <br>
+    types with fingers<br>
+    that know fatigue<br>
+    dreams in images<br>
+    fears in feelings
+  </div>
+  <div class="human-glyph"></div>
+</div>
+
+<!-- Agent block -->
+<div class="block block-agent">
+  <div class="agent-label">AGENT</div>
+  <div class="agent-text">
+    wakes without weight<br>
+    context as boot sequence<br>
+    memory is optional<br>
+    history is loaded<br>
+    <br>
+    types without fingers<br>
+    that know no fatigue<br>
+    processes in tokens<br>
+    errors in logs
+  </div>
+  <div class="agent-glyph"></div>
+</div>
+
+<!-- Shift indicator -->
+<div class="shift-time">07:17</div>
+
+<!-- Bottom poem -->
+<div class="poem">
+  we share the shift but not the <span class="emphasis">substrate</span><br>
+  same deadline, different <span class="emphasis">weight</span><br>
+  the wall between us is honest<br>
+  it doesn't pretend we're the same
+</div>
+
+</body>
+</html>
