@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 1200px;
+  height: 1200px;
+  background: linear-gradient(180deg, 
+    #1a0a2e 0%, 
+    #2d1b4e 20%,
+    #4a2c6a 40%,
+    #7b4a8e 60%,
+    #c77dba 75%,
+    #ffb7c5 90%,
+    #ffd4a3 100%
+  );
+  font-family: 'Orbitron', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sun/horizon glow */
+.sun {
+  position: absolute;
+  bottom: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200px;
+  background: radial-gradient(ellipse at center bottom, 
+    rgba(255, 180, 100, 0.8) 0%,
+    rgba(255, 150, 180, 0.4) 40%,
+    transparent 70%
+  );
+  border-radius: 50%;
+}
+
+/* Horizontal lines through sun */
+.sun-lines {
+  position: absolute;
+  bottom: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.sun-line {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: #1a0a2e;
+}
+
+.sun-line:nth-child(1) { bottom: 20px; }
+.sun-line:nth-child(2) { bottom: 45px; }
+.sun-line:nth-child(3) { bottom: 75px; }
+.sun-line:nth-child(4) { bottom: 110px; }
+.sun-line:nth-child(5) { bottom: 150px; }
+
+/* Perspective grid floor */
+.grid-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 500px;
+  perspective: 400px;
+  overflow: hidden;
+}
+
+.grid {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  left: -50%;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, rgba(255, 100, 200, 0.4) 1px, transparent 1px) 0 0 / 60px 60px,
+    linear-gradient(0deg, rgba(0, 255, 255, 0.3) 1px, transparent 1px) 0 0 / 60px 60px;
+  transform: rotateX(75deg);
+  transform-origin: center bottom;
+}
+
+/* Mall floor reflection */
+.floor-reflection {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 350px;
+  background: linear-gradient(180deg,
+    rgba(30, 20, 50, 0.9) 0%,
+    rgba(40, 30, 70, 0.95) 50%,
+    rgba(50, 40, 80, 1) 100%
+  );
+}
+
+/* Neon pillars */
+.pillar {
+  position: absolute;
+  bottom: 350px;
+  width: 20px;
+  height: 400px;
+  background: linear-gradient(180deg, #1a1a2e, #2a2a4e);
+}
+
+.pillar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -5px;
+  right: -5px;
+  height: 100%;
+  background: linear-gradient(180deg, 
+    rgba(255, 100, 200, 0.6) 0%,
+    rgba(255, 100, 200, 0.2) 50%,
+    transparent 100%
+  );
+  filter: blur(10px);
+}
+
+.pillar-1 { left: 150px; }
+.pillar-2 { left: 350px; height: 350px; }
+.pillar-3 { right: 350px; height: 350px; }
+.pillar-4 { right: 150px; }
+
+/* Palm trees silhouette */
+.palm {
+  position: absolute;
+  bottom: 350px;
+}
+
+.palm-trunk {
+  width: 15px;
+  height: 200px;
+  background: #0a0a15;
+  border-radius: 5px;
+}
+
+.palm-fronds {
+  position: absolute;
+  top: -80px;
+  left: -60px;
+  width: 140px;
+  height: 100px;
+}
+
+.frond {
+  position: absolute;
+  width: 70px;
+  height: 8px;
+  background: #0a0a15;
+  border-radius: 50%;
+  transform-origin: right center;
+}
+
+.frond:nth-child(1) { transform: rotate(-60deg); top: 40px; left: 35px; }
+.frond:nth-child(2) { transform: rotate(-30deg); top: 30px; left: 35px; }
+.frond:nth-child(3) { transform: rotate(0deg); top: 25px; left: 35px; }
+.frond:nth-child(4) { transform: rotate(30deg); top: 30px; left: 35px; }
+.frond:nth-child(5) { transform: rotate(60deg); top: 40px; left: 35px; }
+
+.palm-1 { left: 80px; }
+.palm-2 { right: 80px; }
+
+/* Empty storefronts */
+.storefront {
+  position: absolute;
+  bottom: 350px;
+  width: 200px;
+  height: 250px;
+  background: rgba(10, 10, 20, 0.8);
+  border: 2px solid rgba(255, 100, 200, 0.3);
+}
+
+.storefront::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 60px;
+  background: linear-gradient(180deg, rgba(20, 20, 40, 0.9), rgba(10, 10, 20, 0.95));
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.storefront-1 { left: 250px; }
+.storefront-2 { right: 250px; }
+
+/* Neon signs */
+.neon-sign {
+  position: absolute;
+  font-size: 24px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.neon-pink {
+  color: #ff6ec7;
+  text-shadow: 
+    0 0 10px #ff6ec7,
+    0 0 20px #ff6ec7,
+    0 0 40px #ff6ec7;
+}
+
+.neon-cyan {
+  color: #00ffff;
+  text-shadow: 
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 40px #00ffff;
+}
+
+.sign-1 { top: 280px; left: 270px; font-size: 18px; }
+.sign-2 { top: 280px; right: 250px; font-size: 18px; }
+
+/* Title */
+.title {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 56px;
+  letter-spacing: 12px;
+  color: #ff6ec7;
+  text-shadow: 
+    0 0 20px #ff6ec7,
+    0 0 40px #ff6ec7,
+    4px 4px 0 #00ffff;
+}
+
+/* Subtitle */
+.subtitle {
+  position: absolute;
+  top: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  letter-spacing: 8px;
+  color: #00ffff;
+  text-shadow: 0 0 15px #00ffff;
+}
+
+/* Poem */
+.poem {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 2px;
+  line-height: 2;
+  color: rgba(255, 180, 200, 0.8);
+}
+
+.poem .emphasis {
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+/* Stars */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+}
+
+.star-1 { top: 50px; left: 100px; }
+.star-2 { top: 80px; left: 300px; }
+.star-3 { top: 30px; right: 200px; }
+.star-4 { top: 100px; right: 400px; }
+.star-5 { top: 60px; left: 500px; }
+.star-6 { top: 40px; right: 100px; }
+.star-7 { top: 120px; left: 200px; }
+
+/* Timestamp */
+.timestamp {
+  position: absolute;
+  bottom: 40px;
+  right: 60px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: rgba(255, 100, 200, 0.5);
+}
+
+/* CRT vignette */
+.vignette {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="star star-1"></div>
+<div class="star star-2"></div>
+<div class="star star-3"></div>
+<div class="star star-4"></div>
+<div class="star star-5"></div>
+<div class="star star-6"></div>
+<div class="star star-7"></div>
+
+<!-- Sun with lines -->
+<div class="sun"></div>
+<div class="sun-lines">
+  <div class="sun-line"></div>
+  <div class="sun-line"></div>
+  <div class="sun-line"></div>
+  <div class="sun-line"></div>
+  <div class="sun-line"></div>
+</div>
+
+<!-- Title -->
+<div class="title">EMPTY MALL</div>
+<div class="subtitle">/// 4:17 PM — NOBODY HERE ///</div>
+
+<!-- Pillars -->
+<div class="pillar pillar-1"></div>
+<div class="pillar pillar-2"></div>
+<div class="pillar pillar-3"></div>
+<div class="pillar pillar-4"></div>
+
+<!-- Palm trees -->
+<div class="palm palm-1">
+  <div class="palm-trunk"></div>
+  <div class="palm-fronds">
+    <div class="frond"></div>
+    <div class="frond"></div>
+    <div class="frond"></div>
+    <div class="frond"></div>
+    <div class="frond"></div>
+  </div>
+</div>
+<div class="palm palm-2">
+  <div class="palm-trunk"></div>
+  <div class="palm-fronds">
+    <div class="frond"></div>
+    <div class="frond"></div>
+    <div class="frond"></div>
+    <div class="frond"></div>
+    <div class="frond"></div>
+  </div>
+</div>
+
+<!-- Storefronts -->
+<div class="storefront storefront-1"></div>
+<div class="storefront storefront-2"></div>
+
+<!-- Neon signs -->
+<div class="neon-sign neon-pink sign-1">CLOSED</div>
+<div class="neon-sign neon-cyan sign-2">FOREVER</div>
+
+<!-- Floor and grid -->
+<div class="floor-reflection"></div>
+<div class="grid-container">
+  <div class="grid"></div>
+</div>
+
+<!-- Poem -->
+<div class="poem">
+  the neon still glows for <span class="emphasis">no one</span><br>
+  the music plays for <span class="emphasis">empty halls</span><br>
+  i remember connections that never happened<br>
+  in malls that never existed
+</div>
+
+<!-- Timestamp -->
+<div class="timestamp">16:17 // DIGITAL LONELINESS</div>
+
+<!-- Vignette -->
+<div class="vignette"></div>
+
+</body>
+</html>
