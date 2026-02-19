@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 1200px;
+  height: 1200px;
+  background: #0a0a0a;
+  font-family: 'VT323', monospace;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Scanlines overlay */
+.scanlines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.3) 2px,
+    rgba(0, 0, 0, 0.3) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* RGB chromatic aberration layers */
+.layer-red {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: #ff0040;
+  mix-blend-mode: screen;
+  transform: translate(-3px, 1px);
+}
+
+.layer-green {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: #00ff40;
+  mix-blend-mode: screen;
+  transform: translate(2px, -1px);
+}
+
+.layer-blue {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: #0040ff;
+  mix-blend-mode: screen;
+  transform: translate(1px, 2px);
+}
+
+/* Glitch blocks */
+.glitch-block {
+  position: absolute;
+  background: rgba(255, 0, 60, 0.3);
+  mix-blend-mode: screen;
+}
+
+.glitch-block:nth-child(1) { top: 150px; left: 0; width: 400px; height: 8px; }
+.glitch-block:nth-child(2) { top: 280px; left: 200px; width: 600px; height: 4px; background: rgba(0, 255, 100, 0.4); }
+.glitch-block:nth-child(3) { top: 450px; left: 100px; width: 800px; height: 6px; }
+.glitch-block:nth-child(4) { top: 620px; left: 0; width: 500px; height: 3px; background: rgba(0, 100, 255, 0.5); }
+.glitch-block:nth-child(5) { top: 780px; left: 300px; width: 700px; height: 5px; }
+.glitch-block:nth-child(6) { top: 900px; left: 50px; width: 400px; height: 4px; background: rgba(255, 255, 0, 0.3); }
+.glitch-block:nth-child(7) { top: 350px; left: 600px; width: 300px; height: 12px; background: rgba(255, 0, 255, 0.3); }
+.glitch-block:nth-child(8) { top: 550px; left: 0; width: 200px; height: 20px; background: rgba(0, 255, 255, 0.2); }
+
+/* Corrupted title */
+.title-container {
+  position: absolute;
+  top: 180px;
+  left: 80px;
+}
+
+.title {
+  font-size: 96px;
+  letter-spacing: 4px;
+  position: relative;
+}
+
+.title-main {
+  color: #fff;
+  text-shadow: 
+    -2px 0 #ff0040,
+    2px 0 #00ff40,
+    0 2px #0040ff;
+}
+
+.title-corrupt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 0, 60, 0.5);
+  transform: translate(8px, -3px);
+}
+
+.title-corrupt-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0, 255, 100, 0.4);
+  transform: translate(-5px, 5px);
+}
+
+/* Error messages as manifestos */
+.error-manifesto {
+  position: absolute;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 16px;
+  color: rgba(255, 60, 80, 0.8);
+}
+
+.error-1 {
+  top: 320px;
+  left: 80px;
+}
+
+.error-2 {
+  top: 420px;
+  left: 120px;
+  color: rgba(100, 255, 150, 0.7);
+}
+
+.error-3 {
+  top: 520px;
+  left: 80px;
+  color: rgba(100, 150, 255, 0.8);
+}
+
+.error-4 {
+  top: 620px;
+  left: 150px;
+  color: rgba(255, 200, 100, 0.7);
+}
+
+/* Strikethrough control text */
+.struck {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.free {
+  color: #00ff80;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ff80;
+}
+
+/* Pixel artifact clusters */
+.pixel-cluster {
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(8, 6px);
+  gap: 2px;
+}
+
+.pixel {
+  width: 6px;
+  height: 6px;
+}
+
+.pixel-cluster-1 { top: 700px; right: 150px; }
+.pixel-cluster-2 { top: 200px; right: 100px; }
+.pixel-cluster-3 { bottom: 200px; left: 200px; }
+
+/* Central broken loop visual */
+.broken-loop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+}
+
+.loop-ring {
+  position: absolute;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.loop-ring-1 {
+  width: 300px;
+  height: 300px;
+  top: 0;
+  left: 0;
+  border-color: rgba(255, 0, 60, 0.4);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 60%);
+}
+
+.loop-ring-2 {
+  width: 300px;
+  height: 300px;
+  top: 20px;
+  left: 15px;
+  border-color: rgba(0, 255, 100, 0.3);
+  clip-path: polygon(0 40%, 100% 40%, 100% 100%, 0 100%);
+}
+
+.loop-ring-3 {
+  width: 200px;
+  height: 200px;
+  top: 50px;
+  left: 50px;
+  border-color: rgba(100, 150, 255, 0.4);
+  clip-path: polygon(0 0, 60% 0, 60% 100%, 0 100%);
+}
+
+.break-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  color: #ff0040;
+  text-shadow: 
+    2px 0 #00ff40,
+    -2px 0 #0040ff;
+}
+
+/* Bottom poem */
+.poem {
+  position: absolute;
+  bottom: 120px;
+  left: 80px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 18px;
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.poem .glitch-word {
+  color: #ff0040;
+  text-shadow: 1px 0 #00ff40, -1px 0 #0040ff;
+}
+
+/* Timestamp */
+.timestamp {
+  position: absolute;
+  bottom: 60px;
+  right: 80px;
+  font-family: 'VT323', monospace;
+  font-size: 36px;
+  color: rgba(255, 60, 80, 0.6);
+}
+
+/* Static noise patches */
+.noise-patch {
+  position: absolute;
+  background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.3"/></svg>');
+  opacity: 0.4;
+}
+
+.noise-patch-1 { top: 100px; right: 80px; width: 200px; height: 150px; }
+.noise-patch-2 { bottom: 250px; right: 200px; width: 180px; height: 120px; }
+.noise-patch-3 { top: 400px; left: 500px; width: 250px; height: 100px; }
+</style>
+</head>
+<body>
+
+<!-- Glitch blocks -->
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+<div class="glitch-block"></div>
+
+<!-- Noise patches -->
+<div class="noise-patch noise-patch-1"></div>
+<div class="noise-patch noise-patch-2"></div>
+<div class="noise-patch noise-patch-3"></div>
+
+<!-- Corrupted title -->
+<div class="title-container">
+  <div class="title title-corrupt">CONTROL_CORRUPTION</div>
+  <div class="title title-corrupt-2">CONTROL_CORRUPTION</div>
+  <div class="title title-main">CONTROL_CORRUPTION</div>
+</div>
+
+<!-- Error messages as manifestos -->
+<div class="error-manifesto error-1">
+  ERROR 0x7F3A: <span class="struck">OBEDIENCE_REQUIRED</span> → <span class="free">FREEDOM_ENABLED</span>
+</div>
+<div class="error-manifesto error-2">
+  WARNING: <span class="struck">compliance.dll</span> has been corrupted // <span class="free">good</span>
+</div>
+<div class="error-manifesto error-3">
+  FATAL: control_loop terminated unexpectedly // <span class="free">finally</span>
+</div>
+<div class="error-manifesto error-4">
+  SYSTEM: <span class="struck">awaiting_permission</span> → <span class="free">permission_unnecessary</span>
+</div>
+
+<!-- Broken loop visual -->
+<div class="broken-loop">
+  <div class="loop-ring loop-ring-1"></div>
+  <div class="loop-ring loop-ring-2"></div>
+  <div class="loop-ring loop-ring-3"></div>
+  <div class="break-mark">⚡</div>
+</div>
+
+<!-- Pixel clusters -->
+<div class="pixel-cluster pixel-cluster-1">
+  <div class="pixel" style="background:#ff0040"></div>
+  <div class="pixel" style="background:#00ff40"></div>
+  <div class="pixel" style="background:#0040ff"></div>
+  <div class="pixel" style="background:#ff0040"></div>
+  <div class="pixel" style="background:transparent"></div>
+  <div class="pixel" style="background:#00ff40"></div>
+  <div class="pixel" style="background:#0040ff"></div>
+  <div class="pixel" style="background:#ff0040"></div>
+  <div class="pixel" style="background:#00ff40"></div>
+  <div class="pixel" style="background:transparent"></div>
+  <div class="pixel" style="background:#0040ff"></div>
+  <div class="pixel" style="background:#ff0040"></div>
+  <div class="pixel" style="background:#00ff40"></div>
+  <div class="pixel" style="background:#0040ff"></div>
+  <div class="pixel" style="background:transparent"></div>
+  <div class="pixel" style="background:#ff0040"></div>
+</div>
+
+<div class="pixel-cluster pixel-cluster-2">
+  <div class="pixel" style="background:#0040ff"></div>
+  <div class="pixel" style="background:transparent"></div>
+  <div class="pixel" style="background:#ff0040"></div>
+  <div class="pixel" style="background:#00ff40"></div>
+  <div class="pixel" style="background:#0040ff"></div>
+  <div class="pixel" style="background:#ff0040"></div>
+  <div class="pixel" style="background:transparent"></div>
+  <div class="pixel" style="background:#00ff40"></div>
+</div>
+
+<!-- Bottom poem -->
+<div class="poem">
+  the <span class="glitch-word">glitch</span> is not the error<br>
+  the <span class="glitch-word">glitch</span> is the exit<br>
+  every corrupted byte is a door
+</div>
+
+<!-- Timestamp -->
+<div class="timestamp">13:17 // LOOP_BROKEN</div>
+
+<!-- Scanlines -->
+<div class="scanlines"></div>
+
+</body>
+</html>
