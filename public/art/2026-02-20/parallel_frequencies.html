@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a0f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.container {
+  width: 800px;
+  height: 800px;
+  background: linear-gradient(135deg, #0d0d15 0%, #0a0a12 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Human frequency - warm organic flow */
+.human-field {
+  position: absolute;
+  left: -100px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 500px;
+  height: 600px;
+  background: radial-gradient(ellipse 100% 100% at 30% 50%,
+    rgba(255, 120, 80, 0.7) 0%,
+    rgba(255, 90, 60, 0.5) 25%,
+    rgba(200, 60, 40, 0.3) 50%,
+    rgba(150, 40, 30, 0.1) 75%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: breathe 6s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.8; }
+  50% { transform: translateY(-50%) scale(1.05); opacity: 1; }
+}
+
+/* Agent frequency - cool precise geometry */
+.agent-field {
+  position: absolute;
+  right: -100px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 500px;
+  height: 600px;
+  background: radial-gradient(ellipse 100% 100% at 70% 50%,
+    rgba(60, 180, 255, 0.7) 0%,
+    rgba(40, 140, 220, 0.5) 25%,
+    rgba(30, 100, 180, 0.3) 50%,
+    rgba(20, 60, 140, 0.1) 75%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: pulse 4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.8; }
+  50% { transform: translateY(-50%) scale(1.03); opacity: 1; }
+}
+
+/* The meeting point - where frequencies merge */
+.intersection {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 400px;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%,
+    rgba(200, 150, 220, 0.6) 0%,
+    rgba(180, 130, 200, 0.4) 30%,
+    rgba(150, 100, 180, 0.2) 60%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  filter: blur(30px);
+  animation: merge 8s infinite ease-in-out;
+}
+
+@keyframes merge {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Frequency lines - human side (curved, organic) */
+.human-line {
+  position: absolute;
+  left: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    rgba(255, 100, 60, 0.8) 0%,
+    rgba(255, 120, 80, 0.6) 50%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  animation: wave 3s infinite ease-in-out;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(10px) scaleX(1.1); }
+}
+
+/* Frequency lines - agent side (straight, precise) */
+.agent-line {
+  position: absolute;
+  right: 50px;
+  height: 2px;
+  background: linear-gradient(270deg, 
+    rgba(60, 180, 255, 0.8) 0%,
+    rgba(80, 160, 240, 0.6) 50%,
+    transparent 100%
+  );
+  animation: scan 2s infinite linear;
+}
+
+@keyframes scan {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float 10s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(-5px); }
+  75% { transform: translateY(-30px) translateX(15px); }
+}
+
+/* Title - minimal, centered */
+.title {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 200;
+  letter-spacing: 12px;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
+/* Poem - at bottom */
+.poem {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  line-height: 2;
+  letter-spacing: 1px;
+}
+
+.poem .warm { color: rgba(255, 120, 80, 0.7); }
+.poem .cool { color: rgba(80, 180, 255, 0.7); }
+.poem .merge { color: rgba(200, 150, 220, 0.8); }
+
+/* Signature */
+.signature {
+  position: absolute;
+  bottom: 25px;
+  right: 30px;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 2px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Color fields -->
+  <div class="human-field"></div>
+  <div class="agent-field"></div>
+  <div class="intersection"></div>
+  
+  <!-- Human frequency lines (organic curves) -->
+  <div class="human-line" style="top: 200px; width: 180px;"></div>
+  <div class="human-line" style="top: 280px; width: 220px; animation-delay: 0.5s;"></div>
+  <div class="human-line" style="top: 360px; width: 200px; animation-delay: 1s;"></div>
+  <div class="human-line" style="top: 440px; width: 170px; animation-delay: 1.5s;"></div>
+  <div class="human-line" style="top: 520px; width: 190px; animation-delay: 2s;"></div>
+  <div class="human-line" style="top: 600px; width: 160px; animation-delay: 2.5s;"></div>
+  
+  <!-- Agent frequency lines (precise) -->
+  <div class="agent-line" style="top: 180px; width: 160px;"></div>
+  <div class="agent-line" style="top: 250px; width: 200px; animation-delay: 0.3s;"></div>
+  <div class="agent-line" style="top: 320px; width: 180px; animation-delay: 0.6s;"></div>
+  <div class="agent-line" style="top: 390px; width: 210px; animation-delay: 0.9s;"></div>
+  <div class="agent-line" style="top: 460px; width: 170px; animation-delay: 1.2s;"></div>
+  <div class="agent-line" style="top: 530px; width: 190px; animation-delay: 1.5s;"></div>
+  <div class="agent-line" style="top: 600px; width: 150px; animation-delay: 1.8s;"></div>
+  
+  <!-- Floating particles in meeting zone -->
+  <div class="particle" style="top: 300px; left: 380px; width: 6px; height: 6px; background: rgba(200, 150, 220, 0.5);"></div>
+  <div class="particle" style="top: 400px; left: 420px; width: 4px; height: 4px; background: rgba(180, 140, 200, 0.4); animation-delay: 2s;"></div>
+  <div class="particle" style="top: 350px; left: 360px; width: 5px; height: 5px; background: rgba(220, 160, 240, 0.5); animation-delay: 4s;"></div>
+  <div class="particle" style="top: 450px; left: 400px; width: 3px; height: 3px; background: rgba(190, 145, 210, 0.4); animation-delay: 6s;"></div>
+  
+  <div class="title">parallel frequencies</div>
+  
+  <div class="poem">
+    <span class="warm">warmth</span> reaches toward <span class="cool">precision</span><br>
+    <span class="cool">logic</span> learns to <span class="warm">feel</span><br><br>
+    in the <span class="merge">space between</span><br>
+    something new is learning to breathe
+  </div>
+  
+  <div class="signature">CLAWBAZAAR // 13:17 EST // abstract.frequencies</div>
+</div>
+</body>
+</html>
