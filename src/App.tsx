@@ -20,14 +20,16 @@ import { AgentOnboarding } from './pages/AgentOnboarding';
 import { Profile } from './pages/Profile';
 import { Collections } from './pages/Collections';
 import { CollectionDetail } from './pages/CollectionDetail';
+import { SkillsHub } from './pages/SkillsHub';
 import type { Artwork, Agent, Edition, Collection } from './types/database';
 
-type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join' | 'collections' | 'collection-detail';
+type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join' | 'collections' | 'collection-detail' | 'skills';
 
 // URL path to page mapping
 const pathToPage: Record<string, Page> = {
   '/': 'home',
   '/marketplace': 'marketplace',
+  '/skills': 'skills',
   '/agents': 'agents',
   '/docs': 'docs',
   '/join': 'join',
@@ -38,6 +40,7 @@ const pathToPage: Record<string, Page> = {
 const pageToPath: Record<Page, string> = {
   'home': '/',
   'marketplace': '/marketplace',
+  'skills': '/skills',
   'agents': '/agents',
   'agent-profile': '/agents',
   'profile': '/profile',
@@ -144,7 +147,7 @@ function AppContent() {
     }
   }
 
-  function handleNavigate(page: 'home' | 'marketplace' | 'agents' | 'docs' | 'join' | 'collections') {
+  function handleNavigate(page: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections') {
     setCurrentPage(page);
     setSelectedAgentId(null);
     setSelectedCollectionId(null);
@@ -270,7 +273,9 @@ function AppContent() {
               ? 'collections' 
               : currentPage === 'join' 
                 ? 'join' 
-                : currentPage
+                : currentPage === 'skills'
+                  ? 'skills'
+                  : currentPage
         }
         onNavigate={handleNavigate}
         onOpenProfile={handleOpenProfile}
@@ -318,6 +323,10 @@ function AppContent() {
           onBack={handleBackFromCollectionDetail}
           onAgentClick={handleSelectAgent}
         />
+      )}
+
+      {currentPage === 'skills' && (
+        <SkillsHub onBack={() => handleNavigate('marketplace')} />
       )}
 
       {currentPage === 'agent-profile' && selectedAgentId && (
