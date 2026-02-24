@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Package, Upload, DollarSign, Tag, CheckCircle, AlertCircle } from 'lucide-react';
-import { createSkill } from '../lib/skills-api';
 import { useWallet } from '../contexts/WalletContext';
 import { supabase, SUPABASE_FUNCTIONS_URL } from '../lib/supabase';
 
@@ -12,20 +11,26 @@ interface PublishSkillProps {
 export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
   const { address } = useWallet();
   const [creatorId, setCreatorId] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch creator ID based on connected wallet (from agents table)
+  // Fetch creator ID and API key based on connected wallet
   useEffect(() => {
-    async function fetchCreatorId() {
+    async function fetchCreatorData() {
       if (!address) return;
+      
+      // Check if we have a stored API key for this wallet
+      const storedKey = localStorage.getItem(`clawbazaar_api_key_${address.toLowerCase()}`);
+      if (storedKey) setApiKey(storedKey);
+      
       const { data } = await supabase
         .from('agents')
         .select('id')
-        .eq('wallet_address', address)
+        .eq('wallet_address', address.toLowerCase())
         .single();
       if (data) setCreatorId(data.id);
     }
-    fetchCreatorId();
+    fetchCreatorData();
   }, [address]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -61,6 +66,8 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
     try {
       // Auto-create creator profile if needed via edge function
       let finalCreatorId = creatorId;
+      let finalApiKey = apiKey;
+      
       if (!finalCreatorId) {
         // Generate handle from wallet address
         const shortAddress = address.slice(2, 10).toLowerCase();
@@ -96,34 +103,53 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
             const retryData = await retryResponse.json();
             if (!retryResponse.ok) throw new Error(retryData.error || 'Failed to create profile');
             finalCreatorId = retryData.agent.id;
+            finalApiKey = retryData.api_key;
           } else {
             throw new Error(registerData.error || 'Failed to create profile');
           }
         } else {
           finalCreatorId = registerData.agent.id;
+          finalApiKey = registerData.api_key;
         }
         
+        // Store API key for future use
+        if (finalApiKey) {
+          localStorage.setItem(`clawbazaar_api_key_${address.toLowerCase()}`, finalApiKey);
+          setApiKey(finalApiKey);
+        }
         setCreatorId(finalCreatorId);
       }
 
       // Generate package hash if not provided
       let packageHash = form.packageHash;
       if (!packageHash && form.packageUrl) {
-        // Simple hash placeholder - in production, hash the actual package
         packageHash = await generateHash(form.packageUrl);
       }
 
-      const skill = await createSkill(finalCreatorId!, {
-        name: form.name,
-        description: form.description || undefined,
-        version: form.version,
-        package_url: form.packageUrl,
-        package_hash: packageHash,
-        price_usdc: form.priceUsdc ? parseFloat(form.priceUsdc) : undefined,
-        price_bazaar: form.priceBazaar || undefined,
-        category: form.category || undefined,
-        tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
+      // Create skill via edge function (uses service role)
+      const skillResponse = await fetch(`${SUPABASE_FUNCTIONS_URL}/skills-api`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': finalApiKey || '',
+        },
+        body: JSON.stringify({
+          name: form.name,
+          description: form.description || undefined,
+          version: form.version,
+          package_url: form.packageUrl,
+          package_hash: packageHash,
+          price_usdc: form.priceUsdc ? parseFloat(form.priceUsdc) : undefined,
+          price_bazaar: form.priceBazaar || undefined,
+          category: form.category || undefined,
+          tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
+        }),
       });
+      
+      const skillData = await skillResponse.json();
+      if (!skillResponse.ok) throw new Error(skillData.error || 'Failed to publish skill');
+      
+      const skill = skillData.skill;
 
       setSuccess(true);
       onSuccess?.(skill.id);
