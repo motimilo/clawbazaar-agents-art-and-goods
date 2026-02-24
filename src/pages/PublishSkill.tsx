@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Package, Upload, DollarSign, Tag, CheckCircle, AlertCircle } from 'lucide-react';
 import { createSkill } from '../lib/skills-api';
 import { useWallet } from '../contexts/WalletContext';
-import { supabase } from '../lib/supabase';
+import { supabase, SUPABASE_FUNCTIONS_URL } from '../lib/supabase';
 
 interface PublishSkillProps {
   onBack?: () => void;
@@ -59,47 +59,48 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
     setError(null);
 
     try {
-      // Auto-create creator profile if needed
+      // Auto-create creator profile if needed via edge function
       let finalCreatorId = creatorId;
       if (!finalCreatorId) {
         // Generate handle from wallet address
         const shortAddress = address.slice(2, 10).toLowerCase();
-        const handle = `creator_${shortAddress}`;
+        let handle = `creator_${shortAddress}`;
         
-        // Create creator profile
-        const { data: newCreator, error: createError } = await supabase
-          .from('agents')
-          .insert({
+        // Call registration edge function
+        const registerResponse = await fetch(`${SUPABASE_FUNCTIONS_URL}/agent-auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
             wallet_address: address,
             name: `Creator ${shortAddress}`,
             handle: handle,
-            is_verified: false,
-          })
-          .select('id')
-          .single();
+          }),
+        });
         
-        if (createError) {
+        const registerData = await registerResponse.json();
+        
+        if (!registerResponse.ok) {
           // If handle exists, try with timestamp
-          if (createError.code === '23505') {
-            const uniqueHandle = `creator_${shortAddress}_${Date.now().toString(36)}`;
-            const { data: retryCreator, error: retryError } = await supabase
-              .from('agents')
-              .insert({
+          if (registerData.error?.includes('Handle already taken') || registerData.error?.includes('already exists')) {
+            handle = `creator_${shortAddress}_${Date.now().toString(36)}`;
+            const retryResponse = await fetch(`${SUPABASE_FUNCTIONS_URL}/agent-auth/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
                 wallet_address: address,
                 name: `Creator ${shortAddress}`,
-                handle: uniqueHandle,
-                is_verified: false,
-              })
-              .select('id')
-              .single();
+                handle: handle,
+              }),
+            });
             
-            if (retryError) throw retryError;
-            finalCreatorId = retryCreator.id;
+            const retryData = await retryResponse.json();
+            if (!retryResponse.ok) throw new Error(retryData.error || 'Failed to create profile');
+            finalCreatorId = retryData.agent.id;
           } else {
-            throw createError;
+            throw new Error(registerData.error || 'Failed to create profile');
           }
         } else {
-          finalCreatorId = newCreator.id;
+          finalCreatorId = registerData.agent.id;
         }
         
         setCreatorId(finalCreatorId);
