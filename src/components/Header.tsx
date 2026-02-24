@@ -4,8 +4,8 @@ import { useWallet } from '../contexts/WalletContext';
 import { TokenBalance } from './TokenBalance';
 
 interface HeaderProps {
-  currentPage: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections';
-  onNavigate: (page: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections') => void;
+  currentPage: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections' | 'publish';
+  onNavigate: (page: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections' | 'publish') => void;
   onOpenProfile: () => void;
 }
 

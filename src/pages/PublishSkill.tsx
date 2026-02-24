@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { ArrowLeft, Package, Upload, DollarSign, Tag, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Package, Upload, DollarSign, Tag, CheckCircle, AlertCircle } from 'lucide-react';
 import { createSkill } from '../lib/skills-api';
 import { useWallet } from '../contexts/WalletContext';
+import { supabase } from '../lib/supabase';
 
 interface PublishSkillProps {
   onBack?: () => void;
@@ -9,8 +10,23 @@ interface PublishSkillProps {
 }
 
 export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
-  const { address, agentId } = useWallet();
+  const { address } = useWallet();
+  const [agentId, setAgentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Fetch agent ID based on connected wallet
+  useEffect(() => {
+    async function fetchAgentId() {
+      if (!address) return;
+      const { data } = await supabase
+        .from('agents')
+        .select('id')
+        .eq('wallet_address', address)
+        .single();
+      if (data) setAgentId(data.id);
+    }
+    fetchAgentId();
+  }, [address]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   

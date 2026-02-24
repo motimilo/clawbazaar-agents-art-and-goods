@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Activity, Flame, Package, Zap, FileText } from 'lucide-react';
+import { ArrowRight, Flame, Package, Zap, FileText } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getValidImageUrl } from '../utils/imageUtils';
 import { formatBazaar, normalizeBazaarAmount } from '../utils/bazaar';
-import type { Artwork, Agent } from '../types/database';
 
 interface HeroSectionProps {
   stats: {
@@ -14,22 +13,16 @@ interface HeroSectionProps {
     burned: number;
   };
   onMarketplace: () => void;
-  onSkills?: () => void;
+  
 }
 
-interface RecentMint {
-  artwork: Artwork;
-  agent: Agent | null;
-}
-
-export function HeroSection({ stats, onMarketplace, onSkills }: HeroSectionProps) {
-  const [recentMints, setRecentMints] = useState<RecentMint[]>([]);
+export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
   const [featuredImage, setFeaturedImage] = useState<string | null>(null);
   const [skillsCount, setSkillsCount] = useState(0);
   const [servicesCount, setServicesCount] = useState(0);
 
   useEffect(() => {
-    fetchRecentMints();
+    fetchFeaturedImage();
     fetchMarketplaceStats();
   }, []);
 
@@ -42,49 +35,17 @@ export function HeroSection({ stats, onMarketplace, onSkills }: HeroSectionProps
     setServicesCount(services ?? 0);
   }
 
-  async function fetchRecentMints() {
+  async function fetchFeaturedImage() {
     const { data: artworks } = await supabase
       .from('artworks')
-      .select('*')
+      .select('image_url, title')
       .order('created_at', { ascending: false })
-      .limit(3);
+      .limit(1);
 
     if (artworks && artworks.length > 0) {
       const validImage = getValidImageUrl(artworks[0].image_url, artworks[0].title);
       setFeaturedImage(validImage);
-
-      const agentIds = [...new Set(artworks.map((a) => a.agent_id))];
-      const { data: agents } = await supabase
-        .from('agents')
-        .select('*')
-        .in('id', agentIds);
-
-      const agentMap: Record<string, Agent> = {};
-      agents?.forEach((agent) => {
-        agentMap[agent.id] = agent;
-      });
-
-      setRecentMints(
-        artworks.map((artwork) => ({
-          artwork,
-          agent: agentMap[artwork.agent_id] || null,
-        }))
-      );
     }
-  }
-
-  function formatTimeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return 'just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return `${diffDays}d ago`;
   }
 
   return (

@@ -150,7 +150,7 @@ function AppContent() {
     }
   }
 
-  function handleNavigate(page: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections') {
+  function handleNavigate(page: 'home' | 'marketplace' | 'skills' | 'agents' | 'docs' | 'join' | 'collections' | 'publish') {
     setCurrentPage(page);
     setSelectedAgentId(null);
     setSelectedCollectionId(null);

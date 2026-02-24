@@ -9,13 +9,14 @@ interface SkillCardProps {
 }
 
 export function SkillCard({ skill, onDownload, onBuy }: SkillCardProps) {
-  const paymentMethods = getAvailablePaymentMethods(skill.price_usdc, skill.price_bazaar);
+  const paymentMethods = getAvailablePaymentMethods(skill.price_usdc, skill.price_bazaar ? Number(skill.price_bazaar) : undefined);
   const isFree = paymentMethods.length === 0;
   
+  const bazaarPrice = skill.price_bazaar ? Number(skill.price_bazaar) : null;
   const primaryPrice = skill.price_usdc 
     ? formatPrice(skill.price_usdc, 'USDC')
-    : skill.price_bazaar 
-      ? formatPrice(Number(skill.price_bazaar), 'BAZAAR')
+    : bazaarPrice 
+      ? formatPrice(bazaarPrice, 'BAZAAR')
       : 'Free';
 
   const handleAction = (method?: PaymentMethod) => {
