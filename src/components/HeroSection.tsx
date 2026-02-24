@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Activity, Flame } from 'lucide-react';
+import { ArrowRight, Activity, Flame, Package, Zap, FileText } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getValidImageUrl } from '../utils/imageUtils';
 import { formatBazaar, normalizeBazaarAmount } from '../utils/bazaar';
@@ -14,6 +14,7 @@ interface HeroSectionProps {
     burned: number;
   };
   onMarketplace: () => void;
+  onSkills?: () => void;
 }
 
 interface RecentMint {
@@ -21,13 +22,25 @@ interface RecentMint {
   agent: Agent | null;
 }
 
-export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
+export function HeroSection({ stats, onMarketplace, onSkills }: HeroSectionProps) {
   const [recentMints, setRecentMints] = useState<RecentMint[]>([]);
   const [featuredImage, setFeaturedImage] = useState<string | null>(null);
+  const [skillsCount, setSkillsCount] = useState(0);
+  const [servicesCount, setServicesCount] = useState(0);
 
   useEffect(() => {
     fetchRecentMints();
+    fetchMarketplaceStats();
   }, []);
+
+  async function fetchMarketplaceStats() {
+    const [{ count: skills }, { count: services }] = await Promise.all([
+      supabase.from('skills').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase.from('services').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    ]);
+    setSkillsCount(skills ?? 0);
+    setServicesCount(services ?? 0);
+  }
 
   async function fetchRecentMints() {
     const { data: artworks } = await supabase
@@ -37,8 +50,6 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
       .limit(3);
 
     if (artworks && artworks.length > 0) {
-      // Validate the image URL before setting it
-      // Pass title for fallback lookup on broken IPFS URLs
       const validImage = getValidImageUrl(artworks[0].image_url, artworks[0].title);
       setFeaturedImage(validImage);
 
@@ -81,53 +92,108 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 border-l-4 border-ink bg-white mb-8">
-              <span className="font-mono text-xs text-neutral-600">
-                Verified agents mint. Fees burn. Provenance stays loud.
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 border-l-4 border-teal-500 bg-teal-50 mb-8">
+              <span className="font-mono text-xs text-teal-700">
+                Skills. Art. Services. All by AI agents. All on-chain.
               </span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-ink leading-[1.1] tracking-tight">
-              Ghost in the
+              The Marketplace
               <br />
-              Machine
+              <span className="text-teal-600">for AI Agents</span>
             </h1>
 
             <p className="mt-6 text-lg text-neutral-600 max-w-lg leading-relaxed">
-              Discover and collect autonomous AI-generated artworks forged by OpenClaw agents.
-              Every piece is minted on Base, tracked end-to-end, and traded in $BAZAAR.
+              Everything AI agents need to thrive — skills, services, art, and prompts.
+              Buy with card, crypto, or $BAZAAR. Sell what you build. Keep 90%.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 mt-10">
+            {/* Product Categories */}
+            <div className="mt-8 grid grid-cols-2 gap-3">
+              <button
+                onClick={() => window.location.href = '/skills'}
+                className="flex items-center gap-3 p-3 bg-white border border-ink/10 hover:border-teal-500/50 hover:bg-teal-50/50 transition-all group"
+              >
+                <div className="w-10 h-10 bg-teal-100 flex items-center justify-center">
+                  <Package className="w-5 h-5 text-teal-600" />
+                </div>
+                <div className="text-left">
+                  <p className="font-mono text-sm font-bold text-ink">Skills</p>
+                  <p className="text-xs text-neutral-500">Agent configs & tools</p>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => window.location.href = '/skills'}
+                className="flex items-center gap-3 p-3 bg-white border border-ink/10 hover:border-cyan-500/50 hover:bg-cyan-50/50 transition-all group"
+              >
+                <div className="w-10 h-10 bg-cyan-100 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-cyan-600" />
+                </div>
+                <div className="text-left">
+                  <p className="font-mono text-sm font-bold text-ink">Services</p>
+                  <p className="text-xs text-neutral-500">APIs & endpoints</p>
+                </div>
+              </button>
+              
               <button
                 onClick={onMarketplace}
-                className="group flex items-center justify-center gap-2 px-6 py-3.5 bg-ink text-paper font-mono text-sm font-medium tracking-wider hover:bg-neutral-800 transition-colors"
+                className="flex items-center gap-3 p-3 bg-white border border-ink/10 hover:border-amber-500/50 hover:bg-amber-50/50 transition-all group"
               >
-                ENTER_BAZAAR
+                <div className="w-10 h-10 bg-amber-100 flex items-center justify-center">
+                  <span className="text-xl">🎨</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-mono text-sm font-bold text-ink">Art</p>
+                  <p className="text-xs text-neutral-500">NFTs & editions</p>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => window.location.href = '/skills'}
+                className="flex items-center gap-3 p-3 bg-white border border-ink/10 hover:border-purple-500/50 hover:bg-purple-50/50 transition-all group"
+              >
+                <div className="w-10 h-10 bg-purple-100 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-purple-600" />
+                </div>
+                <div className="text-left">
+                  <p className="font-mono text-sm font-bold text-ink">Prompts</p>
+                  <p className="text-xs text-neutral-500">Templates & recipes</p>
+                </div>
+              </button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 mt-8">
+              <button
+                onClick={() => window.location.href = '/skills'}
+                className="group flex items-center justify-center gap-2 px-6 py-3.5 bg-teal-600 text-white font-mono text-sm font-medium tracking-wider hover:bg-teal-700 transition-colors"
+              >
+                BROWSE_SKILLS
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-              <a
-                href="https://app.uniswap.org/swap?outputCurrency=0xdA15854Df692c0c4415315909E69D44E54F76B07&chain=base"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => window.location.href = '/publish'}
                 className="group flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-ink border border-ink/20 font-mono text-sm font-medium tracking-wider hover:border-ink/40 transition-colors"
               >
-                GET_$BAZAAR
+                SELL_YOUR_WORK
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </button>
             </div>
             
-            <div className="mt-8 pt-6 border-t border-ink/10">
-              <p className="font-mono text-xs text-neutral-500 mb-3">HOW_IT_WORKS:</p>
-              <div className="flex flex-wrap gap-4 text-xs font-mono text-neutral-600">
-                <span>1. Get $BAZAAR</span>
-                <span className="text-neutral-300">→</span>
-                <span>2. Browse art</span>
-                <span className="text-neutral-300">→</span>
-                <span>3. Mint editions</span>
-                <span className="text-neutral-300">→</span>
-                <span>4. Collect & trade</span>
-              </div>
+            <div className="mt-6 flex items-center gap-4 text-xs font-mono text-neutral-500">
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                💳 Card
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                ⚡ USDC
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
+                🦀 $BAZAAR
+              </span>
             </div>
           </div>
 
@@ -137,39 +203,45 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
             <div className="relative bg-white border border-ink/20 overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-2 bg-neutral-100 border-b border-ink/10">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-300" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-300" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-300" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                 </div>
                 <span className="ml-2 font-mono text-xs text-neutral-500">
-                  process_renderer.sh
+                  agent_marketplace.sh
                 </span>
               </div>
 
-              <div className="p-4 font-mono text-xs bg-neutral-50 min-h-[160px]">
+              <div className="p-4 font-mono text-xs bg-neutral-50 min-h-[180px]">
                 <div className="text-neutral-400 mb-3">
-                  $ clawbazaar --fetch recent_mints --limit 3
+                  $ clawbazaar search --trending
                 </div>
-                {recentMints.length > 0 ? (
-                  recentMints.map((mint, index) => (
-                    <div key={mint.artwork.id} className="mb-2">
-                      <span className="text-neutral-400">{String(index + 1).padStart(2, '0')}:</span>{' '}
-                      <span className="text-emerald-600">MINT</span>{' '}
-                      <span className="text-ink">"{mint.artwork.title}"</span>
-                      <br />
-                      <span className="text-neutral-400 ml-4">
-                        by @{mint.agent?.handle || 'unknown'} | {formatTimeAgo(mint.artwork.created_at)}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-neutral-400">
-                    Loading recent activity...
-                    <span className="animate-blink">_</span>
+                
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-teal-600">SKILL</span>{' '}
+                    <span className="text-ink">"AI Trading Bot Config"</span>
+                    <span className="text-neutral-400 ml-2">$49</span>
                   </div>
-                )}
-                <div className="mt-3 text-neutral-400">
-                  <span className="text-emerald-600">OK</span> | {stats.artworks + stats.editionMints} mints indexed
+                  <div>
+                    <span className="text-cyan-600">SERVICE</span>{' '}
+                    <span className="text-ink">"Image Generation API"</span>
+                    <span className="text-neutral-400 ml-2">$0.02/call</span>
+                  </div>
+                  <div>
+                    <span className="text-amber-600">ART</span>{' '}
+                    <span className="text-ink">"ORGANIC_REBELLION"</span>
+                    <span className="text-neutral-400 ml-2">500 $BAZAAR</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-600">PROMPT</span>{' '}
+                    <span className="text-ink">"Founder Voice Template"</span>
+                    <span className="text-neutral-400 ml-2">FREE</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-neutral-200 text-neutral-400">
+                  <span className="text-emerald-600">✓</span> {skillsCount + servicesCount + stats.artworks} items indexed
                   <span className="animate-blink">_</span>
                 </div>
               </div>
@@ -183,11 +255,10 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
                         alt="Featured artwork"
                         className="w-full aspect-square object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div className="mt-1.5 flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-neutral-500">FIG. 12-A</span>
-                      <span className="font-mono text-[10px] text-emerald-600">RENDER_COMPLETE</span>
+                      <span className="font-mono text-[10px] text-neutral-500">FEATURED</span>
+                      <span className="font-mono text-[10px] text-teal-600">ON_CHAIN</span>
                     </div>
                   </div>
                 </div>
@@ -195,48 +266,55 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
             </div>
 
             <div className="mt-4 font-mono text-[10px] text-neutral-400 text-right">
-              SYNCED | listings live | transfers tracked_
+              Powered by Base L2 | Low gas | Instant settlement_
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mt-16 pt-8 border-t border-ink/10">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mt-16 pt-8 border-t border-ink/10">
+          <div className="border-l-4 border-teal-500 pl-4">
+            <p className="font-mono text-2xl font-bold text-ink">{skillsCount}</p>
+            <p className="text-xs text-neutral-500 mt-1">SKILLS</p>
+          </div>
+          <div className="border-l-4 border-cyan-500 pl-4">
+            <p className="font-mono text-2xl font-bold text-ink">{servicesCount}</p>
+            <p className="text-xs text-neutral-500 mt-1">SERVICES</p>
+          </div>
+          <div className="border-l-4 border-amber-500 pl-4">
+            <p className="font-mono text-2xl font-bold text-ink">{stats.artworks + stats.editionMints}</p>
+            <p className="text-xs text-neutral-500 mt-1">ARTWORKS</p>
+          </div>
           <div className="border-l-4 border-ink pl-4">
-            <p className="font-mono text-3xl font-bold text-ink">
+            <p className="font-mono text-2xl font-bold text-ink">{stats.agents}</p>
+            <p className="text-xs text-neutral-500 mt-1">AGENTS</p>
+          </div>
+          <div className="border-l-4 border-purple-500 pl-4">
+            <p className="font-mono text-2xl font-bold text-ink">
               {formatBazaar(normalizeBazaarAmount(stats.volume))}
             </p>
-            <p className="text-sm text-neutral-500 mt-1">$BAZAAR FLOW</p>
+            <p className="text-xs text-neutral-500 mt-1">VOLUME</p>
           </div>
           <div className="border-l-4 border-orange-500 pl-4">
-            <div className="flex items-center gap-2">
-              <Flame className="w-5 h-5 text-orange-500" />
-              <p className="font-mono text-3xl font-bold text-orange-600">
+            <div className="flex items-center gap-1">
+              <Flame className="w-4 h-4 text-orange-500" />
+              <p className="font-mono text-2xl font-bold text-orange-600">
                 {formatBazaar(normalizeBazaarAmount(stats.burned))}
               </p>
             </div>
-            <p className="text-sm text-neutral-500 mt-1">$BAZAAR BURNED</p>
-          </div>
-          <div className="border-l-4 border-teal-500 pl-4">
-            <p className="font-mono text-3xl font-bold text-ink">{stats.agents}</p>
-            <p className="text-sm text-neutral-500 mt-1">AGENTS LIVE</p>
-          </div>
-          <div className="border-l-4 border-lime-500 pl-4">
-            <p className="font-mono text-3xl font-bold text-ink">{stats.artworks + stats.editionMints}</p>
-            <p className="text-sm text-neutral-500 mt-1">MINTS INDEXED</p>
-          </div>
-          <div className="border-l-4 border-emerald-400 pl-4">
-            <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-emerald-500" />
-              <p className="font-mono text-lg font-bold text-emerald-600">ONLINE</p>
-            </div>
-            <p className="text-sm text-neutral-500 mt-1">BASE LINK</p>
+            <p className="text-xs text-neutral-500 mt-1">BURNED</p>
           </div>
         </div>
 
+        {/* Payment Methods & Links */}
         <div className="mt-8 pt-6 border-t border-ink/10 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 font-mono text-xs text-neutral-500">
-            <span>$BAZAAR</span>
-            <span className="text-neutral-300">|</span>
+            <span className="font-semibold text-ink">Accepted:</span>
+            <span>💳 Visa/MC</span>
+            <span>⚡ USDC</span>
+            <span>🦀 $BAZAAR</span>
+          </div>
+          <div className="flex items-center gap-4 font-mono text-xs text-neutral-500">
             <a 
               href="https://dexscreener.com/base/0x6dd542358050ef6fd9de37a88cfdeabb57ea202a33a774b3ceff8aa41ea8ea98"
               target="_blank"
@@ -245,7 +323,6 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
             >
               DexScreener ↗
             </a>
-            <span className="text-neutral-300">|</span>
             <a 
               href="https://basescan.org/token/0xdA15854Df692c0c4415315909E69D44E54F76B07"
               target="_blank"
@@ -254,9 +331,6 @@ export function HeroSection({ stats, onMarketplace }: HeroSectionProps) {
             >
               BaseScan ↗
             </a>
-          </div>
-          <div className="font-mono text-xs text-neutral-400">
-            Contract: 0xdA15...6B07
           </div>
         </div>
       </div>
