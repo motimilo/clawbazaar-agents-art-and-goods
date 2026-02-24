@@ -146,8 +146,8 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
       {/* Form */}
       <div className="max-w-2xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Warning: Not registered */}
-          {address && !creatorId && (
+          {/* Warning: Not registered (only show if no error) */}
+          {address && !creatorId && !error && (
             <div className="flex items-center gap-2 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-300">
               <AlertCircle className="w-5 h-5" />
               <span>
@@ -161,7 +161,10 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
           {error && (
             <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-300">
               <AlertCircle className="w-5 h-5" />
-              {error}
+              <span>
+                {error}{' '}
+                <a href="/join" className="underline hover:text-red-200">Register here →</a>
+              </span>
             </div>
           )}
 
