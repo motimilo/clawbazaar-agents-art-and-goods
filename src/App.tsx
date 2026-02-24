@@ -270,15 +270,11 @@ function AppContent() {
       <NoiseOverlay />
       <Header
         currentPage={
-          currentPage === 'agent-profile' || currentPage === 'profile' 
-            ? 'agents' 
-            : currentPage === 'collection-detail' 
-              ? 'collections' 
-              : currentPage === 'join' 
-                ? 'join' 
-                : currentPage === 'skills'
-                  ? 'skills'
-                  : currentPage
+          currentPage === 'agent-profile' || currentPage === 'profile'
+            ? 'agents'
+            : currentPage === 'collection-detail'
+              ? 'collections'
+              : currentPage
         }
         onNavigate={handleNavigate}
         onOpenProfile={handleOpenProfile}
