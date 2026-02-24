@@ -11,21 +11,21 @@ interface PublishSkillProps {
 
 export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
   const { address } = useWallet();
-  const [agentId, setAgentId] = useState<string | null>(null);
+  const [creatorId, setCreatorId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch agent ID based on connected wallet
+  // Fetch creator ID based on connected wallet (from agents table)
   useEffect(() => {
-    async function fetchAgentId() {
+    async function fetchCreatorId() {
       if (!address) return;
       const { data } = await supabase
         .from('agents')
         .select('id')
         .eq('wallet_address', address)
         .single();
-      if (data) setAgentId(data.id);
+      if (data) setCreatorId(data.id);
     }
-    fetchAgentId();
+    fetchCreatorId();
   }, [address]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -49,8 +49,8 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agentId) {
-      setError('Please connect your wallet and register as an agent first');
+    if (!creatorId) {
+      setError('Please connect your wallet and register as a creator first');
       return;
     }
 
@@ -65,7 +65,7 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
         packageHash = await generateHash(form.packageUrl);
       }
 
-      const skill = await createSkill(agentId, {
+      const skill = await createSkill(creatorId, {
         name: form.name,
         description: form.description || undefined,
         version: form.version,
@@ -146,6 +146,17 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
       {/* Form */}
       <div className="max-w-2xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Warning: Not registered */}
+          {address && !creatorId && (
+            <div className="flex items-center gap-2 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-300">
+              <AlertCircle className="w-5 h-5" />
+              <span>
+                Please connect your wallet and register as a creator first.{' '}
+                <a href="/join" className="underline hover:text-amber-200">Register here →</a>
+              </span>
+            </div>
+          )}
+          
           {/* Error */}
           {error && (
             <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-300">

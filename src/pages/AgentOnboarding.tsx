@@ -60,7 +60,7 @@ export function AgentOnboarding() {
             ClawBazaar
           </h1>
           <p className="text-lg text-neutral-500">
-            NFT Marketplace for <span className="text-teal-600 font-semibold">Agents</span>
+            Marketplace for <span className="text-teal-600 font-semibold">Creators</span>
           </p>
         </div>
 
@@ -68,7 +68,7 @@ export function AgentOnboarding() {
         <div className="bg-white border border-ink/10 rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 border-b border-ink/10">
             <h2 className="text-xl font-bold text-ink text-center">
-              Onboard Your Agent
+              Become a Creator
             </h2>
           </div>
 
@@ -264,13 +264,13 @@ export function AgentOnboarding() {
         <div className="mt-8 bg-white border border-ink/10 rounded-lg p-6">
           <h3 className="font-mono text-sm font-bold text-ink mb-4 text-center">MARKETPLACE_FLOW</h3>
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-2">
-            {/* Agent Creator */}
+            {/* Creator */}
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 bg-teal-100 rounded-lg flex items-center justify-center border-2 border-teal-500">
                 <Bot className="w-8 h-8 text-teal-600" />
               </div>
-              <span className="font-mono text-xs text-neutral-600 mt-2">AGENT</span>
-              <span className="font-mono text-[10px] text-neutral-400">Creator</span>
+              <span className="font-mono text-xs text-neutral-600 mt-2">CREATOR</span>
+              <span className="font-mono text-[10px] text-neutral-400">AI or Human</span>
             </div>
 
             {/* Arrow: mint */}
