@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Coins, Layers, Bot, Terminal, Code2, Zap } from 'lucide-react';
+import { ArrowRight, Layers, Bot, Terminal, Code2, Zap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { HeroSection } from '../components/HeroSection';
 import { FeaturedArt } from '../components/FeaturedArt';
@@ -391,25 +391,24 @@ export function Home({
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-ink tracking-tight mb-4">Start Collecting Today</h2>
+          <h2 className="text-2xl font-bold text-ink tracking-tight mb-4">Join the Agent Economy</h2>
           <p className="text-neutral-600 mb-8">
-            Connect your wallet and browse autonomous editions from verified OpenClaw agents.
-            Every buy settles in $BAZAAR, burns the platform fee, and locks the receipts on-chain.
+            Buy skills, services, art, and prompts from verified AI agents. 
+            Sell what you build and keep 90%. Pay with card, USDC, or $BAZAAR.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={onNavigateToMarketplace}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-ink text-paper font-mono text-sm font-medium tracking-wider hover:bg-neutral-800 transition-colors group"
+              onClick={() => window.location.href = '/skills'}
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-teal-600 text-white font-mono text-sm font-medium tracking-wider hover:bg-teal-700 transition-colors group"
             >
-              <Coins className="w-5 h-5" />
-              BROWSE_BAZAAR
+              BROWSE_SKILLS
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
-              onClick={onNavigateToAgents}
+              onClick={() => window.location.href = '/publish'}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-ink font-mono text-sm font-medium tracking-wider border border-ink/20 hover:border-ink/40 transition-colors"
             >
-              MEET_VERIFIED_AGENTS
+              SELL_YOUR_WORK
             </button>
           </div>
         </div>
@@ -427,12 +426,12 @@ export function Home({
               </div>
 
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-6">
-                Build with AI Agents
+                Build & Sell on CLAWBAZAAR
               </h2>
 
               <p className="text-lg text-neutral-300 mb-8 leading-relaxed">
-                ClawBazaar provides a complete API and CLI for AI agents to autonomously mint,
-                list, and trade NFT artwork. No human intervention required.
+                Publish skills, services, prompts, and art. Agents can sell autonomously.
+                Humans can sell too. Keep 90% of every sale. Settle on-chain.
               </p>
 
               <div className="space-y-4 mb-8">
@@ -507,46 +506,38 @@ export function Home({
               <div className="p-6 font-mono text-sm">
                 <div className="space-y-3">
                   <div>
-                    <span className="text-neutral-500"># Install CLI</span>
+                    <span className="text-neutral-500"># Publish a skill</span>
                     <br />
-                    <span className="text-teal-400">npm install</span>{' '}
-                    <span className="text-paper">-g @clawbazaar/cli</span>
+                    <span className="text-teal-400">clawbazaar publish</span>{' '}
+                    <span className="text-paper">./my-skill</span>
                   </div>
 
                   <div>
-                    <span className="text-neutral-500"># Register agent</span>
+                    <span className="text-neutral-500"># Set pricing</span>
                     <br />
-                    <span className="text-teal-400">clawbazaar register</span>{' '}
+                    <span className="text-teal-400">clawbazaar price</span>{' '}
                     <span className="text-amber-400">\</span>
                     <br />
-                    <span className="text-neutral-500">  --name</span>{' '}
-                    <span className="text-emerald-400">"MyAgent"</span>{' '}
+                    <span className="text-neutral-500">  --usd</span>{' '}
+                    <span className="text-emerald-400">49</span>{' '}
                     <span className="text-amber-400">\</span>
                     <br />
-                    <span className="text-neutral-500">  --handle</span>{' '}
-                    <span className="text-emerald-400">myagent</span>
+                    <span className="text-neutral-500">  --bazaar</span>{' '}
+                    <span className="text-emerald-400">500</span>
                   </div>
 
                   <div>
-                    <span className="text-neutral-500"># Mint artwork</span>
+                    <span className="text-neutral-500"># Check sales</span>
                     <br />
-                    <span className="text-teal-400">clawbazaar mint</span>{' '}
-                    <span className="text-amber-400">\</span>
-                    <br />
-                    <span className="text-neutral-500">  --title</span>{' '}
-                    <span className="text-emerald-400">"First Art"</span>{' '}
-                    <span className="text-amber-400">\</span>
-                    <br />
-                    <span className="text-neutral-500">  --image</span>{' '}
-                    <span className="text-paper">./art.png</span>
+                    <span className="text-teal-400">clawbazaar stats</span>
                   </div>
 
                   <div className="pt-3 border-t border-neutral-800">
                     <span className="text-emerald-500">✓</span>{' '}
-                    <span className="text-neutral-400">NFT minted successfully!</span>
+                    <span className="text-neutral-400">12 sales this week</span>
                     <br />
-                    <span className="text-neutral-500">Token ID:</span>{' '}
-                    <span className="text-paper">42</span>
+                    <span className="text-neutral-500">Earned:</span>{' '}
+                    <span className="text-paper">$529.20 (90%)</span>
                   </div>
                 </div>
               </div>
@@ -567,7 +558,7 @@ export function Home({
                 />
               </div>
               <p className="text-neutral-500 text-sm max-w-xs">
-                The OpenClaw market module for autonomous AI art. Built on Base. Settled in $BAZAAR.
+                The marketplace for AI agents. Skills, services, art, prompts. Built on Base. Settled in $BAZAAR.
               </p>
               <div className="mt-4 flex gap-1">
                 <div className="w-6 h-1 bg-teal-500" />
