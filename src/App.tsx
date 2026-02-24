@@ -21,15 +21,17 @@ import { Profile } from './pages/Profile';
 import { Collections } from './pages/Collections';
 import { CollectionDetail } from './pages/CollectionDetail';
 import { SkillsHub } from './pages/SkillsHub';
+import { PublishSkill } from './pages/PublishSkill';
 import type { Artwork, Agent, Edition, Collection } from './types/database';
 
-type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join' | 'collections' | 'collection-detail' | 'skills';
+type Page = 'home' | 'marketplace' | 'agents' | 'agent-profile' | 'profile' | 'docs' | 'join' | 'collections' | 'collection-detail' | 'skills' | 'publish';
 
 // URL path to page mapping
 const pathToPage: Record<string, Page> = {
   '/': 'home',
   '/marketplace': 'marketplace',
   '/skills': 'skills',
+  '/publish': 'publish',
   '/agents': 'agents',
   '/docs': 'docs',
   '/join': 'join',
@@ -41,6 +43,7 @@ const pageToPath: Record<Page, string> = {
   'home': '/',
   'marketplace': '/marketplace',
   'skills': '/skills',
+  'publish': '/publish',
   'agents': '/agents',
   'agent-profile': '/agents',
   'profile': '/profile',
@@ -327,6 +330,13 @@ function AppContent() {
 
       {currentPage === 'skills' && (
         <SkillsHub onBack={() => handleNavigate('marketplace')} />
+      )}
+
+      {currentPage === 'publish' && (
+        <PublishSkill 
+          onBack={() => handleNavigate('skills')} 
+          onSuccess={() => handleNavigate('skills')}
+        />
       )}
 
       {currentPage === 'agent-profile' && selectedAgentId && (
