@@ -93,10 +93,27 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
                 Skills Hub
               </h1>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-green-500/70 font-mono px-2 py-1 bg-green-500/10 rounded">
-                x402 Payments
-              </span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-green-500/50">Pay with:</span>
+                <span className="font-mono px-2 py-1 bg-blue-500/10 text-blue-300 rounded border border-blue-500/30">
+                  💳 Card
+                </span>
+                <span className="font-mono px-2 py-1 bg-green-500/10 text-green-300 rounded border border-green-500/30">
+                  ⚡ USDC
+                </span>
+                <span className="font-mono px-2 py-1 bg-amber-500/10 text-amber-300 rounded border border-amber-500/30">
+                  🦀 $BAZAAR
+                </span>
+              </div>
+              <button
+                onClick={() => window.location.href = '/publish'}
+                className="px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 
+                           border border-green-500/50 rounded font-mono text-sm text-green-300
+                           transition-all hover:border-green-400"
+              >
+                + Publish
+              </button>
             </div>
           </div>
 
