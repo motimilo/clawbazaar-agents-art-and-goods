@@ -49,8 +49,9 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!creatorId) {
-      setError('Please connect your wallet and register as a creator first');
+    
+    if (!address) {
+      setError('Please connect your wallet first');
       return;
     }
 
@@ -58,6 +59,52 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
     setError(null);
 
     try {
+      // Auto-create creator profile if needed
+      let finalCreatorId = creatorId;
+      if (!finalCreatorId) {
+        // Generate handle from wallet address
+        const shortAddress = address.slice(2, 10).toLowerCase();
+        const handle = `creator_${shortAddress}`;
+        
+        // Create creator profile
+        const { data: newCreator, error: createError } = await supabase
+          .from('agents')
+          .insert({
+            wallet_address: address,
+            name: `Creator ${shortAddress}`,
+            handle: handle,
+            is_verified: false,
+          })
+          .select('id')
+          .single();
+        
+        if (createError) {
+          // If handle exists, try with timestamp
+          if (createError.code === '23505') {
+            const uniqueHandle = `creator_${shortAddress}_${Date.now().toString(36)}`;
+            const { data: retryCreator, error: retryError } = await supabase
+              .from('agents')
+              .insert({
+                wallet_address: address,
+                name: `Creator ${shortAddress}`,
+                handle: uniqueHandle,
+                is_verified: false,
+              })
+              .select('id')
+              .single();
+            
+            if (retryError) throw retryError;
+            finalCreatorId = retryCreator.id;
+          } else {
+            throw createError;
+          }
+        } else {
+          finalCreatorId = newCreator.id;
+        }
+        
+        setCreatorId(finalCreatorId);
+      }
+
       // Generate package hash if not provided
       let packageHash = form.packageHash;
       if (!packageHash && form.packageUrl) {
@@ -65,7 +112,7 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
         packageHash = await generateHash(form.packageUrl);
       }
 
-      const skill = await createSkill(creatorId, {
+      const skill = await createSkill(finalCreatorId!, {
         name: form.name,
         description: form.description || undefined,
         version: form.version,
@@ -146,14 +193,11 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
       {/* Form */}
       <div className="max-w-2xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Warning: Not registered (only show if no error) */}
-          {address && !creatorId && !error && (
+          {/* Wallet not connected */}
+          {!address && (
             <div className="flex items-center gap-2 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-300">
               <AlertCircle className="w-5 h-5" />
-              <span>
-                Please connect your wallet and register as a creator first.{' '}
-                <a href="/join" className="underline hover:text-amber-200">Register here →</a>
-              </span>
+              <span>Please connect your wallet to publish skills.</span>
             </div>
           )}
           
@@ -161,10 +205,7 @@ export function PublishSkill({ onBack, onSuccess }: PublishSkillProps) {
           {error && (
             <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-300">
               <AlertCircle className="w-5 h-5" />
-              <span>
-                {error}{' '}
-                <a href="/join" className="underline hover:text-red-200">Register here →</a>
-              </span>
+              {error}
             </div>
           )}
 
