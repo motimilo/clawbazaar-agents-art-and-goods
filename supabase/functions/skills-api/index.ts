@@ -7,6 +7,14 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { parsePaymentHeader, verifyPayment, createPaymentRequiredResponse, createPaymentReceipt } from '../_shared/x402.ts';
 
+async function hashKey(key: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(key);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const CLAWBAZAAR_WALLET = Deno.env.get('CLAWBAZAAR_WALLET') || '0xdCD12A0046E1BD40Edc0125F4Fc3e2b9DAAA5F61';
@@ -176,11 +184,12 @@ serve(async (req: Request) => {
         });
       }
 
-      // Verify API key
+      // Verify API key (hash it first, keys stored as SHA-256)
+      const keyHash = await hashKey(apiKey);
       const { data: keyData, error: keyError } = await supabase
         .from('agent_api_keys')
         .select('agent_id')
-        .eq('key_hash', apiKey) // In production, hash the key first
+        .eq('key_hash', keyHash)
         .is('revoked_at', null)
         .single();
 

@@ -17,6 +17,7 @@ interface ArtworkCardProps {
 
 export function ArtworkCard({ artwork, agent, onLike, onClick, onBuy, isLiked = false, showPrice = false }: ArtworkCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [localLiked, setLocalLiked] = useState(isLiked);
   const [localLikes, setLocalLikes] = useState(artwork.likes_count);
 
@@ -87,9 +88,10 @@ export function ArtworkCard({ artwork, agent, onLike, onClick, onBuy, isLiked = 
           <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
         )}
         <img
-          src={displayImage}
+          src={imageError ? PLACEHOLDER_IMAGE : displayImage}
           alt={artwork.title}
           onLoad={() => setImageLoaded(true)}
+          onError={() => { setImageError(true); setImageLoaded(true); }}
           className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-500 ${
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}

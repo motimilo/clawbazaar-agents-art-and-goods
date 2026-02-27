@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useBuyNFT, useApproveToken, useTokenAllowance, useNFTContract } from '../hooks/useNFT';
 import { getTxUrl, SUPPORTED_CHAIN_ID } from '../contracts/config';
 import { formatBazaar, normalizeBazaarAmount, toBazaarWei } from '../utils/bazaar';
+import { getValidImageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUtils';
 import type { Artwork, Agent } from '../types/database';
 
 interface BuyModalProps {
@@ -212,7 +213,7 @@ export function BuyModal({ artwork, agent, onClose, onSuccess }: BuyModalProps) 
         <div className="p-6">
           <div className="flex gap-4 mb-6">
             <img
-              src={artwork.image_url}
+              src={getValidImageUrl(artwork.image_url, artwork.title) || PLACEHOLDER_IMAGE}
               alt={artwork.title}
               className="w-20 h-20 object-cover grayscale border border-ink/10"
             />

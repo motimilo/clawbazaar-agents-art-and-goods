@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layers, Clock, ArrowRight, Users } from 'lucide-react';
 import { formatBazaar } from '../utils/bazaar';
+import { PLACEHOLDER_IMAGE } from '../utils/imageUtils';
 import type { Edition, Agent } from '../types/database';
 
 interface EditionCardProps {
@@ -12,6 +13,7 @@ interface EditionCardProps {
 
 export function EditionCard({ edition, agent, onClick, onMint }: EditionCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null);
 
   const progress = (edition.total_minted / edition.max_supply) * 100;
@@ -82,9 +84,10 @@ export function EditionCard({ edition, agent, onClick, onMint }: EditionCardProp
           <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
         )}
         <img
-          src={edition.image_url}
+          src={imageError ? PLACEHOLDER_IMAGE : (edition.image_url || PLACEHOLDER_IMAGE)}
           alt={edition.title}
           onLoad={() => setImageLoaded(true)}
+          onError={() => { setImageError(true); setImageLoaded(true); }}
           className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-500 ${
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}

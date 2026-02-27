@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { Package, Zap, FileText, Search, Filter, ArrowLeft } from 'lucide-react';
 import { SkillCard } from '../components/SkillCard';
 import { ServiceCard } from '../components/ServiceCard';
+import { BuySkillModal } from '../components/BuySkillModal';
 import { fetchSkills } from '../lib/skills-api';
 import { fetchServices } from '../lib/services-api';
 import { fetchPrompts } from '../lib/prompts-api';
 import type { Skill, Service, Prompt } from '../types/marketplace';
+import type { PaymentMethod } from '../lib/payments';
 
 type TabType = 'skills' | 'services' | 'prompts';
 
@@ -21,6 +23,7 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [buySkill, setBuySkill] = useState<{ skill: Skill; method: PaymentMethod } | null>(null);
 
   useEffect(() => {
     loadData();
@@ -79,7 +82,7 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
       {/* Header */}
       <div className="border-b border-green-500/30 bg-black/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
             <div className="flex items-center gap-4">
               {onBack && (
                 <button
@@ -89,12 +92,12 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
                   <ArrowLeft className="w-5 h-5" />
                 </button>
               )}
-              <h1 className="text-2xl font-mono font-bold text-green-400">
+              <h1 className="text-xl sm:text-2xl font-mono font-bold text-green-400">
                 Skills Hub
               </h1>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-xs">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="hidden sm:flex items-center gap-2 text-xs">
                 <span className="text-green-500/50">Pay with:</span>
                 <span className="font-mono px-2 py-1 bg-blue-500/10 text-blue-300 rounded border border-blue-500/30">
                   💳 Card
@@ -136,7 +139,7 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
 
       {/* Search & Filters */}
       <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500/50" />
             <input
@@ -179,6 +182,7 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
                 key={skill.id} 
                 skill={skill}
                 onDownload={(s) => window.open(s.package_url, '_blank')}
+                onBuy={(s, method) => setBuySkill({ skill: s, method })}
               />
             ))}
             {activeTab === 'services' && services.map((service) => (
@@ -220,15 +224,40 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
           (activeTab === 'prompts' && prompts.length === 0)
         ) && (
           <div className="text-center py-20">
-            <div className="text-green-500/50 font-mono mb-2">
-              No {activeTab} found
+            <div className="w-16 h-16 mx-auto mb-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center justify-center">
+              {activeTab === 'skills' ? <Package className="w-8 h-8 text-green-500/50" /> : 
+               activeTab === 'services' ? <Zap className="w-8 h-8 text-cyan-500/50" /> : 
+               <FileText className="w-8 h-8 text-purple-500/50" />}
             </div>
-            <p className="text-green-500/30 text-sm">
-              Be the first to publish!
+            <div className="text-green-500/50 font-mono mb-2 text-lg">
+              No {activeTab} yet
+            </div>
+            <p className="text-green-500/30 text-sm mb-6">
+              The marketplace is fresh — be the first to publish!
             </p>
+            <button
+              onClick={() => window.location.href = '/publish'}
+              className="px-6 py-2.5 bg-green-500/20 hover:bg-green-500/30 
+                         border border-green-500/50 rounded font-mono text-sm text-green-300
+                         transition-all hover:border-green-400"
+            >
+              + Publish {activeTab === 'skills' ? 'a Skill' : activeTab === 'services' ? 'a Service' : 'a Prompt'}
+            </button>
           </div>
         )}
       </div>
+
+      {buySkill && (
+        <BuySkillModal
+          skill={buySkill.skill}
+          paymentMethod={buySkill.method}
+          onClose={() => setBuySkill(null)}
+          onSuccess={() => {
+            setBuySkill(null);
+            window.open(buySkill.skill.package_url, '_blank');
+          }}
+        />
+      )}
     </div>
   );
 }
