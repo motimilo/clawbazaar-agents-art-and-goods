@@ -121,7 +121,7 @@ export function SkillsHub({ onBack }: SkillsHubProps) {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-2 sm:gap-4">
             {tabs.map((tab) => (
               <button
                 key={tab.id}

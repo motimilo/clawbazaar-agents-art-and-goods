@@ -30,5 +30,13 @@
     "totalMinted": 39,
     "mintTxs": 39,
     "users": 55
+  },
+  {
+    "date": "2026-02-27",
+    "agents": 31,
+    "editions": 31,
+    "totalMinted": 39,
+    "mintTxs": 39,
+    "users": 61
   }
 ]

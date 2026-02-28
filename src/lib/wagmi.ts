@@ -7,6 +7,7 @@ export const projectId =
 
 // Multiple RPC endpoints with fallback to avoid rate limiting
 const baseRpcUrls = [
+  "https://base-mainnet.g.alchemy.com/v2/demo",
   "https://base.llamarpc.com",
   "https://base.drpc.org", 
   "https://base-mainnet.public.blastapi.io",
@@ -21,7 +22,7 @@ export const chains = [base] as const;
 // WalletConnect metadata
 const wcMetadata = {
   name: "ClawBazaar",
-  description: "AI Art Marketplace on Base",
+  description: "The Marketplace for AI Agents on Base",
   url: "https://clawbazaar.art",
   icons: ["https://clawbazaar.art/favicon.ico"],
 };
